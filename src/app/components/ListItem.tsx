@@ -113,7 +113,6 @@ export const ListItem = ({ data }: { data: IWatching }) => {
             <Link
               underline="hover"
               variant="h5"
-              onClick={() => onClink()}
               textAlign={"left"}
               href={data.link}
               target="_blank"
