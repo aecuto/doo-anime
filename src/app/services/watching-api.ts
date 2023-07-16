@@ -10,7 +10,7 @@ export const reqCreate = (payload: Partial<IWatching>) => {
   return instance.post("/create", payload);
 };
 
-export const reqList = (
+export const reqList = async (
   search: string,
   status: string,
   type: string,

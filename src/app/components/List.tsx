@@ -25,11 +25,11 @@ export default function List() {
   const [loading, seLoading] = useState(true);
 
   useEffect(() => {
-    if (!status || !type || !createdBy) return;
+    if (!status || !createdBy) return;
 
     fetchData(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [search, status, type, sync, createdBy]);
+  }, [search, status, type, sync]);
 
   const fetchData = useDebouncedCallback((isInit?: boolean) => {
     let currPage = page + 1;

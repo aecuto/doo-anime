@@ -20,7 +20,8 @@ export const InitForm = () => {
     setOpen(!value);
   }, [setCreatedBy]);
 
-  const handleClose = () => {
+  const handleClose = (event: object, reason: string) => {
+    if (reason) return;
     setOpen(false);
   };
 
@@ -31,8 +32,8 @@ export const InitForm = () => {
   };
 
   return (
-    <div>
-      <Dialog open={open} onClose={handleClose}>
+    <Dialog open={open} onClose={handleClose}>
+      <form>
         <DialogTitle>Please enter your name</DialogTitle>
         <DialogContent>
           <DialogContentText>
@@ -49,10 +50,12 @@ export const InitForm = () => {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleConfirm}>Confirm</Button>
+          <Button onClick={() => setOpen(false)}>Cancel</Button>
+          <Button onClick={handleConfirm} type="submit">
+            Confirm
+          </Button>
         </DialogActions>
-      </Dialog>
-    </div>
+      </form>
+    </Dialog>
   );
 };

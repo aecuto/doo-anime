@@ -13,16 +13,12 @@ interface IPros {
 }
 
 export const Modal = ({ children, setOpen, open, id }: IPros) => {
+  const onClose = (event: object, reason: string) => {
+    setOpen(false);
+  };
   return (
-    <Dialog
-      open={open}
-      onClose={() => setOpen(false)}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-    >
-      <DialogTitle id="alert-dialog-title">
-        {id ? "Update" : "Create"}
-      </DialogTitle>
+    <Dialog open={open} onClose={onClose} disableEnforceFocus>
+      <DialogTitle>{id ? "Update" : "Create"}</DialogTitle>
       <DialogContent>
         <Box sx={{ mt: 3 }}>{children}</Box>
       </DialogContent>

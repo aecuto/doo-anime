@@ -10,11 +10,18 @@ interface IFilter {
   setData: React.Dispatch<React.SetStateAction<string>>;
   options: string[];
   label: string;
+  defaultValue?: string;
 }
 
-export default function Filter({ data, setData, options, label }: IFilter) {
+export default function Filter({
+  data,
+  setData,
+  options,
+  label,
+  defaultValue,
+}: IFilter) {
   React.useEffect(() => {
-    setData(options[0]);
+    setData(defaultValue || "all");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

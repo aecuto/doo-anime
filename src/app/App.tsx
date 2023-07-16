@@ -92,6 +92,7 @@ function AppPage() {
                   setData={setStatus}
                   options={Object.values(STATUS)}
                   label="Status"
+                  defaultValue={STATUS.WATCHING}
                 />
               </Grid>
               <Grid item xs>
