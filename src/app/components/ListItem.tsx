@@ -26,6 +26,7 @@ import { IWatching } from "@/database/model";
 import { STATUS } from "../constant";
 import { toast } from "react-toastify";
 import { useDebouncedCallback } from "use-debounce";
+import AnimeDetails from "@/app/components/AnimeDetails";
 
 const ChipV2 = styled(Chip)`
   && {
@@ -104,7 +105,7 @@ export const ListItem = ({ data }: { data: IWatching }) => {
     <Box sx={{ p: 2 }}>
       <Grid container>
         <Grid item xs={12} sm={9}>
-          <Box sx={{ mb: 2 }}>
+          <Grid container sx={{ mb: 2 }}>
             <Link
               underline="hover"
               variant="h5"
@@ -115,8 +116,10 @@ export const ListItem = ({ data }: { data: IWatching }) => {
             >
               {data.name}
             </Link>
-          </Box>
+          </Grid>
+
           <Box>
+            <AnimeDetails name={data.name} />
             <ChipV2
               label={`Edit`}
               variant="outlined"
