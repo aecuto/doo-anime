@@ -111,11 +111,13 @@ export const ListItem = ({ data }: { data: IWatching }) => {
         <Grid item xs={9}>
           <Box sx={{ mb: 2 }}>
             <Link
-              component="button"
               underline="hover"
               variant="h5"
               onClick={() => onClink()}
               textAlign={"left"}
+              href={data.link}
+              target="_blank"
+              referrerPolicy="no-referrer"
             >
               {data.name}
             </Link>
