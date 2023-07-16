@@ -50,8 +50,9 @@ export const WatchingListForm = ({ id }: { id?: string }) => {
         pending: "create is pending",
         success: "create successfully",
         error: {
-          render({ data }: { data: AxiosError }) {
-            return data.response?.statusText;
+          render(props) {
+            const error = props.data as AxiosError;
+            return error.response?.statusText;
           },
         },
       }
