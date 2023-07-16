@@ -19,12 +19,14 @@ export async function GET(request: NextRequest, seg: ISegment) {
   return NextResponse.json(found);
 }
 
-export async function PUT(request: { body: IWatching }, seg: ISegment) {
+export async function PUT(request: NextRequest, seg: ISegment) {
   await connectDB();
 
   const { id } = seg.params;
 
-  const data = await WatchingModel.findByIdAndUpdate(id, request.body, {
+  const body = await request.json();
+
+  const data = await WatchingModel.findByIdAndUpdate(id, body, {
     new: true,
   });
   return NextResponse.json(data);
