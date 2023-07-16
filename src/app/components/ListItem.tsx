@@ -44,7 +44,7 @@ export const ListItem = ({ data }: { data: IWatching }) => {
 
   const reqUpdateEpisodeDeb = useDebouncedCallback(() => {
     reqUpdateEpisode(data._id, episode).then(() =>
-      toast.success("Episode updated")
+      toast.success("Episodes updated")
     );
   }, 500);
 
@@ -84,20 +84,15 @@ export const ListItem = ({ data }: { data: IWatching }) => {
     );
   };
 
-  const onClink = () => {
-    if (!data.link) return;
-    window.open(data.link, "_blank");
-  };
-
   const shortCutAction = () => {
     return (
       <>
         {data.status === STATUS.WATCHING ? (
-          <IconButton color="success" onClick={() => onComplete()}>
+          <IconButton color="success" onClick={() => onComplete()} size="large">
             <TaskAltOutlined />
           </IconButton>
         ) : (
-          <IconButton color="warning" onClick={() => onReplay()}>
+          <IconButton color="warning" onClick={() => onReplay()} size="large">
             <ReplayIcon />
           </IconButton>
         )}
@@ -108,7 +103,7 @@ export const ListItem = ({ data }: { data: IWatching }) => {
   return (
     <Box sx={{ p: 2 }}>
       <Grid container>
-        <Grid item xs={9}>
+        <Grid item xs={12} sm={9}>
           <Box sx={{ mb: 2 }}>
             <Link
               underline="hover"
@@ -141,10 +136,12 @@ export const ListItem = ({ data }: { data: IWatching }) => {
           </Box>
         </Grid>
         <Grid item xs sx={{ m: "auto" }}>
-          <Grid container textAlign={"right"}>
-            <Grid item xs>
+          <Grid container textAlign={"center"}>
+            <Grid item xs={12} sm={2}>
               {data.status !== STATUS.DONE ? shortCutAction() : null}
+            </Grid>
 
+            <Grid item xs={12} sm={10}>
               <IconButton color="error" onClick={() => onRemove()} size="large">
                 <RemoveIcon />
               </IconButton>
