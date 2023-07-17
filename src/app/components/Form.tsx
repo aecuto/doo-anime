@@ -115,16 +115,18 @@ export const WatchingListForm = ({ id }: { id?: string }) => {
             fullWidth
           />
         </FormControl>
-        <FormControl fullWidth sx={{ mb: 3 }}>
-          <TextField
-            name="episode"
-            label="Episode"
-            variant="outlined"
-            value={formik.values.episode}
-            onChange={formik.handleChange}
-            fullWidth
-          />
-        </FormControl>
+        {id ? (
+          <FormControl fullWidth sx={{ mb: 3 }}>
+            <TextField
+              name="episode"
+              label="Episode"
+              variant="outlined"
+              value={formik.values.episode}
+              onChange={formik.handleChange}
+              fullWidth
+            />
+          </FormControl>
+        ) : null}
 
         <FormControl fullWidth sx={{ mb: 3 }}>
           <InputLabel>{"Status"}</InputLabel>
@@ -174,6 +176,8 @@ export const WatchingListForm = ({ id }: { id?: string }) => {
             value={formik.values.episodePrev}
             onChange={formik.handleChange}
             fullWidth
+            defaultValue={"0"}
+            helperText="*for part of episode and continue ex. part 1 end at 13, so this field should put 13 otherwise put 0"
           />
         </FormControl>
 

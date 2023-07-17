@@ -140,7 +140,7 @@ export const ListItem = ({ data }: { data: IWatching }) => {
 
             {data.episodePrev ? (
               <ChipV2
-                label={`real epison: ${episode}`}
+                label={`real episode: ${episode}`}
                 variant="outlined"
                 color="error"
               />
