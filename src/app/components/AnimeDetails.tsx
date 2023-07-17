@@ -12,13 +12,15 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { Chip } from "@mui/material";
 import { toast } from "react-toastify";
+import { IWatching } from "@/database/model";
+import { TYPE } from "@/app/constant";
 
-export default function AnimeDetails({ name }: { name: string }) {
+export default function AnimeDetails({ item }: { item: IWatching }) {
   const [open, setOpen] = React.useState(false);
   const [data, setData] = React.useState<IAnimeDetails[]>([]);
 
   const handleClickOpen = () => {
-    getAnimeDetails(name).then((res) => {
+    getAnimeDetails(item.name).then((res) => {
       if (!res.data.data.length) {
         toast.info("info not found");
         return;
@@ -32,6 +34,8 @@ export default function AnimeDetails({ name }: { name: string }) {
   const handleClose = () => {
     setOpen(false);
   };
+
+  if (item.type !== TYPE.ANIME) return null;
 
   return (
     <>

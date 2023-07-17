@@ -7,7 +7,9 @@ export interface IWatching {
   type: string;
   link: string;
   episode: number;
+  episodePrev: number;
   completed: Date;
+  createdBy: string;
 }
 
 const schema = new Schema(
@@ -17,7 +19,9 @@ const schema = new Schema(
     type: String,
     link: String,
     episode: Number,
+    episodePrev: Number,
     completed: Date,
+    createdBy: String,
   },
   { timestamps: true }
 );

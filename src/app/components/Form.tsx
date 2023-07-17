@@ -23,7 +23,7 @@ import { AxiosError } from "axios";
 import { IWatching } from "@/database/model";
 
 export const WatchingListForm = ({ id }: { id?: string }) => {
-  const { setOpen, setSync } = useContext(AppContext);
+  const { setOpen, setSync, createdBy } = useContext(AppContext);
   const [loading, setLoading] = useState(true);
 
   const onUpdate = (id: string, values: Partial<IWatching>) => {
@@ -41,8 +41,12 @@ export const WatchingListForm = ({ id }: { id?: string }) => {
   };
 
   const onCreate = (values: Partial<IWatching>) => {
+    const payload = {
+      ...values,
+      createdBy,
+    };
     toast.promise(
-      reqCreate(values).then(() => {
+      reqCreate(payload).then(() => {
         setSync(new Date());
         setOpen(false);
       }),
@@ -66,6 +70,7 @@ export const WatchingListForm = ({ id }: { id?: string }) => {
       type: TYPE.ANIME,
       link: "",
       episode: 1,
+      episodePrev: 0,
     },
     onSubmit: (values: Partial<IWatching>) => {
       if (id) {
@@ -120,6 +125,7 @@ export const WatchingListForm = ({ id }: { id?: string }) => {
             fullWidth
           />
         </FormControl>
+
         <FormControl fullWidth sx={{ mb: 3 }}>
           <InputLabel>{"Status"}</InputLabel>
           <Select
@@ -157,6 +163,17 @@ export const WatchingListForm = ({ id }: { id?: string }) => {
             variant="outlined"
             value={formik.values.link}
             onChange={formik.handleChange}
+          />
+        </FormControl>
+
+        <FormControl fullWidth sx={{ mb: 3 }}>
+          <TextField
+            name="episodePrev"
+            label="Episode Prev"
+            variant="outlined"
+            value={formik.values.episodePrev}
+            onChange={formik.handleChange}
+            fullWidth
           />
         </FormControl>
 

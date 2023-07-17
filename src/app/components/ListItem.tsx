@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import Box from "@mui/material/Box";
 
-import { useContext, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import { AppContext } from "../App";
 import {
   reqUpdateEpisode,
@@ -119,7 +119,7 @@ export const ListItem = ({ data }: { data: IWatching }) => {
           </Grid>
 
           <Box>
-            <AnimeDetails name={data.name} />
+            <AnimeDetails item={data} />
             <ChipV2
               label={`Edit`}
               variant="outlined"
@@ -131,11 +131,20 @@ export const ListItem = ({ data }: { data: IWatching }) => {
               variant="outlined"
               color="warning"
             />
+
             <ChipV2
               label={`type: ${data.type}`}
               variant="outlined"
               color="success"
             />
+
+            {data.episodePrev ? (
+              <ChipV2
+                label={`real epison: ${episode}`}
+                variant="outlined"
+                color="error"
+              />
+            ) : null}
           </Box>
         </Grid>
         <Grid item xs sx={{ m: "auto" }}>
@@ -149,7 +158,7 @@ export const ListItem = ({ data }: { data: IWatching }) => {
                 <RemoveIcon />
               </IconButton>
               <Chip
-                label={episode <= 0 ? 0 : episode}
+                label={episode <= 0 ? 0 : episode + (data.episodePrev || 0)}
                 sx={{ width: "100px", fontSize: "32px", height: "auto" }}
               ></Chip>
               <IconButton color="success" onClick={() => onAdd()} size="large">
