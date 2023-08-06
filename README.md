@@ -14,6 +14,11 @@ First, run the development server:
 npm ci
 ```
 
+### add .env.local
+```sh
+MONGO_URL=mongodb+srv://aaaa:gggg@aecuto.8jkrk1d.mongodb.net/watching-list-test
+```
+
 ```sh
 npm run dev
 ```

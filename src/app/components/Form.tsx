@@ -70,7 +70,8 @@ export const WatchingListForm = ({ id }: { id?: string }) => {
       type: TYPE.ANIME,
       link: "",
       episode: 1,
-      episodePrev: 0,
+      imageUrl: "",
+      totalEpisodes: 12,
     },
     onSubmit: (values: Partial<IWatching>) => {
       if (id) {
@@ -92,7 +93,6 @@ export const WatchingListForm = ({ id }: { id?: string }) => {
       formik.setValues(res.data);
       setLoading(false);
     });
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
@@ -170,14 +170,23 @@ export const WatchingListForm = ({ id }: { id?: string }) => {
 
         <FormControl fullWidth sx={{ mb: 3 }}>
           <TextField
-            name="episodePrev"
-            label="Episode Prev"
+            name="totalEpisodes"
+            label="Total Episodes"
             variant="outlined"
-            value={formik.values.episodePrev}
+            value={formik.values.totalEpisodes}
             onChange={formik.handleChange}
             fullWidth
-            defaultValue={"0"}
-            helperText="*for part of episode and continue ex. part 1 end at 13, so this field should put 13 otherwise put 0"
+          />
+        </FormControl>
+
+        <FormControl fullWidth sx={{ mb: 3 }}>
+          <TextField
+            name="imageUrl"
+            label="Image Url"
+            variant="outlined"
+            value={formik.values.imageUrl}
+            onChange={formik.handleChange}
+            fullWidth
           />
         </FormControl>
 

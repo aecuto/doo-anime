@@ -1,42 +1,41 @@
-import {
-  Button,
-  ButtonGroup,
-  Chip,
-  Grid,
-  IconButton,
-  Link,
-} from "@mui/material";
-import Box from "@mui/material/Box";
+import * as React from "react";
+import Card from "@mui/material/Card";
+import CardActions from "@mui/material/CardActions";
+import CardContent from "@mui/material/CardContent";
+import CardMedia from "@mui/material/CardMedia";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
+import { IWatching } from "@/database/model";
+import { Box, Chip, Grid, IconButton, Link } from "@mui/material";
 
-import { useContext, useMemo, useState } from "react";
-import { AppContext } from "../App";
+import AddIcon from "@mui/icons-material/Add";
+import RemoveIcon from "@mui/icons-material/Remove";
+import { TaskAltOutlined } from "@mui/icons-material";
+import ReplayIcon from "@mui/icons-material/Replay";
+
 import {
   reqUpdateEpisode,
   reqUpdateComplete,
   reqUpdateReplay,
 } from "../services/watching-api";
-
-import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from "@mui/icons-material/Remove";
-import styled from "styled-components";
-import { TaskAltOutlined } from "@mui/icons-material";
-import ReplayIcon from "@mui/icons-material/Replay";
-
-import { IWatching } from "@/database/model";
-import { STATUS } from "../constant";
-import { toast } from "react-toastify";
 import { useDebouncedCallback } from "use-debounce";
-import AnimeDetails from "@/app/components/AnimeDetails";
+import { toast } from "react-toastify";
+import styled from "styled-components";
+
+import { AppContext } from "../App";
+import { STATUS } from "@/app/constant";
+import SyncAnime from "@/app/components/SyncAnime";
 
 const ChipV2 = styled(Chip)`
   && {
     margin-right: 10px;
+    margin-bottom: 10px;
   }
 `;
 
-export const ListItem = ({ data }: { data: IWatching }) => {
-  const { setId, setOpen, setSync } = useContext(AppContext);
-  const [episode, setEpisode] = useState(data.episode || 0);
+export default function ListItem({ data }: { data: IWatching }) {
+  const { setId, setOpen, setSync } = React.useContext(AppContext);
+  const [episode, setEpisode] = React.useState(data.episode || 0);
 
   const handleOpen = () => {
     setOpen(true);
@@ -85,89 +84,97 @@ export const ListItem = ({ data }: { data: IWatching }) => {
     );
   };
 
-  const shortCutAction = () => {
+  const displayInfo = () => {
     return (
-      <>
-        {data.status === STATUS.WATCHING ? (
-          <IconButton color="success" onClick={() => onComplete()} size="large">
-            <TaskAltOutlined />
-          </IconButton>
-        ) : (
-          <IconButton color="warning" onClick={() => onReplay()} size="large">
-            <ReplayIcon />
-          </IconButton>
-        )}
-      </>
+      <Box>
+        <ChipV2
+          label={`type: ${data.type}`}
+          variant="outlined"
+          color="success"
+        />
+        <ChipV2
+          label={`status: ${data.status}`}
+          variant="outlined"
+          color="warning"
+        />
+      </Box>
     );
   };
 
   return (
-    <Box sx={{ p: 2 }}>
-      <Grid container>
-        <Grid item xs={12} sm={9}>
-          <Grid container sx={{ mb: 2 }}>
-            <Link
-              underline="hover"
-              variant="h5"
-              textAlign={"left"}
-              href={data.link}
-              target="_blank"
-              referrerPolicy="no-referrer"
-            >
-              {data.name}
-            </Link>
-          </Grid>
+    <Card sx={{ display: "flex" }}>
+      <CardMedia
+        component="img"
+        image={
+          data.imageUrl ||
+          "https://www.movienewz.com/img/films/poster-holder.jpg"
+        }
+        height={250}
+        sx={{ width: "auto" }}
+      />
+      <Box sx={{ display: "flex", flexDirection: "column", width: "100%" }}>
+        <CardContent
+          sx={{ display: "flex", flexDirection: "column", height: "100%" }}
+        >
+          <Typography
+            variant="body1"
+            sx={{ maxHeight: "70px", overflow: "hidden", marginBottom: "5px" }}
+          >
+            {data.name}
+          </Typography>
 
           <Box>
-            <AnimeDetails item={data} />
             <ChipV2
-              label={`Edit`}
+              label={`episodes: ${data.totalEpisodes || "??"}`}
               variant="outlined"
-              onClick={() => handleOpen()}
               color="info"
             />
-            <ChipV2
-              label={`status: ${data.status}`}
-              variant="outlined"
-              color="warning"
-            />
-
-            <ChipV2
-              label={`type: ${data.type}`}
-              variant="outlined"
-              color="success"
-            />
-
-            {data.episodePrev ? (
-              <ChipV2
-                label={`real episode: ${episode}`}
-                variant="outlined"
-                color="error"
-              />
-            ) : null}
           </Box>
-        </Grid>
-        <Grid item xs sx={{ m: "auto" }}>
-          <Grid container textAlign={"center"}>
-            <Grid item xs={12} sm={2}>
-              {data.status !== STATUS.DONE ? shortCutAction() : null}
-            </Grid>
 
-            <Grid item xs={12} sm={10}>
-              <IconButton color="error" onClick={() => onRemove()} size="large">
-                <RemoveIcon />
-              </IconButton>
-              <Chip
-                label={episode <= 0 ? 0 : episode + (data.episodePrev || 0)}
-                sx={{ width: "100px", fontSize: "32px", height: "auto" }}
-              ></Chip>
-              <IconButton color="success" onClick={() => onAdd()} size="large">
-                <AddIcon />
-              </IconButton>
-            </Grid>
-          </Grid>
-        </Grid>
-      </Grid>
-    </Box>
+          <Box
+            sx={{
+              display: "flex",
+              mt: "auto",
+              justifyContent: "center",
+            }}
+          >
+            <IconButton color="error" onClick={() => onRemove()}>
+              <RemoveIcon />
+            </IconButton>
+            <Chip
+              label={episode <= 0 ? 0 : episode}
+              sx={{ width: "100px", fontSize: "18px", height: "auto" }}
+            ></Chip>
+            <IconButton color="success" onClick={() => onAdd()}>
+              <AddIcon />
+            </IconButton>
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            {data.status === STATUS.WATCHING ? (
+              <Button size="small" color="success" onClick={() => onComplete()}>
+                Done
+              </Button>
+            ) : (
+              <Button size="small" color="warning" onClick={() => onReplay()}>
+                Replay
+              </Button>
+            )}
+
+            <Button size="small" color="info">
+              Link
+            </Button>
+            <Button size="small" onClick={() => handleOpen()}>
+              Edit
+            </Button>
+            <SyncAnime item={data} />
+          </Box>
+        </CardContent>
+      </Box>
+    </Card>
   );
-};
+}

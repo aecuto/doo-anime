@@ -7,9 +7,11 @@ export interface IWatching {
   type: string;
   link: string;
   episode: number;
-  episodePrev: number;
+  totalEpisodes: number;
   completed: Date;
   createdBy: string;
+  animeId: number;
+  imageUrl: string;
 }
 
 const schema = new Schema(
@@ -19,9 +21,11 @@ const schema = new Schema(
     type: String,
     link: String,
     episode: Number,
-    episodePrev: Number,
+    totalEpisodes: Number,
     completed: Date,
     createdBy: String,
+    animeId: Number,
+    imageUrl: String,
   },
   { timestamps: true }
 );

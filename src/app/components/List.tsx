@@ -1,4 +1,4 @@
-import { Skeleton, Typography, debounce } from "@mui/material";
+import { Grid, Skeleton, Typography, debounce } from "@mui/material";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
@@ -6,13 +6,13 @@ import Stack from "@mui/material/Stack";
 import { useContext, useEffect, useState } from "react";
 import { AppContext } from "../App";
 import { reqList } from "../services/watching-api";
-import { ListItem } from "./ListItem";
 
 import SearchOffIcon from "@mui/icons-material/SearchOff";
 
 import InfiniteScroll from "react-infinite-scroll-component";
 import { IWatching } from "@/database/model";
 import { useDebouncedCallback } from "use-debounce";
+import ListItem from "@/app/components/ListItem";
 
 export default function List() {
   const { search, status, type, sync, createdBy } = useContext(AppContext);
@@ -98,13 +98,13 @@ export default function List() {
             </p>
           }
         >
-          <Stack spacing={2}>
+          <Grid container spacing={3}>
             {data.map((value) => (
-              <Paper elevation={2} key={value._id}>
+              <Grid item key={value._id} xs={12} sm={6}>
                 <ListItem data={value} />
-              </Paper>
+              </Grid>
             ))}
-          </Stack>
+          </Grid>
         </InfiniteScroll>
       );
     }
