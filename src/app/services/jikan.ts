@@ -17,6 +17,7 @@ export interface IAnimeDetails {
       large_image_url: string;
     };
   };
+  titles: { type: string; title: string }[];
 }
 interface IRespone {
   data: IAnimeDetails[];

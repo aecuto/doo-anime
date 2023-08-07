@@ -11,8 +11,8 @@ export async function POST(request: NextRequest) {
   const exist = await WatchingModel.findOne({ name: body.name });
   if (exist)
     return NextResponse.json(
-      {},
-      { status: 400, statusText: "this name is exists" }
+      { message: "anime's name is exists" },
+      { status: 400 }
     );
 
   const data = await WatchingModel.create(body);

@@ -14,7 +14,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Button, IconButton } from "@mui/material";
+import { Box, Button, Collapse, IconButton, Typography } from "@mui/material";
 import { toast } from "react-toastify";
 import { IWatching } from "@/database/model";
 import { TYPE } from "@/app/constant";
@@ -36,7 +36,8 @@ export default function SyncAnime({ item }: { item: IWatching }) {
           return;
         }
         const data = res.data.data;
-        syncAnime(data);
+        setOpen(true);
+        setData([data]);
       });
     } else {
       getAnimeSearch(item.name).then((res) => {
@@ -62,11 +63,13 @@ export default function SyncAnime({ item }: { item: IWatching }) {
       imageUrl: data.images.webp.image_url,
       totalEpisodes: data.episodes || undefined,
     };
-    reqUpdate(item._id, payload).then(() => {
-      toast.success("sync success!");
-      handleClose();
-      setSync(new Date());
-    });
+    reqUpdate(item._id, payload)
+      .then(() => {
+        toast.success("sync success!");
+        handleClose();
+        setSync(new Date());
+      })
+      .catch((error) => toast.error(error.response.data.message));
   };
 
   if (item.type !== TYPE.ANIME) return null;
@@ -81,20 +84,20 @@ export default function SyncAnime({ item }: { item: IWatching }) {
           <Table aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell>Episodes</TableCell>
                 <TableCell>Title</TableCell>
                 <TableCell>status</TableCell>
+                <TableCell>Episodes</TableCell>
                 <TableCell></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {data.map((row) => (
                 <TableRow key={row.title}>
+                  <TableCell>{row.title}</TableCell>
+                  <TableCell>{row.status}</TableCell>
                   <TableCell component="th" scope="row">
                     {row.episodes || "??"}
                   </TableCell>
-                  <TableCell>{row.title}</TableCell>
-                  <TableCell>{row.status}</TableCell>
                   <TableCell>
                     <Button onClick={() => syncAnime(row)}>sync</Button>
                   </TableCell>
@@ -102,6 +105,28 @@ export default function SyncAnime({ item }: { item: IWatching }) {
               ))}
             </TableBody>
           </Table>
+
+          {item.animeId ? (
+            <Table
+              size="small"
+              sx={{ backgroundColor: "rgba(255, 255, 255, 0.08);" }}
+            >
+              <TableHead>
+                <TableRow>
+                  <TableCell>Type</TableCell>
+                  <TableCell>Title</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {data[0]?.titles.map((value) => (
+                  <TableRow key={value.type}>
+                    <TableCell>{value.type}</TableCell>
+                    <TableCell colSpan={3}>{value.title}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          ) : null}
         </TableContainer>
       </Dialog>
     </>

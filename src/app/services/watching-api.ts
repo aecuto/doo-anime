@@ -1,6 +1,7 @@
 import axios from "axios";
 import { STATUS } from "../constant";
 import { IWatching } from "@/database/model";
+import { omit } from "lodash";
 
 const instance = axios.create({
   baseURL: "/api",

@@ -14,7 +14,7 @@ export async function GET(request: NextRequest, seg: ISegment) {
 
   const found = await WatchingModel.findOne({ _id: id });
   if (!found)
-    return NextResponse.json({}, { status: 404, statusText: "not found" });
+    return NextResponse.json({ message: "anime not found" }, { status: 404 });
 
   return NextResponse.json(found);
 }
@@ -25,6 +25,15 @@ export async function PUT(request: NextRequest, seg: ISegment) {
   const { id } = seg.params;
 
   const body = await request.json();
+
+  if (body.name) {
+    const exist = await WatchingModel.findOne({ name: body.name });
+    if (exist && String(exist._id) !== id)
+      return NextResponse.json(
+        { message: "anime's name is exists" },
+        { status: 400 }
+      );
+  }
 
   const data = await WatchingModel.findByIdAndUpdate(id, body, {
     new: true,

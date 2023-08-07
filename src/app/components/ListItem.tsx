@@ -1,17 +1,14 @@
 import * as React from "react";
 import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { IWatching } from "@/database/model";
-import { Box, Chip, Grid, IconButton, Link } from "@mui/material";
+import { Box, Chip, IconButton } from "@mui/material";
 
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
-import { TaskAltOutlined } from "@mui/icons-material";
-import ReplayIcon from "@mui/icons-material/Replay";
 
 import {
   reqUpdateEpisode,
@@ -43,7 +40,14 @@ export default function ListItem({ data }: { data: IWatching }) {
   };
 
   const reqUpdateEpisodeDeb = useDebouncedCallback(() => {
-    reqUpdateEpisode(data._id, episode).then(() =>
+    let updateEpisode = episode;
+
+    if (data.totalEpisodes && updateEpisode > data.totalEpisodes) {
+      updateEpisode = data.totalEpisodes;
+      onComplete();
+    }
+
+    reqUpdateEpisode(data._id, updateEpisode).then(() =>
       toast.success("Episodes updated")
     );
   }, 500);
@@ -84,21 +88,9 @@ export default function ListItem({ data }: { data: IWatching }) {
     );
   };
 
-  const displayInfo = () => {
-    return (
-      <Box>
-        <ChipV2
-          label={`type: ${data.type}`}
-          variant="outlined"
-          color="success"
-        />
-        <ChipV2
-          label={`status: ${data.status}`}
-          variant="outlined"
-          color="warning"
-        />
-      </Box>
-    );
+  const onLink = (url: string) => {
+    if (!url) return;
+    window.open(url, "_blank", "noreferrer");
   };
 
   return (
@@ -107,11 +99,12 @@ export default function ListItem({ data }: { data: IWatching }) {
         component="img"
         image={
           data.imageUrl ||
-          "https://www.movienewz.com/img/films/poster-holder.jpg"
+          "https://sgame.etsisi.upm.es/pictures/12946.png?1608547866/"
         }
-        height={250}
-        sx={{ width: "auto" }}
+        // height={240}
+        sx={{ width: "175px", height: "250px" }}
       />
+
       <Box sx={{ display: "flex", flexDirection: "column", width: "100%" }}>
         <CardContent
           sx={{ display: "flex", flexDirection: "column", height: "100%" }}
@@ -155,17 +148,13 @@ export default function ListItem({ data }: { data: IWatching }) {
               justifyContent: "center",
             }}
           >
-            {data.status === STATUS.WATCHING ? (
-              <Button size="small" color="success" onClick={() => onComplete()}>
-                Done
-              </Button>
-            ) : (
+            {[STATUS.WAIT, STATUS.DROP].includes(data.status as STATUS) ? (
               <Button size="small" color="warning" onClick={() => onReplay()}>
                 Replay
               </Button>
-            )}
+            ) : null}
 
-            <Button size="small" color="info">
+            <Button size="small" color="info" onClick={() => onLink(data.link)}>
               Link
             </Button>
             <Button size="small" onClick={() => handleOpen()}>
