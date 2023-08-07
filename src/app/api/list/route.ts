@@ -23,7 +23,14 @@ export async function GET(req: NextRequest) {
     status: { $regex: `.*${String(status || "")}.*`.replace("all", "") },
     type: { $regex: `.*${String(type || "")}.*`.replace("all", "") },
     name: { $regex: `(?i).*${String(search || "")}.*`.replace("+", " ") },
-    owner,
+    $or: [
+      {
+        owner,
+      },
+      {
+        share: owner,
+      },
+    ],
   };
 
   const limit = Number(perPage);

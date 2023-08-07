@@ -27,8 +27,15 @@ export const WatchingListForm = ({ id }: { id?: string }) => {
   const [loading, setLoading] = useState(true);
 
   const onUpdate = (id: string, values: Partial<IWatching>) => {
+    const share = String(values.share).split(",");
+
+    const payload = {
+      ...values,
+      share,
+    };
+
     toast.promise(
-      reqUpdate(id, values).then(() => {
+      reqUpdate(id, payload).then(() => {
         setSync(new Date());
         setOpen(false);
       }),
@@ -55,8 +62,8 @@ export const WatchingListForm = ({ id }: { id?: string }) => {
         success: "create successfully",
         error: {
           render(props) {
-            const error = props.data as AxiosError;
-            return error.response?.statusText;
+            const error = props.data as AxiosError<{ message: string }>;
+            return error.response?.data?.message;
           },
         },
       }
@@ -72,6 +79,7 @@ export const WatchingListForm = ({ id }: { id?: string }) => {
       episode: 1,
       imageUrl: "",
       totalEpisodes: 12,
+      share: [],
     },
     onSubmit: (values: Partial<IWatching>) => {
       if (id) {
@@ -189,6 +197,20 @@ export const WatchingListForm = ({ id }: { id?: string }) => {
             fullWidth
           />
         </FormControl>
+
+        {id ? (
+          <FormControl fullWidth sx={{ mb: 3 }}>
+            <TextField
+              name="share"
+              label="Share"
+              variant="outlined"
+              value={formik.values.share}
+              onChange={formik.handleChange}
+              fullWidth
+              helperText="ex. waennoi,aecuto"
+            />
+          </FormControl>
+        ) : null}
 
         <FormControl fullWidth sx={{ mb: 3 }}>
           <Button type="submit" variant="outlined">
