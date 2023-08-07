@@ -17,10 +17,10 @@ export const reqList = async (
   type: string,
   page: number,
   perPage: number,
-  createdBy: string
+  owner: string
 ) => {
   return instance.get<IWatching[]>("/list", {
-    params: { search, status, type, page, perPage, createdBy },
+    params: { search, status, type, page, perPage, owner },
   });
 };
 

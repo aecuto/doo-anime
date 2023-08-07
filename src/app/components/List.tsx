@@ -15,7 +15,7 @@ import { useDebouncedCallback } from "use-debounce";
 import ListItem from "@/app/components/ListItem";
 
 export default function List() {
-  const { search, status, type, sync, createdBy } = useContext(AppContext);
+  const { search, status, type, sync, owner } = useContext(AppContext);
 
   const [data, setData] = useState<IWatching[]>([]);
   const [page, setPage] = useState(1);
@@ -25,7 +25,7 @@ export default function List() {
   const [loading, seLoading] = useState(true);
 
   useEffect(() => {
-    if (!status || !createdBy) return;
+    if (!status || !owner) return;
 
     fetchData(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -42,7 +42,7 @@ export default function List() {
       currPage = 1;
     }
 
-    reqList(search, status, type, currPage, perPage, createdBy).then((res) => {
+    reqList(search, status, type, currPage, perPage, owner).then((res) => {
       if (!res.data.length || res.data.length < perPage) setHasMore(false);
 
       if (isInit) {
@@ -110,7 +110,7 @@ export default function List() {
     }
   };
 
-  if (!createdBy) return null;
+  if (!owner) return null;
 
   return <>{displayList()}</>;
 }

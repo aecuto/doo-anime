@@ -23,7 +23,7 @@ import { AxiosError } from "axios";
 import { IWatching } from "@/database/model";
 
 export const WatchingListForm = ({ id }: { id?: string }) => {
-  const { setOpen, setSync, createdBy } = useContext(AppContext);
+  const { setOpen, setSync, owner } = useContext(AppContext);
   const [loading, setLoading] = useState(true);
 
   const onUpdate = (id: string, values: Partial<IWatching>) => {
@@ -43,7 +43,7 @@ export const WatchingListForm = ({ id }: { id?: string }) => {
   const onCreate = (values: Partial<IWatching>) => {
     const payload = {
       ...values,
-      createdBy,
+      owner,
     };
     toast.promise(
       reqCreate(payload).then(() => {

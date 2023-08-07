@@ -31,8 +31,8 @@ interface IAppContext {
   open: boolean;
   setSync: React.Dispatch<React.SetStateAction<Date>>;
   sync: Date;
-  createdBy: string;
-  setCreatedBy: React.Dispatch<React.SetStateAction<string>>;
+  owner: string;
+  setOwner: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export const AppContext = createContext<IAppContext>({} as IAppContext);
@@ -44,7 +44,7 @@ function AppPage() {
   const [id, setId] = useState("");
   const [open, setOpen] = useState(false);
   const [sync, setSync] = useState(new Date());
-  const [createdBy, setCreatedBy] = useState("");
+  const [owner, setOwner] = useState("");
 
   return (
     <AppContext.Provider
@@ -57,8 +57,8 @@ function AppPage() {
         open,
         sync,
         setSync,
-        createdBy,
-        setCreatedBy,
+        owner,
+        setOwner,
       }}
     >
       <ThemeProvider theme={darkTheme}>

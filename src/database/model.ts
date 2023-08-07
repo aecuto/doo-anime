@@ -9,7 +9,7 @@ export interface IWatching {
   episode: number;
   totalEpisodes: number;
   completed: Date;
-  createdBy: string;
+  owner: string;
   animeId: number;
   imageUrl: string;
 }
@@ -23,7 +23,7 @@ const schema = new Schema(
     episode: Number,
     totalEpisodes: Number,
     completed: Date,
-    createdBy: String,
+    owner: String,
     animeId: Number,
     imageUrl: String,
   },

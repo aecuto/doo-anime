@@ -12,13 +12,13 @@ export const InitForm = () => {
   const [open, setOpen] = React.useState(false);
   const [data, setData] = React.useState("");
 
-  const { setCreatedBy } = React.useContext(AppContext);
+  const { setOwner } = React.useContext(AppContext);
 
   React.useEffect(() => {
-    const value = localStorage.getItem("createdBy");
-    setCreatedBy(value || "");
+    const value = localStorage.getItem("owner");
+    setOwner(value || "");
     setOpen(!value);
-  }, [setCreatedBy]);
+  }, [setOwner]);
 
   const handleClose = (event: object, reason: string) => {
     if (reason) return;
@@ -26,8 +26,8 @@ export const InitForm = () => {
   };
 
   const handleConfirm = () => {
-    localStorage.setItem("createdBy", data);
-    setCreatedBy(data);
+    localStorage.setItem("owner", data);
+    setOwner(data);
     setOpen(false);
   };
 

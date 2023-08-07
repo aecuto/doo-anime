@@ -9,21 +9,21 @@ interface IList {
   search: string;
   perPage: string;
   page: string;
-  createdBy: string;
+  owner: string;
 }
 
 export async function GET(req: NextRequest) {
   await connectDB();
   const queryParams = parse(req.nextUrl.search);
 
-  const { status, type, search, perPage, page, createdBy } =
+  const { status, type, search, perPage, page, owner } =
     queryParams as unknown as IList;
 
   const query = {
     status: { $regex: `.*${String(status || "")}.*`.replace("all", "") },
     type: { $regex: `.*${String(type || "")}.*`.replace("all", "") },
     name: { $regex: `(?i).*${String(search || "")}.*`.replace("+", " ") },
-    createdBy,
+    owner,
   };
 
   const limit = Number(perPage);
