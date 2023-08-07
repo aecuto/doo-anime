@@ -95,15 +95,16 @@ export default function ListItem({ data }: { data: IWatching }) {
 
   return (
     <Card sx={{ display: "flex" }}>
-      <CardMedia
-        component="img"
-        image={
-          data.imageUrl ||
-          "https://sgame.etsisi.upm.es/pictures/12946.png?1608547866/"
-        }
-        // height={240}
-        sx={{ width: "175px", height: "250px" }}
-      />
+      <Box sx={{ width: "250px", height: "250px" }}>
+        <CardMedia
+          component="img"
+          image={
+            data.imageUrl ||
+            "https://sgame.etsisi.upm.es/pictures/12946.png?1608547866/"
+          }
+          height={`100%`}
+        />
+      </Box>
 
       <Box sx={{ display: "flex", flexDirection: "column", width: "100%" }}>
         <CardContent
