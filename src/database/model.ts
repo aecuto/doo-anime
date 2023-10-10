@@ -13,6 +13,7 @@ export interface IWatching {
   animeId: number;
   imageUrl: string;
   share: string[];
+  rating: number;
 }
 
 const schema = new Schema(
@@ -28,6 +29,7 @@ const schema = new Schema(
     animeId: Number,
     imageUrl: String,
     share: [String],
+    rating: Number
   },
   { timestamps: true }
 );

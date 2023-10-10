@@ -5,7 +5,7 @@ import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { IWatching } from "@/database/model";
-import { Box, Chip, IconButton } from "@mui/material";
+import { Box, Chip, IconButton, Rating } from "@mui/material";
 
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
@@ -14,6 +14,7 @@ import {
   reqUpdateEpisode,
   reqUpdateComplete,
   reqUpdateReplay,
+  reqUpdateRating,
 } from "../services/watching-api";
 import { useDebouncedCallback } from "use-debounce";
 import { toast } from "react-toastify";
@@ -33,6 +34,7 @@ const ChipV2 = styled(Chip)`
 export default function ListItem({ data }: { data: IWatching }) {
   const { setId, setOpen, setSync } = React.useContext(AppContext);
   const [episode, setEpisode] = React.useState(data.episode || 0);
+  const [rating, setRating] = React.useState(data.rating || 0);
 
   const handleOpen = () => {
     setOpen(true);
@@ -61,6 +63,13 @@ export default function ListItem({ data }: { data: IWatching }) {
     setEpisode((prev) => prev - 1);
     reqUpdateEpisodeDeb();
   };
+
+  const handleRatingChange = (newValue: number) => {
+    setRating(newValue)
+    reqUpdateRating(data._id, newValue).then(() =>
+      toast.success("Rating updated")
+    );
+  }
 
   const onComplete = () => {
     toast.promise(
@@ -124,6 +133,11 @@ export default function ListItem({ data }: { data: IWatching }) {
               color="info"
             />
           </Box>
+
+          <Rating
+            value={rating}
+            onChange={(_, newValue) => handleRatingChange(Number(newValue)) }          
+          />
 
           <Box
             sx={{

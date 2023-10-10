@@ -80,6 +80,7 @@ export const WatchingListForm = ({ id }: { id?: string }) => {
       imageUrl: "",
       totalEpisodes: 12,
       share: [],
+      rating: 0
     },
     onSubmit: (values: Partial<IWatching>) => {
       if (id) {
@@ -208,6 +209,21 @@ export const WatchingListForm = ({ id }: { id?: string }) => {
               onChange={formik.handleChange}
               fullWidth
               helperText="ex. waennoi,aecuto"
+            />
+          </FormControl>
+        ) : null}
+
+        {id ? (
+          <FormControl fullWidth sx={{ mb: 3 }}>
+            <TextField
+              name="rating"
+              label="Rating"
+              variant="outlined"
+              value={formik.values.rating}
+              onChange={formik.handleChange}
+              fullWidth
+              type="number"
+              InputProps={{ inputProps: { min: 0, max: 5 } }}
             />
           </FormControl>
         ) : null}

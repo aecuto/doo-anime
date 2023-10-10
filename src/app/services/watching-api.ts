@@ -38,6 +38,12 @@ export const reqUpdateEpisode = (id: string, episode: number) => {
   });
 };
 
+export const reqUpdateRating = (id: string, rating: number) => {
+  return instance.put<IWatching>(`/${id}`, {
+    rating,
+  });
+};
+
 export const reqUpdateComplete = (id: string) => {
   const newPayload = {
     completed: new Date(),
