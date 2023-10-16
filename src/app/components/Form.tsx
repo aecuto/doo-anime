@@ -13,7 +13,7 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Autocomplete from "@mui/material/Autocomplete";
 
-import { reqCreate, reqGetById, reqUpdate } from "../services/watching-api";
+import { reqCreate, reqGetById, reqUpdate } from "../services/anime-api";
 import { toast } from "react-toastify";
 
 import {
@@ -27,23 +27,17 @@ import { AppContext } from "../App";
 import { STATUS, TYPE } from "../constant";
 
 import { AxiosError } from "axios";
-import { IWatching } from "@/database/model";
+import { IAnime } from "@/database/model";
 import { IAnimeDetails, getAnimeSearch } from "@/app/services/jikan";
 import _ from "lodash";
 
-export const WatchingListForm = ({ id }: { id?: string }) => {
-  const { setOpen, setSync, owner } = useContext(AppContext);
+export const AnimeForm = ({ id }: { id?: string }) => {
+  const { setOpen, setSync, user } = useContext(AppContext);
   const [loading, setLoading] = useState(true);
   const [animeList, setAnimeList] = useState<IAnimeDetails[]>([]);
 
-  const onUpdate = (id: string, values: Partial<IWatching>) => {
-    const share = String(values.share).split(",");
-
-    const payload = {
-      ...values,
-      share,
-    };
-
+  const onUpdate = (id: string, values: Partial<IAnime>) => {
+    const payload = values;
     toast.promise(
       reqUpdate(id, payload).then(() => {
         setSync(new Date());
@@ -57,11 +51,8 @@ export const WatchingListForm = ({ id }: { id?: string }) => {
     );
   };
 
-  const onCreate = (values: Partial<IWatching>) => {
-    const payload = {
-      ...values,
-      owner,
-    };
+  const onCreate = (values: Partial<IAnime>) => {
+    const payload = values;
     toast.promise(
       reqCreate(payload).then(() => {
         setSync(new Date());
@@ -89,9 +80,9 @@ export const WatchingListForm = ({ id }: { id?: string }) => {
       episode: 1,
       imageUrl: "",
       totalEpisodes: 0,
-      share: [],
+      user: user?._id,
     },
-    onSubmit: (values: Partial<IWatching>) => {
+    onSubmit: (values: Partial<IAnime>) => {
       if (id) {
         onUpdate(id, values);
       } else {
@@ -99,6 +90,8 @@ export const WatchingListForm = ({ id }: { id?: string }) => {
       }
     },
   });
+
+  console.log(formik.values);
 
   useEffect(() => {
     if (!id) {
@@ -225,20 +218,6 @@ export const WatchingListForm = ({ id }: { id?: string }) => {
             fullWidth
           />
         </FormControl>
-
-        {id ? (
-          <FormControl fullWidth sx={{ mb: 3 }}>
-            <TextField
-              name="share"
-              label="Share"
-              variant="outlined"
-              value={formik.values.share}
-              onChange={formik.handleChange}
-              fullWidth
-              helperText="ex. waennoi,aecuto"
-            />
-          </FormControl>
-        ) : null}
 
         <FormControl fullWidth sx={{ mb: 3 }}>
           <Button type="submit" variant="outlined">

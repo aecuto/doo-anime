@@ -5,19 +5,19 @@ import Stack from "@mui/material/Stack";
 
 import { useContext, useEffect, useState } from "react";
 import { AppContext } from "../App";
-import { reqList } from "../services/watching-api";
+import { reqList } from "../services/anime-api";
 
 import SearchOffIcon from "@mui/icons-material/SearchOff";
 
 import InfiniteScroll from "react-infinite-scroll-component";
-import { IWatching } from "@/database/model";
+import { IAnime } from "@/database/model";
 import { useDebouncedCallback } from "use-debounce";
 import ListItem from "@/app/components/ListItem";
 
 export default function List() {
-  const { search, status, type, sync, owner } = useContext(AppContext);
+  const { search, status, type, sync, user } = useContext(AppContext);
 
-  const [data, setData] = useState<IWatching[]>([]);
+  const [data, setData] = useState<IAnime[]>([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const perPage = 6;
@@ -25,7 +25,7 @@ export default function List() {
   const [loading, seLoading] = useState(true);
 
   useEffect(() => {
-    if (!status || !owner) return;
+    if (!status) return;
 
     fetchData(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -42,19 +42,30 @@ export default function List() {
       currPage = 1;
     }
 
-    reqList(search, status, type, currPage, perPage, owner).then((res) => {
-      if (!res.data.length || res.data.length < perPage) setHasMore(false);
-
-      if (isInit) {
-        setData(res.data);
-      } else {
-        setTotal((prev) => prev + perPage);
-        setPage((prev) => prev + 1);
-        setData((prev) => prev.concat(res.data));
-      }
-
-      seLoading(false);
+    console.log({
+      search,
+      status,
+      type,
+      currPage,
+      perPage,
+      user: user?._id || "",
     });
+
+    reqList(search, status, type, currPage, perPage, user?._id || "").then(
+      (res) => {
+        if (!res.data.length || res.data.length < perPage) setHasMore(false);
+
+        if (isInit) {
+          setData(res.data);
+        } else {
+          setTotal((prev) => prev + perPage);
+          setPage((prev) => prev + 1);
+          setData((prev) => prev.concat(res.data));
+        }
+
+        seLoading(false);
+      }
+    );
   }, 500);
 
   const displayList = () => {
@@ -109,8 +120,6 @@ export default function List() {
       );
     }
   };
-
-  if (!owner) return null;
 
   return <>{displayList()}</>;
 }

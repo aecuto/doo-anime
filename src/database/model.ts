@@ -1,6 +1,6 @@
 import { Schema, model, models } from "mongoose";
 
-export interface IWatching {
+export interface IAnime {
   _id: string;
   name: string;
   status: string;
@@ -9,13 +9,12 @@ export interface IWatching {
   episode: number;
   totalEpisodes: number;
   completed: Date;
-  owner: string;
   animeId: number;
   imageUrl: string;
-  share: string[];
+  user: string;
 }
 
-const schema = new Schema(
+const AnimeSchema = new Schema(
   {
     name: String,
     status: String,
@@ -24,13 +23,25 @@ const schema = new Schema(
     episode: Number,
     totalEpisodes: Number,
     completed: Date,
-    owner: String,
     animeId: Number,
     imageUrl: String,
-    share: [String],
+    user: { type: Schema.Types.ObjectId, ref: "user" },
   },
   { timestamps: true }
 );
 
-export const WatchingModel =
-  models.Watching || model<IWatching>("Watching", schema);
+export const AnimeModel = models.anime || model<IAnime>("anime", AnimeSchema);
+
+export interface IUser {
+  _id: string;
+  username: string;
+}
+
+const UserSchema = new Schema(
+  {
+    username: String,
+  },
+  { timestamps: true }
+);
+
+export const UserModel = models.user || model<IUser>("user", UserSchema);

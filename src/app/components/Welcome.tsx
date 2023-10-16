@@ -7,18 +7,33 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import { AppContext } from "../App";
+import { reqMe } from "@/app/services/user-api";
 
-export const InitForm = () => {
+export const WelcomeForm = () => {
   const [open, setOpen] = React.useState(false);
-  const [data, setData] = React.useState("");
+  const [username, setUsername] = React.useState("");
 
-  const { setOwner } = React.useContext(AppContext);
+  const { user, setUser } = React.useContext(AppContext);
+
+  const getUserData = (username: string) => {
+    reqMe(username).then((res) => {
+      setUser(res.data);
+      setOpen(!res.data);
+    });
+  };
 
   React.useEffect(() => {
-    const value = localStorage.getItem("owner");
-    setOwner(value || "");
-    setOpen(!value);
-  }, [setOwner]);
+    const username = localStorage.getItem("username") || "";
+
+    if (!username) {
+      setOpen(true);
+      return;
+    }
+
+    getUserData(username);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [username]);
 
   const handleClose = (event: object, reason: string) => {
     if (reason) return;
@@ -26,34 +41,31 @@ export const InitForm = () => {
   };
 
   const handleConfirm = () => {
-    localStorage.setItem("owner", data);
-    setOwner(data);
-    setOpen(false);
+    localStorage.setItem("username", username);
+    getUserData(username);
   };
 
   return (
     <Dialog open={open} onClose={handleClose}>
       <form>
-        <DialogTitle>Please enter your name</DialogTitle>
+        <DialogTitle>Please enter username</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            This name can be reference to your whatcing list. Anyone know this
-            name can know your list.
+            This name can be reference to your anime list. Anyone know this name
+            which can view your list.
           </DialogContentText>
           <TextField
-            autoFocus
             margin="dense"
-            label="Whaching list name"
+            label="username"
             fullWidth
             variant="standard"
-            onChange={(e) => setData(e.target.value)}
+            onChange={(e) => setUsername(e.target.value)}
+            autoFocus
           />
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpen(false)}>Cancel</Button>
-          <Button onClick={handleConfirm} type="submit">
-            Confirm
-          </Button>
+          <Button onClick={handleConfirm}>Confirm</Button>
         </DialogActions>
       </form>
     </Dialog>

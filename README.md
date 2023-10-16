@@ -1,25 +1,34 @@
-# Watching List
+# Doo anime
 
-site: [https://watching-list.vercel.app/](https://watching-list.vercel.app/)
+site: [https://doo-anime.vercel.app/](https://doo-anime.vercel.app/)
+
+`doo-anime = doo(watch)-anime in my lang :)`
 
 ## stack tech
 - react-nextjs
 - api-serverless-nextjs
-- mongo atlas with mongoose
+- mongo with mongoose
+
 ## Getting Started
 
 First, run the development server:
 
-```sh
-npm ci
-```
 
 ### add .env.local
-```sh
-MONGO_URL=mongodb+srv://aaaa:gggg@aecuto.8jkrk1d.mongodb.net/watching-list-test
-```
 
 ```sh
+MONGO_URL=mongodb://root:example@localhost:27017/doo-anime?authSource=admin
+# MONGO_URL=mongodb+srv://[username]:[password]@[mongo_domain]/doo-anime
+# Don't forget remove `[]`
+```
+
+### Run following commands
+
+```sh
+npm ci
+
+docker compose up -d
+
 npm run dev
 ```
 

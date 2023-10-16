@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { WatchingModel } from "../../../database/model";
-import { connectDB } from "../../../database/mongodb";
+import { AnimeModel } from "../../../../database/model";
+import { connectDB } from "../../../../database/mongodb";
 import { parse } from "search-params";
 
 interface IList {
@@ -9,14 +9,14 @@ interface IList {
   search: string;
   perPage: string;
   page: string;
-  owner: string;
+  user: string;
 }
 
 export async function GET(req: NextRequest) {
   await connectDB();
   const queryParams = parse(req.nextUrl.search);
 
-  const { status, type, search, perPage, page, owner } =
+  const { status, type, search, perPage, page, user } =
     queryParams as unknown as IList;
 
   const query = {
@@ -25,10 +25,7 @@ export async function GET(req: NextRequest) {
     name: { $regex: `(?i).*${String(search || "")}.*`.replace("+", " ") },
     $or: [
       {
-        owner,
-      },
-      {
-        share: owner,
+        user,
       },
     ],
   };
@@ -36,7 +33,7 @@ export async function GET(req: NextRequest) {
   const limit = Number(perPage);
   const skip = Number(perPage) * (Number(page) - 1);
 
-  const data = await WatchingModel.find(query)
+  const data = await AnimeModel.find(query)
     .limit(limit)
     .skip(skip)
     .sort({ updatedAt: "desc", _id: -1 });

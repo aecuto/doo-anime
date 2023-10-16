@@ -1,6 +1,6 @@
 {
-  "name": "watching-list",
-  "version": "1.0.0",
+  "name": "doo-anime",
+  "version": "2.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",

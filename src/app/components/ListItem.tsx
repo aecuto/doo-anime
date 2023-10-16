@@ -4,7 +4,7 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { IWatching } from "@/database/model";
+import { IAnime } from "@/database/model";
 import { Box, Chip, IconButton } from "@mui/material";
 
 import AddIcon from "@mui/icons-material/Add";
@@ -14,7 +14,7 @@ import {
   reqUpdateEpisode,
   reqUpdateComplete,
   reqUpdateReplay,
-} from "../services/watching-api";
+} from "../services/anime-api";
 import { useDebouncedCallback } from "use-debounce";
 import { toast } from "react-toastify";
 import styled from "styled-components";
@@ -29,7 +29,7 @@ const ChipV2 = styled(Chip)`
   }
 `;
 
-export default function ListItem({ data }: { data: IWatching }) {
+export default function ListItem({ data }: { data: IAnime }) {
   const { setId, setOpen, setSync } = React.useContext(AppContext);
   const [episode, setEpisode] = React.useState(data.episode || 0);
 
