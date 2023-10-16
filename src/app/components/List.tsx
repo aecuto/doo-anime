@@ -42,15 +42,6 @@ export default function List() {
       currPage = 1;
     }
 
-    console.log({
-      search,
-      status,
-      type,
-      currPage,
-      perPage,
-      user: user?._id || "",
-    });
-
     reqList(search, status, type, currPage, perPage, user?._id || "").then(
       (res) => {
         if (!res.data.length || res.data.length < perPage) setHasMore(false);

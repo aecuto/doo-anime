@@ -15,7 +15,7 @@ export async function GET(request: NextRequest, seg: ISegment) {
   let data = await UserModel.findOne({ username });
 
   if (!data && username) {
-    data = UserModel.create({ username });
+    data = await UserModel.create({ username });
   }
 
   return NextResponse.json(data);

@@ -91,8 +91,6 @@ export const AnimeForm = ({ id }: { id?: string }) => {
     },
   });
 
-  console.log(formik.values);
-
   useEffect(() => {
     if (!id) {
       setLoading(false);
