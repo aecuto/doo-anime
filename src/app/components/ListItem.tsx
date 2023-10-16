@@ -21,7 +21,6 @@ import styled from "styled-components";
 
 import { AppContext } from "../App";
 import { STATUS } from "@/app/constant";
-import SyncAnime from "@/app/components/SyncAnime";
 
 const ChipV2 = styled(Chip)`
   && {
@@ -161,7 +160,6 @@ export default function ListItem({ data }: { data: IWatching }) {
             <Button size="small" onClick={() => handleOpen()}>
               Edit
             </Button>
-            <SyncAnime item={data} />
           </Box>
         </CardContent>
       </Box>

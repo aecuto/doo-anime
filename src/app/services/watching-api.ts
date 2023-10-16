@@ -20,7 +20,7 @@ export const reqList = async (
   owner: string
 ) => {
   return instance.get<IWatching[]>("/list", {
-    params: { search, status, type, page, perPage, owner },
+    params: { search, status, page, perPage, owner },
   });
 };
 

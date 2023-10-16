@@ -95,14 +95,6 @@ function AppPage() {
                   defaultValue={STATUS.WATCHING}
                 />
               </Grid>
-              <Grid item xs>
-                <Filter
-                  data={type}
-                  setData={setType}
-                  options={Object.values(TYPE)}
-                  label="Type"
-                />
-              </Grid>
             </Grid>
 
             <List />

@@ -22,6 +22,7 @@ export interface IAnimeDetails {
 interface IRespone {
   data: IAnimeDetails[];
 }
+
 export const getAnimeSearch = (name: string) => {
   const url =
     `https://api.jikan.moe/v4/anime?` +

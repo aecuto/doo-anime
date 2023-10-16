@@ -11,20 +11,30 @@ import { useFormik } from "formik";
 
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
+import Autocomplete from "@mui/material/Autocomplete";
 
 import { reqCreate, reqGetById, reqUpdate } from "../services/watching-api";
 import { toast } from "react-toastify";
 
-import { useContext, useEffect, useState } from "react";
+import {
+  SetStateAction,
+  SyntheticEvent,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { AppContext } from "../App";
 import { STATUS, TYPE } from "../constant";
 
 import { AxiosError } from "axios";
 import { IWatching } from "@/database/model";
+import { IAnimeDetails, getAnimeSearch } from "@/app/services/jikan";
+import _ from "lodash";
 
 export const WatchingListForm = ({ id }: { id?: string }) => {
   const { setOpen, setSync, owner } = useContext(AppContext);
   const [loading, setLoading] = useState(true);
+  const [animeList, setAnimeList] = useState<IAnimeDetails[]>([]);
 
   const onUpdate = (id: string, values: Partial<IWatching>) => {
     const share = String(values.share).split(",");
@@ -78,7 +88,7 @@ export const WatchingListForm = ({ id }: { id?: string }) => {
       link: "",
       episode: 1,
       imageUrl: "",
-      totalEpisodes: 12,
+      totalEpisodes: 0,
       share: [],
     },
     onSubmit: (values: Partial<IWatching>) => {
@@ -104,6 +114,28 @@ export const WatchingListForm = ({ id }: { id?: string }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
+  useEffect(() => {
+    getAnimeSearch(formik.values.name || "").then((res) =>
+      setAnimeList(res.data.data)
+    );
+  }, [formik.values.name]);
+
+  const getOptionLabel = (option: IAnimeDetails) => {
+    return option.title;
+  };
+  const onAutocomplete = (
+    event: SyntheticEvent<Element, Event>,
+    value: IAnimeDetails | null
+  ) => {
+    formik.setValues({
+      ...formik.values,
+      name: value?.title,
+      totalEpisodes: value?.episodes || 0,
+      animeId: value?.mal_id,
+      imageUrl: value?.images.webp.image_url,
+    });
+  };
+
   return (
     <>
       {loading ? (
@@ -113,16 +145,27 @@ export const WatchingListForm = ({ id }: { id?: string }) => {
       ) : null}
 
       <form onSubmit={formik.handleSubmit} style={{ width: "100%" }}>
-        <FormControl fullWidth sx={{ mb: 3 }}>
-          <TextField
-            name="name"
-            label="Name"
-            variant="outlined"
-            value={formik.values.name}
-            onChange={formik.handleChange}
-            fullWidth
-          />
-        </FormControl>
+        {id ? (
+          <FormControl fullWidth sx={{ mb: 3 }}>
+            <TextField
+              value={formik.values.name}
+              variant="outlined"
+              label="Name"
+              disabled
+            />
+          </FormControl>
+        ) : (
+          <FormControl fullWidth sx={{ mb: 3 }}>
+            <Autocomplete
+              options={animeList}
+              getOptionLabel={getOptionLabel}
+              onChange={onAutocomplete}
+              renderInput={(params) => (
+                <TextField {...params} variant="outlined" label="Name" />
+              )}
+            />
+          </FormControl>
+        )}
         {id ? (
           <FormControl fullWidth sx={{ mb: 3 }}>
             <TextField
@@ -145,21 +188,6 @@ export const WatchingListForm = ({ id }: { id?: string }) => {
             onChange={formik.handleChange}
           >
             {Object.values(STATUS).map((option) => (
-              <MenuItem value={option} key={option}>
-                {option}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <FormControl fullWidth sx={{ mb: 3 }}>
-          <InputLabel>{"Type"}</InputLabel>
-          <Select
-            label={"Type"}
-            name="type"
-            value={formik.values.type}
-            onChange={formik.handleChange}
-          >
-            {Object.values(TYPE).map((option) => (
               <MenuItem value={option} key={option}>
                 {option}
               </MenuItem>
