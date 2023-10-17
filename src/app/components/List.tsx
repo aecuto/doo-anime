@@ -90,14 +90,12 @@ export default function List() {
           next={fetchData}
           hasMore={hasMore}
           loader={
-            <p style={{ textAlign: "center" }}>
-              <b>Loading...</b>
-            </p>
+            <Typography sx={{ textAlign: "center" }}>Loading...</Typography>
           }
           endMessage={
-            <p style={{ textAlign: "center" }}>
-              <b>Yay! You have seen it all</b>
-            </p>
+            <Typography sx={{ textAlign: "center" }}>
+              Yay! You have seen it all
+            </Typography>
           }
         >
           <Grid container spacing={3}>

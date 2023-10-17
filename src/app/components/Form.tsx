@@ -30,6 +30,7 @@ import { AxiosError } from "axios";
 import { IAnime } from "@/database/model";
 import { IAnimeDetails, getAnimeSearch } from "@/app/services/jikan";
 import _ from "lodash";
+import { useDebouncedCallback } from "use-debounce";
 
 export const AnimeForm = ({ id }: { id?: string }) => {
   const { setOpen, setSync, user } = useContext(AppContext);
@@ -44,9 +45,9 @@ export const AnimeForm = ({ id }: { id?: string }) => {
         setOpen(false);
       }),
       {
-        pending: "update is pending",
-        success: "update successfully",
-        error: "update is failed",
+        pending: "Update is pending",
+        success: "Update successfully",
+        error: "Update is failed",
       }
     );
   };
@@ -59,8 +60,8 @@ export const AnimeForm = ({ id }: { id?: string }) => {
         setOpen(false);
       }),
       {
-        pending: "create is pending",
-        success: "create successfully",
+        pending: "Create is pending",
+        success: "Create successfully",
         error: {
           render(props) {
             const error = props.data as AxiosError<{ message: string }>;
@@ -105,15 +106,17 @@ export const AnimeForm = ({ id }: { id?: string }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
-  useEffect(() => {
-    getAnimeSearch(formik.values.name || "").then((res) =>
-      setAnimeList(res.data.data)
-    );
-  }, [formik.values.name]);
+  const onInputChange = useDebouncedCallback(
+    (event: React.SyntheticEvent, value: string) => {
+      getAnimeSearch(value).then((res) => setAnimeList(res.data.data));
+    },
+    500
+  );
 
   const getOptionLabel = (option: IAnimeDetails) => {
     return option.title;
   };
+
   const onAutocomplete = (
     event: SyntheticEvent<Element, Event>,
     value: IAnimeDetails | null
@@ -151,6 +154,7 @@ export const AnimeForm = ({ id }: { id?: string }) => {
               options={animeList}
               getOptionLabel={getOptionLabel}
               onChange={onAutocomplete}
+              onInputChange={onInputChange}
               renderInput={(params) => (
                 <TextField {...params} variant="outlined" label="Name" />
               )}

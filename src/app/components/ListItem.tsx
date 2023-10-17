@@ -67,9 +67,9 @@ export default function ListItem({ data }: { data: IAnime }) {
         setSync(new Date());
       }),
       {
-        pending: "update is pending",
-        success: "update status to done",
-        error: "update is failed",
+        pending: "Update is pending",
+        success: "Update status to done",
+        error: "Update is failed",
       }
     );
   };
@@ -80,9 +80,9 @@ export default function ListItem({ data }: { data: IAnime }) {
         setSync(new Date());
       }),
       {
-        pending: "update is pending",
-        success: "update status to watching",
-        error: "update is failed",
+        pending: "Update is pending",
+        success: "Update status to watching",
+        error: "Update is failed",
       }
     );
   };

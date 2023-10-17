@@ -14,13 +14,17 @@ import "react-toastify/dist/ReactToastify.css";
 import { AnimeForm } from "./components/Form";
 import { STATUS, TYPE } from "./constant";
 import { Modal } from "./components/Dialog";
-import { WelcomeForm } from "./components/Welcome";
+import { Welcome } from "./components/Welcome";
 import { IUser } from "@/database/model";
+import "./App.css";
+
+const fontFamily = `'Noto Sans', sans-serif;`;
 
 const darkTheme = createTheme({
   palette: {
     mode: "dark",
   },
+  typography: { fontFamily },
 });
 
 interface IAppContext {
@@ -105,13 +109,12 @@ function AppPage() {
     >
       <ThemeProvider theme={darkTheme}>
         <CssBaseline />
-
-        {user ? Main() : <WelcomeForm />}
+        {user ? Main() : <Welcome />}
 
         <ToastContainer
           position="top-right"
           autoClose={3000}
-          limit={3}
+          limit={2}
           hideProgressBar={true}
           newestOnTop={false}
           closeOnClick
