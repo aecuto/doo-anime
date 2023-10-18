@@ -1,18 +1,17 @@
-import { Grid, Skeleton, Typography, debounce } from "@mui/material";
+import { Grid, Skeleton, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
-import Stack from "@mui/material/Stack";
 
 import { useContext, useEffect, useState } from "react";
-import { AppContext } from "../App";
-import { reqList } from "../services/anime-api";
+import { AppContext } from "../../App";
+import { reqList } from "../../services/anime-api";
 
 import SearchOffIcon from "@mui/icons-material/SearchOff";
 
 import InfiniteScroll from "react-infinite-scroll-component";
 import { IAnime } from "@/database/model";
 import { useDebouncedCallback } from "use-debounce";
-import ListItem from "@/app/components/ListItem";
+import ListItem from "@/app/components/List/Item";
 
 export default function List() {
   const { search, status, type, sync, user } = useContext(AppContext);

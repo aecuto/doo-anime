@@ -18,6 +18,13 @@ export interface IAnimeDetails {
     };
   };
   titles: { type: string; title: string }[];
+  broadcast: {
+    day: string;
+    time: string;
+    timezone: string;
+    string: string;
+  };
+  type: string;
 }
 interface IRespone {
   data: IAnimeDetails[];

@@ -11,9 +11,8 @@ import { createContext, useState } from "react";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { AnimeForm } from "./components/Form";
 import { STATUS, TYPE } from "./constant";
-import { Modal } from "./components/Dialog";
+import { DialogForm } from "./components/DialogForm";
 import { Welcome } from "./components/Welcome";
 import { IUser } from "@/database/model";
 import "./App.css";
@@ -67,9 +66,7 @@ function AppPage() {
             Add
           </Button>
 
-          <Modal id={id} setOpen={setOpen} open={open}>
-            <AnimeForm id={id} />
-          </Modal>
+          <DialogForm id={id} setOpen={setOpen} open={open} />
 
           <Grid container spacing={2} sx={{ mb: 3 }}>
             <Grid item xs={12} sm={8}>

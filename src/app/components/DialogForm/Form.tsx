@@ -18,7 +18,7 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
 
-import { reqCreate, reqGetById, reqUpdate } from "../services/anime-api";
+import { reqCreate, reqGetById, reqUpdate } from "../../services/anime-api";
 import { toast } from "react-toastify";
 
 import {
@@ -28,8 +28,8 @@ import {
   useEffect,
   useState,
 } from "react";
-import { AppContext } from "../App";
-import { STATUS, TYPE } from "../constant";
+import { AppContext } from "../../App";
+import { STATUS, TYPE } from "../../constant";
 
 import { AxiosError } from "axios";
 import { IAnime } from "@/database/model";
