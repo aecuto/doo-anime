@@ -24,7 +24,6 @@ interface IRespone {
 }
 
 export const getAnimeSearch = (name: string) => {
-  console.log(name)
   const url =
     `https://api.jikan.moe/v4/anime?` +
     new URLSearchParams({

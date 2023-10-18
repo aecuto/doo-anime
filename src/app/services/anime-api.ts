@@ -15,7 +15,7 @@ export const reqList = async (
   user: string
 ) => {
   return apiService.get<IAnime[]>("/anime/list", {
-    params: { search, status, page, perPage, user },
+    params: { search, status, page, perPage, user, type },
   });
 };
 
@@ -46,4 +46,8 @@ export const reqUpdateReplay = (id: string) => {
     status: STATUS.WATCHING,
   };
   return apiService.put<IAnime>(`/anime/${id}`, newPayload);
+};
+
+export const reqDelete = (id: string) => {
+  return apiService.delete<IAnime>(`/anime/${id}`);
 };

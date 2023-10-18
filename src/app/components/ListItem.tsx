@@ -14,6 +14,7 @@ import {
   reqUpdateEpisode,
   reqUpdateComplete,
   reqUpdateReplay,
+  reqDelete,
 } from "../services/anime-api";
 import { useDebouncedCallback } from "use-debounce";
 import { toast } from "react-toastify";
@@ -27,6 +28,15 @@ const ChipV2 = styled(Chip)`
     margin-right: 10px;
     margin-bottom: 10px;
   }
+`;
+
+const EmptyImage = styled(Box)`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  border: 1px solid darkslategray;
+  color: darkslategray;
 `;
 
 export default function ListItem({ data }: { data: IAnime }) {
@@ -92,17 +102,29 @@ export default function ListItem({ data }: { data: IAnime }) {
     window.open(url, "_blank", "noreferrer");
   };
 
+  const handleDelete = () => {
+    toast.promise(
+      reqDelete(data._id).then(() => {
+        setSync(new Date());
+      }),
+      {
+        pending: "Delete is pending",
+        success: "Delete status to watching",
+        error: "Delete is failed",
+      }
+    );
+  };
+
   return (
     <Card sx={{ display: "flex" }}>
       <Box sx={{ width: "250px", height: "250px" }}>
-        <CardMedia
-          component="img"
-          image={
-            data.imageUrl ||
-            "https://sgame.etsisi.upm.es/pictures/12946.png?1608547866/"
-          }
-          height={`100%`}
-        />
+        {data.imageUrl ? (
+          <CardMedia component="img" image={data.imageUrl} height={`100%`} />
+        ) : (
+          <EmptyImage>
+            <Typography align="center">No Image</Typography>
+          </EmptyImage>
+        )}
       </Box>
 
       <Box sx={{ display: "flex", flexDirection: "column", width: "100%" }}>
@@ -159,6 +181,9 @@ export default function ListItem({ data }: { data: IAnime }) {
             </Button>
             <Button size="small" onClick={() => handleOpen()}>
               Edit
+            </Button>
+            <Button size="small" onClick={() => handleDelete()} color="error">
+              Del
             </Button>
           </Box>
         </CardContent>

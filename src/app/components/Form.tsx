@@ -1,9 +1,14 @@
 import {
   Backdrop,
   CircularProgress,
+  FilterOptionsState,
   FormControl,
+  FormControlLabel,
+  FormLabel,
   InputLabel,
   MenuItem,
+  Radio,
+  RadioGroup,
   Select,
 } from "@mui/material";
 
@@ -11,7 +16,7 @@ import { useFormik } from "formik";
 
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import Autocomplete from "@mui/material/Autocomplete";
+import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
 
 import { reqCreate, reqGetById, reqUpdate } from "../services/anime-api";
 import { toast } from "react-toastify";
@@ -108,7 +113,9 @@ export const AnimeForm = ({ id }: { id?: string }) => {
 
   const onInputChange = useDebouncedCallback(
     (event: React.SyntheticEvent, value: string) => {
-      getAnimeSearch(value).then((res) => setAnimeList(res.data.data));
+      getAnimeSearch(value).then((res) => {
+        setAnimeList(res.data.data);
+      });
     },
     500
   );
@@ -117,7 +124,7 @@ export const AnimeForm = ({ id }: { id?: string }) => {
     return option.title;
   };
 
-  const onAutocomplete = (
+  const onChange = (
     event: SyntheticEvent<Element, Event>,
     value: IAnimeDetails | null
   ) => {
@@ -126,9 +133,36 @@ export const AnimeForm = ({ id }: { id?: string }) => {
       name: value?.title,
       totalEpisodes: value?.episodes || 0,
       animeId: value?.mal_id,
-      imageUrl: value?.images.webp.image_url,
+      imageUrl: value?.images?.webp?.image_url || "",
     });
   };
+
+  const filterOptions = (
+    options: IAnimeDetails[],
+    state: FilterOptionsState<IAnimeDetails>
+  ) => {
+    const filter = createFilterOptions<IAnimeDetails>();
+
+    const filtered = filter(options, state);
+
+    const { inputValue } = state;
+    const isExisting = options.some((option) => inputValue === option.title);
+
+    if (inputValue && !isExisting) {
+      filtered.push({
+        title: inputValue,
+      } as IAnimeDetails);
+    }
+
+    return filtered;
+  };
+
+  const renderOption = (
+    props: React.HTMLAttributes<HTMLLIElement>,
+    option: IAnimeDetails
+  ) => (
+    <li {...props}>{option.mal_id ? option.title : `Add "${option.title}"`}</li>
+  );
 
   return (
     <>
@@ -151,10 +185,12 @@ export const AnimeForm = ({ id }: { id?: string }) => {
         ) : (
           <FormControl fullWidth sx={{ mb: 3 }}>
             <Autocomplete
+              renderOption={renderOption}
               options={animeList}
               getOptionLabel={getOptionLabel}
-              onChange={onAutocomplete}
+              onChange={onChange}
               onInputChange={onInputChange}
+              filterOptions={filterOptions}
               renderInput={(params) => (
                 <TextField {...params} variant="outlined" label="Name" />
               )}
@@ -175,20 +211,43 @@ export const AnimeForm = ({ id }: { id?: string }) => {
         ) : null}
 
         <FormControl fullWidth sx={{ mb: 3 }}>
-          <InputLabel>{"Status"}</InputLabel>
-          <Select
-            label={"Status"}
+          <FormLabel>Status</FormLabel>
+          <RadioGroup
+            row
             name="status"
             value={formik.values.status}
             onChange={formik.handleChange}
           >
-            {Object.values(STATUS).map((option) => (
-              <MenuItem value={option} key={option}>
-                {option}
-              </MenuItem>
+            {Object.values(STATUS).map((value) => (
+              <FormControlLabel
+                value={value}
+                control={<Radio />}
+                label={value}
+                key={value}
+              />
             ))}
-          </Select>
+          </RadioGroup>
         </FormControl>
+
+        <FormControl fullWidth sx={{ mb: 3 }}>
+          <FormLabel>Type</FormLabel>
+          <RadioGroup
+            row
+            name="type"
+            value={formik.values.type}
+            onChange={formik.handleChange}
+          >
+            {Object.values(TYPE).map((value) => (
+              <FormControlLabel
+                value={value}
+                control={<Radio />}
+                label={value}
+                key={value}
+              />
+            ))}
+          </RadioGroup>
+        </FormControl>
+
         <FormControl fullWidth sx={{ mb: 3 }}>
           <TextField
             name="link"

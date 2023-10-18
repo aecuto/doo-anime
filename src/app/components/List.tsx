@@ -90,10 +90,12 @@ export default function List() {
           next={fetchData}
           hasMore={hasMore}
           loader={
-            <Typography sx={{ textAlign: "center" }}>Loading...</Typography>
+            <Typography sx={{ textAlign: "center", marginTop: "10px" }}>
+              Loading...
+            </Typography>
           }
           endMessage={
-            <Typography sx={{ textAlign: "center" }}>
+            <Typography sx={{ textAlign: "center", marginTop: "10px" }}>
               Yay! You have seen it all
             </Typography>
           }
