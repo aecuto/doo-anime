@@ -9,7 +9,7 @@ import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableRow from "@mui/material/TableRow";
-import { Typography } from "@mui/material";
+import { Skeleton, Typography } from "@mui/material";
 
 import moment from "moment-timezone";
 
@@ -39,7 +39,7 @@ export default function InfoDialog({ open, animeId, setOpen }: Props) {
       anime?.broadcast.timezone || ""
     );
 
-    if (!date.isValid) return "-";
+    if (!date.isValid()) return "-";
 
     return moment(date.format()).tz("Asia/Bangkok").format("dddd HH:mm");
   };
@@ -51,33 +51,42 @@ export default function InfoDialog({ open, animeId, setOpen }: Props) {
       <DialogTitle>Info</DialogTitle>
       <DialogContent>
         <TableContainer>
-          <Table>
-            <TableBody>
-              <TableRow>
-                <TableCell>Status</TableCell>
-                <TableCell>{anime?.status}</TableCell>
-              </TableRow>
-
-              <TableRow>
-                <TableCell>Broadcast</TableCell>
-                <TableCell>{getTime()}</TableCell>
-              </TableRow>
-
-              <TableRow>
-                <TableCell>Type</TableCell>
-                <TableCell>{anime?.type}</TableCell>
-              </TableRow>
-
-              {anime?.titles.map((data) => (
-                <TableRow key={data.type}>
-                  <TableCell>Names ({data.type})</TableCell>
-                  <TableCell>
-                    <Typography>{data.title}</Typography>
-                  </TableCell>
+          {anime ? (
+            <Table>
+              <TableBody>
+                <TableRow>
+                  <TableCell>Status</TableCell>
+                  <TableCell>{anime?.status}</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+
+                <TableRow>
+                  <TableCell>Broadcast</TableCell>
+                  <TableCell>{getTime()}</TableCell>
+                </TableRow>
+
+                <TableRow>
+                  <TableCell>Type</TableCell>
+                  <TableCell>{anime?.type}</TableCell>
+                </TableRow>
+
+                {anime?.titles.map((data) => (
+                  <TableRow key={data.type}>
+                    <TableCell>Title ({data.type})</TableCell>
+                    <TableCell>
+                      <Typography>{data.title}</Typography>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          ) : (
+            <>
+              <Skeleton animation="wave" width={300} />
+              <Skeleton animation="wave" width={200} />
+              <Skeleton animation="wave" width={400} />
+              <Skeleton animation="wave" width={250} />
+            </>
+          )}
         </TableContainer>
       </DialogContent>
     </Dialog>
