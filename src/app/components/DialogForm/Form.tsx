@@ -1,33 +1,26 @@
 import {
   Backdrop,
+  Box,
   CircularProgress,
   FilterOptionsState,
   FormControl,
   FormControlLabel,
   FormLabel,
-  InputLabel,
-  MenuItem,
   Radio,
   RadioGroup,
-  Select,
+  Typography,
 } from "@mui/material";
 
 import { useFormik } from "formik";
 
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
+import Autocomplete from "@mui/material/Autocomplete";
 
 import { reqCreate, reqGetById, reqUpdate } from "../../services/anime-api";
 import { toast } from "react-toastify";
 
-import {
-  SetStateAction,
-  SyntheticEvent,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { SyntheticEvent, useContext, useEffect, useState } from "react";
 import { AppContext } from "../../App";
 import { STATUS, TYPE } from "../../constant";
 
@@ -141,28 +134,37 @@ export const AnimeForm = ({ id }: { id?: string }) => {
     options: IAnimeDetails[],
     state: FilterOptionsState<IAnimeDetails>
   ) => {
-    const filter = createFilterOptions<IAnimeDetails>();
-
-    const filtered = filter(options, state);
-
     const { inputValue } = state;
     const isExisting = options.some((option) => inputValue === option.title);
 
     if (inputValue && !isExisting) {
-      filtered.push({
+      options.push({
         title: inputValue,
       } as IAnimeDetails);
     }
 
-    return filtered;
+    return options;
   };
 
   const renderOption = (
     props: React.HTMLAttributes<HTMLLIElement>,
     option: IAnimeDetails
-  ) => (
-    <li {...props}>{option.mal_id ? option.title : `Add "${option.title}"`}</li>
-  );
+  ) => {
+    return (
+      <li {...props}>
+        {option.mal_id ? (
+          <Box>
+            <Typography>{option.title}</Typography>
+            <Typography variant="body2" color={`darkgray`}>
+              {option.title_english}
+            </Typography>
+          </Box>
+        ) : (
+          `Add "${option.title}"`
+        )}
+      </li>
+    );
+  };
 
   return (
     <>

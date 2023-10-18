@@ -3,6 +3,7 @@ import axios from "axios";
 export interface IAnimeDetails {
   mal_id: number;
   title: string;
+  title_english: string;
   episodes: number;
   status: string;
   images: {
