@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import {
   Backdrop,
   Box,
@@ -6,6 +7,7 @@ import {
   FormControl,
   FormControlLabel,
   FormLabel,
+  Grid,
   Radio,
   RadioGroup,
   Typography,
@@ -29,6 +31,7 @@ import { IAnime } from "@/database/model";
 import { IAnimeDetails, getAnimeSearch } from "@/app/services/jikan";
 import _ from "lodash";
 import { useDebouncedCallback } from "use-debounce";
+import Image from "next/image";
 
 export const AnimeForm = ({ id }: { id?: string }) => {
   const { setOpen, setSync, user } = useContext(AppContext);
@@ -150,15 +153,22 @@ export const AnimeForm = ({ id }: { id?: string }) => {
     props: React.HTMLAttributes<HTMLLIElement>,
     option: IAnimeDetails
   ) => {
+    const image = option?.images?.webp.small_image_url;
     return (
       <li {...props}>
         {option.mal_id ? (
-          <Box>
-            <Typography>{option.title}</Typography>
-            <Typography variant="body2" color={`darkgray`}>
-              {option.title_english}
-            </Typography>
-          </Box>
+          <Grid container>
+            <Grid item xs={2}>
+              {image ? <img src={image} alt="cover" /> : null}
+            </Grid>
+
+            <Grid item xs>
+              <Typography>{option.title}</Typography>
+              <Typography variant="body2" color={`darkgray`}>
+                {option.title_english}
+              </Typography>
+            </Grid>
+          </Grid>
         ) : (
           `Add "${option.title}"`
         )}

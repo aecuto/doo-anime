@@ -55,6 +55,11 @@ export default function InfoDialog({ open, animeId, setOpen }: Props) {
             <Table>
               <TableBody>
                 <TableRow>
+                  <TableCell>Episodes</TableCell>
+                  <TableCell>{anime?.episodes || `??`}</TableCell>
+                </TableRow>
+
+                <TableRow>
                   <TableCell>Status</TableCell>
                   <TableCell>{anime?.status}</TableCell>
                 </TableRow>
