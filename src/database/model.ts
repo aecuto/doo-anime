@@ -12,6 +12,7 @@ export interface IAnime {
   animeId: number;
   imageUrl: string;
   user: string;
+  updatedAt: Date;
 }
 
 const AnimeSchema = new Schema(

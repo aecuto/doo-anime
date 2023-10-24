@@ -22,8 +22,8 @@ import styled from "styled-components";
 
 import { AppContext } from "../../App";
 import { STATUS } from "@/app/constant";
-import { getAnimeById } from "@/app/services/jikan";
 import InfoDialog from "@/app/components/List/Info";
+import moment from "moment-timezone";
 
 const ChipV2 = styled(Chip)`
   && {
@@ -170,6 +170,12 @@ export default function ListItem({ data }: { data: IAnime }) {
                 label={`episodes: ${data.totalEpisodes || "??"}`}
                 variant="outlined"
                 color="warning"
+              />
+
+              <ChipV2
+                label={`${moment(data.updatedAt).fromNow()}`}
+                variant="outlined"
+                color="secondary"
               />
             </Box>
 
