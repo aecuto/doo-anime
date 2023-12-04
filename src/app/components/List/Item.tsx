@@ -126,6 +126,7 @@ export default function ListItem({ data }: { data: IAnime }) {
     <>
       <InfoDialog
         animeId={data.animeId}
+        anime_id={data._id}
         open={openInfo}
         setOpen={setInfoOpen}
       />

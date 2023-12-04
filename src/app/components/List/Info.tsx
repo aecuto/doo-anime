@@ -3,6 +3,7 @@ import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { IAnimeDetails, getAnimeById } from "@/app/services/jikan";
+import { reqUpdate } from "@/app/services/anime-api";
 
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -17,9 +18,15 @@ interface Props {
   open: boolean;
   animeId: number;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  anime_id: string;
 }
 
-export default function InfoDialog({ open, animeId, setOpen }: Props) {
+export default function InfoDialog({
+  open,
+  animeId,
+  setOpen,
+  anime_id,
+}: Props) {
   const [anime, setAnime] = React.useState<IAnimeDetails>();
 
   React.useEffect(() => {
@@ -28,7 +35,12 @@ export default function InfoDialog({ open, animeId, setOpen }: Props) {
     getAnimeById(animeId).then((res) => setAnime(res.data.data));
   }, [animeId, open]);
 
+  const syncAnime = () => {
+    reqUpdate(anime_id, { totalEpisodes: anime?.episodes });
+  };
+
   const handleClose = () => {
+    syncAnime();
     setOpen(false);
   };
 
