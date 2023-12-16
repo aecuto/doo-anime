@@ -11,7 +11,7 @@ import SearchOffIcon from "@mui/icons-material/SearchOff";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { IAnime } from "@/database/model";
 import { useDebouncedCallback } from "use-debounce";
-import ListItem from "@/app/components/List/Item";
+import ItemList from "@/app/components/List/Item";
 
 export default function List() {
   const { search, status, type, sync, user } = useContext(AppContext);
@@ -102,7 +102,7 @@ export default function List() {
           <Grid container spacing={3}>
             {data.map((value) => (
               <Grid item key={value._id} xs={12} sm={6}>
-                <ListItem data={value} />
+                <ItemList data={value} />
               </Grid>
             ))}
           </Grid>

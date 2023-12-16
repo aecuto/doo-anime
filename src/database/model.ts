@@ -7,6 +7,7 @@ export interface IAnime {
   type: string;
   link: string;
   episode: number;
+  episodeUpdated: Date;
   totalEpisodes: number;
   completed: Date;
   animeId: number;
@@ -22,6 +23,7 @@ const AnimeSchema = new Schema(
     type: String,
     link: String,
     episode: Number,
+    episodeUpdated: Date,
     totalEpisodes: Number,
     completed: Date,
     animeId: Number,

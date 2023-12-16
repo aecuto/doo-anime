@@ -80,6 +80,7 @@ export const AnimeForm = ({ id }: { id?: string }) => {
       type: TYPE.ANIME,
       link: "",
       episode: 1,
+      episodeUpdated: new Date(),
       imageUrl: "",
       totalEpisodes: 0,
       user: user?._id,

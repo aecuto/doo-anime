@@ -36,7 +36,10 @@ export default function InfoDialog({
   }, [animeId, open]);
 
   const syncAnime = () => {
-    reqUpdate(anime_id, { totalEpisodes: anime?.episodes });
+    reqUpdate(anime_id, {
+      totalEpisodes: anime?.episodes,
+      imageUrl: anime?.images?.webp?.image_url || "",
+    });
   };
 
   const handleClose = () => {
