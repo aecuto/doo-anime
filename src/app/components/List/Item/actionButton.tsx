@@ -60,7 +60,7 @@ const ActionButton = ({ data }: Props) => {
         justifyContent: "center",
       }}
     >
-      {[STATUS.WAIT, STATUS.DROP].includes(data.status as STATUS) ? (
+      {[STATUS.DROP].includes(data.status as STATUS) ? (
         <Button size="small" color="warning" onClick={() => onReplay()}>
           Replay
         </Button>
