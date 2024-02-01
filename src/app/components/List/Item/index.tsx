@@ -46,7 +46,7 @@ export default function ItemList({ data }: { data: IAnime }) {
         setOpen={setInfoOpen}
       />
 
-      <Card sx={{ display: "flex" }}>
+      <Card sx={{ display: "flex", boxShadow: "none" }}>
         <Box sx={{ width: "250px", height: "250px" }}>
           {data.imageUrl ? (
             <CardMedia component="img" image={data.imageUrl} height={`100%`} />

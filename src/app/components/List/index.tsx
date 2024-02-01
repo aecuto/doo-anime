@@ -32,25 +32,18 @@ export default function List() {
   } as Expanded);
 
   useEffect(() => {
-    fetchData();
+    getAnimeList(STATUS.WATCHING).finally(() => {
+      seLoading(false);
+      getAnimeList(STATUS.DROP);
+      getAnimeList(STATUS.DONE);
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [search, sync]);
+  }, [sync]);
 
   const getAnimeList = (status: STATUS) =>
-    reqList(status, TYPE.ANIME, user?._id || "", search).then((res) => {
+    reqList(status, TYPE.ANIME, user?._id || "").then((res) => {
       setData((prev) => ({ ...prev, [status]: res.data }));
     });
-
-  const fetchData = useDebouncedCallback(
-    () => {
-      getAnimeList(STATUS.WATCHING).finally(() => {
-        seLoading(false);
-        getAnimeList(STATUS.DROP);
-        getAnimeList(STATUS.DONE);
-      });
-    },
-    search ? 500 : 0
-  );
 
   const handleChange =
     (panel: STATUS) => (event: React.SyntheticEvent, isExpanded: boolean) => {
@@ -64,17 +57,26 @@ export default function List() {
           key={status}
           expanded={Boolean(expanded[status]) || Boolean(search)}
           onChange={handleChange(status)}
+          TransitionProps={{
+            timeout: 0,
+          }}
         >
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             {status}
           </AccordionSummary>
           <AccordionDetails>
             <Grid container spacing={3}>
-              {data[status]?.map((value) => (
-                <Grid item key={value._id} xs={12} sm={6}>
-                  <ItemList data={value} />
-                </Grid>
-              ))}
+              {data[status]
+                ?.filter((value) =>
+                  search
+                    ? value.name.toLowerCase().includes(search.toLowerCase())
+                    : true
+                )
+                .map((value) => (
+                  <Grid item key={value._id} xs={12} sm={6}>
+                    <ItemList data={value} />
+                  </Grid>
+                ))}
             </Grid>
           </AccordionDetails>
         </Accordion>

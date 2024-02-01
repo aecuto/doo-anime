@@ -6,14 +6,9 @@ export const reqCreate = (payload: Partial<IAnime>) => {
   return apiService.post("/anime/create", payload);
 };
 
-export const reqList = async (
-  status: string,
-  type: string,
-  user: string,
-  search: string
-) => {
+export const reqList = async (status: string, type: string, user: string) => {
   return apiService.get<IAnime[]>("/anime/list", {
-    params: { type, status, search, user },
+    params: { type, status, user },
   });
 };
 
