@@ -31,7 +31,7 @@ export default function Filter({
 
   return (
     <Box sx={{ minWidth: 120 }}>
-      <FormControl fullWidth>
+      <FormControl fullWidth disabled>
         <InputLabel>{label}</InputLabel>
         <Select value={data} label={label} onChange={handleChange}>
           <MenuItem value="all">

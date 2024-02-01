@@ -36,7 +36,7 @@ export async function GET(req: NextRequest) {
   const data = await AnimeModel.find(query)
     .limit(limit)
     .skip(skip)
-    .sort({ updatedAt: "desc", _id: -1 });
+    .sort({ episodeUpdated: "desc", _id: -1 });
 
   return NextResponse.json(data);
 }

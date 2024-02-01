@@ -1,115 +1,84 @@
-import { Grid, Skeleton, Typography } from "@mui/material";
-import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
+import { Grid, CircularProgress } from "@mui/material";
 
 import { useContext, useEffect, useState } from "react";
 import { AppContext } from "../../App";
 import { reqList } from "../../services/anime-api";
 
-import SearchOffIcon from "@mui/icons-material/SearchOff";
-
-import InfiniteScroll from "react-infinite-scroll-component";
 import { IAnime } from "@/database/model";
 import { useDebouncedCallback } from "use-debounce";
 import ItemList from "@/app/components/List/Item";
 
-export default function List() {
-  const { search, status, type, sync, user } = useContext(AppContext);
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { STATUS, TYPE } from "@/app/constant";
 
-  const [data, setData] = useState<IAnime[]>([]);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
-  const perPage = 6;
-  const [total, setTotal] = useState(perPage);
+interface AnimeList {
+  [status: string]: IAnime[];
+}
+
+interface Expanded {
+  [status: string]: Boolean;
+}
+
+export default function List() {
+  const { search, sync, user } = useContext(AppContext);
+
+  const [data, setData] = useState<AnimeList>({} as AnimeList);
   const [loading, seLoading] = useState(true);
+  const [expanded, setExpanded] = useState<Expanded>({
+    [STATUS.WATCHING]: true,
+  } as Expanded);
 
   useEffect(() => {
-    if (!status) return;
-
-    fetchData(true);
+    fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [search, status, type, sync]);
+  }, [search, sync]);
 
-  const fetchData = useDebouncedCallback((isInit?: boolean) => {
-    let currPage = page + 1;
-    seLoading(true);
+  const getAnimeList = (status: STATUS) =>
+    reqList(status, TYPE.ANIME, user?._id || "", search).then((res) => {
+      setData((prev) => ({ ...prev, [status]: res.data }));
+    });
 
-    if (isInit) {
-      setHasMore(true);
-      setData([]);
-      setPage(1);
-      currPage = 1;
-    }
-
-    reqList(search, status, type, currPage, perPage, user?._id || "").then(
-      (res) => {
-        if (!res.data.length || res.data.length < perPage) setHasMore(false);
-
-        if (isInit) {
-          setData(res.data);
-        } else {
-          setTotal((prev) => prev + perPage);
-          setPage((prev) => prev + 1);
-          setData((prev) => prev.concat(res.data));
-        }
-
+  const fetchData = useDebouncedCallback(
+    () => {
+      getAnimeList(STATUS.WATCHING).finally(() => {
         seLoading(false);
-      }
-    );
-  }, 500);
+        getAnimeList(STATUS.DROP);
+        getAnimeList(STATUS.DONE);
+      });
+    },
+    search ? 500 : 0
+  );
 
-  const displayList = () => {
-    if (!data?.length) {
-      return (
-        <Paper elevation={2}>
-          <Box sx={{ p: 2 }}>
-            <Typography variant="h5" textAlign={"center"}>
-              {loading ? (
-                <>
-                  <Skeleton animation="wave" />
-                  <Skeleton animation="wave" width={"30%"} />
-                  <Skeleton animation="wave" width={"70%"} />
-                </>
-              ) : (
-                <>
-                  <Box>
-                    <SearchOffIcon sx={{ fontSize: "2em" }} />
-                  </Box>
-                  Not Found
-                </>
-              )}
-            </Typography>
-          </Box>
-        </Paper>
-      );
-    } else {
-      return (
-        <InfiniteScroll
-          dataLength={total} //This is important field to render the next data
-          next={fetchData}
-          hasMore={hasMore}
-          loader={
-            <Typography sx={{ textAlign: "center", marginTop: "10px" }}>
-              Loading...
-            </Typography>
-          }
-          endMessage={
-            <Typography sx={{ textAlign: "center", marginTop: "10px" }}>
-              Yay! You have seen it all
-            </Typography>
-          }
+  const handleChange =
+    (panel: STATUS) => (event: React.SyntheticEvent, isExpanded: boolean) => {
+      setExpanded((prev) => ({ ...prev, [panel]: isExpanded }));
+    };
+
+  return (
+    <>
+      {Object.values(STATUS).map((status) => (
+        <Accordion
+          key={status}
+          expanded={Boolean(expanded[status]) || Boolean(search)}
+          onChange={handleChange(status)}
         >
-          <Grid container spacing={3}>
-            {data.map((value) => (
-              <Grid item key={value._id} xs={12} sm={6}>
-                <ItemList data={value} />
-              </Grid>
-            ))}
-          </Grid>
-        </InfiniteScroll>
-      );
-    }
-  };
-
-  return <>{displayList()}</>;
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            {status}
+          </AccordionSummary>
+          <AccordionDetails>
+            <Grid container spacing={3}>
+              {data[status]?.map((value) => (
+                <Grid item key={value._id} xs={12} sm={6}>
+                  <ItemList data={value} />
+                </Grid>
+              ))}
+            </Grid>
+          </AccordionDetails>
+        </Accordion>
+      ))}
+    </>
+  );
 }
