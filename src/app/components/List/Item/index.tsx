@@ -4,7 +4,7 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import { IAnime } from "@/database/model";
-import { Box, Chip } from "@mui/material";
+import { Box, Chip, Grid } from "@mui/material";
 
 import styled from "styled-components";
 
@@ -15,8 +15,8 @@ import ActionButton from "@/app/components/List/Item/actionButton";
 
 const ChipV2 = styled(Chip)`
   && {
-    margin-right: 10px;
-    margin-bottom: 10px;
+    margin: auto;
+    margin-right: 5px;
   }
 `;
 
@@ -46,7 +46,10 @@ export default function ItemList({ data }: { data: IAnime }) {
         setOpen={setInfoOpen}
       />
 
-      <Card sx={{ display: "flex", boxShadow: "none" }}>
+      <Card
+        sx={{ display: "flex", backgroundColor: "transparent" }}
+        variant="outlined"
+      >
         <Box sx={{ width: "250px", height: "250px" }}>
           {data.imageUrl ? (
             <CardMedia component="img" image={data.imageUrl} height={`100%`} />
@@ -83,9 +86,11 @@ export default function ItemList({ data }: { data: IAnime }) {
               ) : null}
 
               <ChipV2
-                label={`episodes: ${data.totalEpisodes || "??"}`}
+                label={`Link`}
                 variant="outlined"
                 color="warning"
+                onClick={() => window.open(data.link, "_blank", "noreferrer")}
+                disabled={!data.link}
               />
 
               <ChipV2
@@ -95,8 +100,10 @@ export default function ItemList({ data }: { data: IAnime }) {
                     : "-"
                 }`}
                 variant="outlined"
-                color="secondary"
+                color="primary"
               />
+
+              <ActionButton data={data} />
             </Box>
 
             <Box
@@ -112,7 +119,6 @@ export default function ItemList({ data }: { data: IAnime }) {
                 data={data}
               />
             </Box>
-            <ActionButton data={data} />
           </CardContent>
         </Box>
       </Card>

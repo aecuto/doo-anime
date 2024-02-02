@@ -8,6 +8,7 @@ import {
   FormControlLabel,
   FormLabel,
   Grid,
+  InputAdornment,
   Radio,
   RadioGroup,
   Typography,
@@ -210,18 +211,6 @@ export const AnimeForm = ({ id }: { id?: string }) => {
             />
           </FormControl>
         )}
-        {id ? (
-          <FormControl fullWidth sx={{ mb: 3 }}>
-            <TextField
-              name="episode"
-              label="Episode"
-              variant="outlined"
-              value={formik.values.episode}
-              onChange={formik.handleChange}
-              fullWidth
-            />
-          </FormControl>
-        ) : null}
 
         <FormControl fullWidth sx={{ mb: 3 }}>
           <FormLabel>Status</FormLabel>
@@ -243,6 +232,26 @@ export const AnimeForm = ({ id }: { id?: string }) => {
         </FormControl>
 
         <FormControl fullWidth sx={{ mb: 3 }}>
+          <TextField
+            name="episode"
+            label="Episode"
+            variant="outlined"
+            value={formik.values.episode}
+            onChange={formik.handleChange}
+            fullWidth
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  {formik.values.totalEpisodes
+                    ? `/${formik.values.totalEpisodes}`
+                    : ""}
+                </InputAdornment>
+              ),
+            }}
+          />
+        </FormControl>
+
+        {/* <FormControl fullWidth sx={{ mb: 3 }}>
           <FormLabel>Type</FormLabel>
           <RadioGroup
             row
@@ -259,7 +268,7 @@ export const AnimeForm = ({ id }: { id?: string }) => {
               />
             ))}
           </RadioGroup>
-        </FormControl>
+        </FormControl> */}
 
         <FormControl fullWidth sx={{ mb: 3 }}>
           <TextField
@@ -271,7 +280,7 @@ export const AnimeForm = ({ id }: { id?: string }) => {
           />
         </FormControl>
 
-        <FormControl fullWidth sx={{ mb: 3 }}>
+        {/* <FormControl fullWidth sx={{ mb: 3 }}>
           <TextField
             name="totalEpisodes"
             label="Total Episodes"
@@ -280,7 +289,7 @@ export const AnimeForm = ({ id }: { id?: string }) => {
             onChange={formik.handleChange}
             fullWidth
           />
-        </FormControl>
+        </FormControl> */}
 
         <FormControl fullWidth sx={{ mb: 3 }}>
           <TextField

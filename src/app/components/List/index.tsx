@@ -1,11 +1,10 @@
-import { Grid, CircularProgress } from "@mui/material";
+import { Grid } from "@mui/material";
 
 import { useContext, useEffect, useState } from "react";
 import { AppContext } from "../../App";
 import { reqList } from "../../services/anime-api";
 
 import { IAnime } from "@/database/model";
-import { useDebouncedCallback } from "use-debounce";
 import ItemList from "@/app/components/List/Item";
 
 import Accordion from "@mui/material/Accordion";
@@ -14,6 +13,9 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { STATUS, TYPE } from "@/app/constant";
 
+import SmartDisplayIcon from "@mui/icons-material/SmartDisplay";
+import ThumbDownIcon from "@mui/icons-material/ThumbDown";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 interface AnimeList {
   [status: string]: IAnime[];
 }
@@ -50,6 +52,19 @@ export default function List() {
       setExpanded((prev) => ({ ...prev, [panel]: isExpanded }));
     };
 
+  const statusIcons = (status: STATUS) => {
+    switch (status) {
+      case STATUS.WATCHING:
+        return <SmartDisplayIcon sx={{ marginRight: "5px" }} />;
+      case STATUS.DROP:
+        return <ThumbDownIcon sx={{ marginRight: "5px" }} />;
+      case STATUS.DONE:
+        return <CheckCircleIcon sx={{ marginRight: "5px" }} />;
+      default:
+        break;
+    }
+  };
+
   return (
     <>
       {Object.values(STATUS).map((status) => (
@@ -62,7 +77,7 @@ export default function List() {
           }}
         >
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            {status}
+            {statusIcons(status)} {status}
           </AccordionSummary>
           <AccordionDetails>
             <Grid container spacing={3}>

@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import { IAnime } from "@/database/model";
-import { Chip, IconButton } from "@mui/material";
+import { Chip, IconButton, Typography } from "@mui/material";
 
 import { reqUpdateEpisode, reqUpdateComplete } from "@/app/services/anime-api";
 import { useDebouncedCallback } from "use-debounce";
@@ -62,9 +62,18 @@ const EpisodeAction = ({ episode, setEpisode, data }: Props) => {
         <RemoveIcon />
       </IconButton>
       <Chip
-        label={episode <= 0 ? 0 : episode}
+        label={
+          <>
+            <Typography display="inline">
+              {episode <= 0 ? 0 : episode}
+            </Typography>
+            <Typography display="inline" fontSize={12} color={"gold"}>
+              {data.totalEpisodes ? `/${data.totalEpisodes}` : ""}
+            </Typography>
+          </>
+        }
         sx={{ width: "100px", fontSize: "18px", height: "auto" }}
-      ></Chip>
+      />
       <IconButton color="success" onClick={() => onAdd()}>
         <AddIcon />
       </IconButton>
