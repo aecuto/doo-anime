@@ -37,6 +37,12 @@ export default function ItemList({ data }: { data: IAnime }) {
     setInfoOpen(true);
   };
 
+  const displayEpisodeFromNow = () => {
+    if (!data?.broadcast?.day || !data.episodeUpdated) return "-";
+    const day = moment(data.episodeUpdated).day(data?.broadcast?.day);
+    return moment(day).fromNow();
+  };
+
   return (
     <>
       <InfoDialog
@@ -76,6 +82,14 @@ export default function ItemList({ data }: { data: IAnime }) {
             </Typography>
 
             <Box>
+              <ChipV2
+                label={`Link`}
+                variant="outlined"
+                color="warning"
+                onClick={() => window.open(data.link, "_blank", "noreferrer")}
+                disabled={!data.link}
+              />
+
               {data.animeId ? (
                 <ChipV2
                   label={`info`}
@@ -86,21 +100,9 @@ export default function ItemList({ data }: { data: IAnime }) {
               ) : null}
 
               <ChipV2
-                label={`Link`}
+                label={displayEpisodeFromNow()}
                 variant="outlined"
-                color="warning"
-                onClick={() => window.open(data.link, "_blank", "noreferrer")}
-                disabled={!data.link}
-              />
-
-              <ChipV2
-                label={`${
-                  data.episodeUpdated
-                    ? moment(data.episodeUpdated).fromNow()
-                    : "-"
-                }`}
-                variant="outlined"
-                color="primary"
+                color="success"
               />
 
               <ActionButton data={data} />

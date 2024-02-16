@@ -1,5 +1,12 @@
 import { Schema, model, models } from "mongoose";
 
+interface Broadcast {
+  day: string;
+  time: string;
+  timezone: string;
+  string: string;
+}
+
 export interface IAnime {
   _id: string;
   name: string;
@@ -14,6 +21,7 @@ export interface IAnime {
   imageUrl: string;
   user: string;
   updatedAt: Date;
+  broadcast: Broadcast;
 }
 
 const AnimeSchema = new Schema(
@@ -28,6 +36,12 @@ const AnimeSchema = new Schema(
     completed: Date,
     animeId: Number,
     imageUrl: String,
+    broadcast: {
+      day: String,
+      time: String,
+      timezone: String,
+      string: String,
+    },
     user: { type: Schema.Types.ObjectId, ref: "user" },
   },
   { timestamps: true }

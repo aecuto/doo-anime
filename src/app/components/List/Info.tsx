@@ -39,6 +39,7 @@ export default function InfoDialog({
     reqUpdate(anime_id, {
       totalEpisodes: anime?.episodes,
       imageUrl: anime?.images?.webp?.image_url || "",
+      broadcast: anime?.broadcast,
     });
   };
 
