@@ -6,16 +6,15 @@ import CssBaseline from "@mui/material/CssBaseline";
 import List from "./components/List";
 import SearchField from "./components/SearchField";
 import { Box, Button, Container, Grid } from "@mui/material";
-import Filter from "./components/Filter";
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { STATUS, TYPE } from "./constant";
 import { DialogForm } from "./components/DialogForm";
 import { Welcome } from "./components/Welcome";
 import { IUser } from "@/database/model";
 import "./App.css";
+import { reqSync } from "@/app/services/anime-api";
 
 const fontFamily = `'Noto Sans', sans-serif;`;
 
@@ -45,6 +44,10 @@ function AppPage() {
   const [open, setOpen] = useState(false);
   const [sync, setSync] = useState(new Date());
   const [user, setUser] = useState<IUser>();
+
+  useEffect(() => {
+    reqSync();
+  }, []);
 
   const Main = () => {
     return (

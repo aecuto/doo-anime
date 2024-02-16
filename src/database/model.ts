@@ -9,39 +9,40 @@ interface Broadcast {
 
 export interface IAnime {
   _id: string;
+  updatedAt: Date;
+
   name: string;
   status: string;
-  type: string;
   link: string;
   episode: number;
-  episodeUpdated: Date;
   totalEpisodes: number;
   completed: Date;
   animeId: number;
   imageUrl: string;
   user: string;
-  updatedAt: Date;
+  airing: boolean;
   broadcast: Broadcast;
+  episodeAt: Date;
 }
 
 const AnimeSchema = new Schema(
   {
     name: String,
     status: String,
-    type: String,
     link: String,
     episode: Number,
-    episodeUpdated: Date,
     totalEpisodes: Number,
     completed: Date,
     animeId: Number,
     imageUrl: String,
+    airing: Boolean,
     broadcast: {
       day: String,
       time: String,
       timezone: String,
       string: String,
     },
+    episodeAt: Date,
     user: { type: Schema.Types.ObjectId, ref: "user" },
   },
   { timestamps: true }

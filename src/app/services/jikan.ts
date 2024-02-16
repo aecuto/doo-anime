@@ -26,12 +26,13 @@ export interface IAnimeDetails {
     string: string;
   };
   type: string;
+  airing: boolean;
 }
 interface IRespone {
   data: IAnimeDetails[];
 }
 
-export const getAnimeSearch = (name: string) => {
+export const getAnimeSearch = async (name: string) => {
   const url =
     `https://api.jikan.moe/v4/anime?` +
     new URLSearchParams({
@@ -45,7 +46,7 @@ export const getAnimeSearch = (name: string) => {
 interface IResponeById {
   data: IAnimeDetails;
 }
-export const getAnimeById = (animeId: number) => {
+export const getAnimeById = async (animeId: number) => {
   const url = `https://api.jikan.moe/v4/anime/${animeId}`;
 
   return axios.get<IResponeById>(url);

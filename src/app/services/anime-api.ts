@@ -6,9 +6,9 @@ export const reqCreate = (payload: Partial<IAnime>) => {
   return apiService.post("/anime/create", payload);
 };
 
-export const reqList = async (status: string, type: string, user: string) => {
+export const reqList = async (status: string, user: string) => {
   return apiService.get<IAnime[]>("/anime/list", {
-    params: { type, status, user },
+    params: { status, user },
   });
 };
 
@@ -20,10 +20,14 @@ export const reqUpdate = (id: string, payload: Partial<IAnime>) => {
   return apiService.put<IAnime>(`/anime/${id}`, payload);
 };
 
-export const reqUpdateEpisode = (id: string, episode: number) => {
+export const reqUpdateEpisode = (
+  id: string,
+  episode: number,
+  episodeAt: Date
+) => {
   return apiService.put<IAnime>(`/anime/${id}`, {
     episode: episode <= 0 ? 0 : episode,
-    episodeUpdated: new Date(),
+    episodeAt,
   });
 };
 
@@ -44,4 +48,8 @@ export const reqUpdateReplay = (id: string) => {
 
 export const reqDelete = (id: string) => {
   return apiService.delete<IAnime>(`/anime/${id}`);
+};
+
+export const reqSync = () => {
+  return apiService.get<IAnime>(`/anime/sync`);
 };

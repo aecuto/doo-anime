@@ -4,7 +4,7 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import { IAnime } from "@/database/model";
-import { Box, Chip, Grid } from "@mui/material";
+import { Box, Chip } from "@mui/material";
 
 import styled from "styled-components";
 
@@ -12,6 +12,7 @@ import InfoDialog from "@/app/components/List/Info";
 import moment from "moment-timezone";
 import EpisodeAction from "@/app/components/List/Item/episodeAction";
 import ActionButton from "@/app/components/List/Item/actionButton";
+import { HourglassTop, Info, Link, LinkOutlined } from "@mui/icons-material";
 
 const ChipV2 = styled(Chip)`
   && {
@@ -37,17 +38,22 @@ export default function ItemList({ data }: { data: IAnime }) {
     setInfoOpen(true);
   };
 
-  const displayEpisodeFromNow = () => {
-    if (!data?.broadcast?.day || !data.episodeUpdated) return "-";
-    const day = moment(data.episodeUpdated).isoWeekday(data?.broadcast?.day);
-    return moment(day).fromNow();
+  const episodeRemaining = () => {
+    let remaining = 0;
+    if (!data.airing) remaining = data.totalEpisodes - data.episode;
+    if (data.episodeAt) {
+      const fromNow = moment();
+      const episodeAt = moment(data.episodeAt);
+      remaining = fromNow.diff(episodeAt, "weeks");
+    }
+
+    return remaining + " ep";
   };
 
   return (
     <>
       <InfoDialog
         animeId={data.animeId}
-        anime_id={data._id}
         open={openInfo}
         setOpen={setInfoOpen}
       />
@@ -83,6 +89,7 @@ export default function ItemList({ data }: { data: IAnime }) {
 
             <Box>
               <ChipV2
+                icon={<LinkOutlined />}
                 label={`Link`}
                 variant="outlined"
                 color="warning"
@@ -92,6 +99,7 @@ export default function ItemList({ data }: { data: IAnime }) {
 
               {data.animeId ? (
                 <ChipV2
+                  icon={<Info />}
                   label={`info`}
                   variant="outlined"
                   color="info"
@@ -100,7 +108,8 @@ export default function ItemList({ data }: { data: IAnime }) {
               ) : null}
 
               <ChipV2
-                label={displayEpisodeFromNow()}
+                icon={<HourglassTop />}
+                label={episodeRemaining()}
                 variant="outlined"
                 color="success"
               />

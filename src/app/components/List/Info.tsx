@@ -3,7 +3,6 @@ import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { IAnimeDetails, getAnimeById } from "@/app/services/jikan";
-import { reqUpdate } from "@/app/services/anime-api";
 
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -18,15 +17,9 @@ interface Props {
   open: boolean;
   animeId: number;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  anime_id: string;
 }
 
-export default function InfoDialog({
-  open,
-  animeId,
-  setOpen,
-  anime_id,
-}: Props) {
+export default function InfoDialog({ open, animeId, setOpen }: Props) {
   const [anime, setAnime] = React.useState<IAnimeDetails>();
 
   React.useEffect(() => {
@@ -35,16 +28,7 @@ export default function InfoDialog({
     getAnimeById(animeId).then((res) => setAnime(res.data.data));
   }, [animeId, open]);
 
-  const syncAnime = () => {
-    reqUpdate(anime_id, {
-      totalEpisodes: anime?.episodes,
-      imageUrl: anime?.images?.webp?.image_url || "",
-      broadcast: anime?.broadcast,
-    });
-  };
-
   const handleClose = () => {
-    syncAnime();
     setOpen(false);
   };
 
@@ -57,7 +41,7 @@ export default function InfoDialog({
 
     if (!date.isValid()) return "-";
 
-    return moment(date.format()).tz("Asia/Bangkok").format("dddd HH:mm");
+    return moment(date.format()).format("dddd HH:mm");
   };
 
   if (!animeId) return null;

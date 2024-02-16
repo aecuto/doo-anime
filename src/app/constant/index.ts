@@ -3,9 +3,3 @@ export enum STATUS {
   DROP = "drop",
   DONE = "done",
 }
-
-export enum TYPE {
-  ANIME = "anime",
-  SERIES = "series",
-  MOVIE = "movie",
-}

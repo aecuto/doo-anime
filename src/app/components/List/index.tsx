@@ -11,7 +11,7 @@ import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { STATUS, TYPE } from "@/app/constant";
+import { STATUS } from "@/app/constant";
 
 import SmartDisplayIcon from "@mui/icons-material/SmartDisplay";
 import ThumbDownIcon from "@mui/icons-material/ThumbDown";
@@ -43,7 +43,7 @@ export default function List() {
   }, [sync]);
 
   const getAnimeList = (status: STATUS) =>
-    reqList(status, TYPE.ANIME, user?._id || "").then((res) => {
+    reqList(status, user?._id || "").then((res) => {
       setData((prev) => ({ ...prev, [status]: res.data }));
     });
 

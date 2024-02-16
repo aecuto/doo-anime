@@ -1,7 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import {
   Backdrop,
-  Box,
   CircularProgress,
   FilterOptionsState,
   FormControl,
@@ -25,14 +24,13 @@ import { toast } from "react-toastify";
 
 import { SyntheticEvent, useContext, useEffect, useState } from "react";
 import { AppContext } from "../../App";
-import { STATUS, TYPE } from "../../constant";
+import { STATUS } from "../../constant";
 
 import { AxiosError } from "axios";
 import { IAnime } from "@/database/model";
 import { IAnimeDetails, getAnimeSearch } from "@/app/services/jikan";
 import _ from "lodash";
 import { useDebouncedCallback } from "use-debounce";
-import Image from "next/image";
 
 export const AnimeForm = ({ id }: { id?: string }) => {
   const { setOpen, setSync, user } = useContext(AppContext);
@@ -78,7 +76,6 @@ export const AnimeForm = ({ id }: { id?: string }) => {
     initialValues: {
       name: "",
       status: STATUS.WATCHING,
-      type: TYPE.ANIME,
       link: "",
       episode: 1,
       imageUrl: "",
@@ -128,10 +125,11 @@ export const AnimeForm = ({ id }: { id?: string }) => {
     formik.setValues({
       ...formik.values,
       name: value?.title,
-      totalEpisodes: value?.episodes || 0,
       animeId: value?.mal_id,
+      totalEpisodes: value?.episodes || 0,
       imageUrl: value?.images?.webp?.image_url || "",
       broadcast: value?.broadcast,
+      airing: value?.airing,
     });
   };
 
@@ -251,25 +249,6 @@ export const AnimeForm = ({ id }: { id?: string }) => {
           />
         </FormControl>
 
-        {/* <FormControl fullWidth sx={{ mb: 3 }}>
-          <FormLabel>Type</FormLabel>
-          <RadioGroup
-            row
-            name="type"
-            value={formik.values.type}
-            onChange={formik.handleChange}
-          >
-            {Object.values(TYPE).map((value) => (
-              <FormControlLabel
-                value={value}
-                control={<Radio />}
-                label={value}
-                key={value}
-              />
-            ))}
-          </RadioGroup>
-        </FormControl> */}
-
         <FormControl fullWidth sx={{ mb: 3 }}>
           <TextField
             name="link"
@@ -279,17 +258,6 @@ export const AnimeForm = ({ id }: { id?: string }) => {
             onChange={formik.handleChange}
           />
         </FormControl>
-
-        {/* <FormControl fullWidth sx={{ mb: 3 }}>
-          <TextField
-            name="totalEpisodes"
-            label="Total Episodes"
-            variant="outlined"
-            value={formik.values.totalEpisodes}
-            onChange={formik.handleChange}
-            fullWidth
-          />
-        </FormControl> */}
 
         <FormControl fullWidth sx={{ mb: 3 }}>
           <TextField
