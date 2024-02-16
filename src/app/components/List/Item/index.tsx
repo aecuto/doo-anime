@@ -39,11 +39,8 @@ export default function ItemList({ data }: { data: IAnime }) {
 
   const displayEpisodeFromNow = () => {
     if (!data?.broadcast?.day || !data.episodeUpdated) return "-";
-
-    const day = moment().day(data?.broadcast?.day).weekday() - 1;
-    const newEpUpdate = moment(data.episodeUpdated).day(-day);
-
-    return moment(newEpUpdate).fromNow();
+    const day = moment(data.episodeUpdated).isoWeekday(data?.broadcast?.day);
+    return moment(day).fromNow();
   };
 
   return (
