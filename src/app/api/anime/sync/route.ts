@@ -22,7 +22,6 @@ export async function GET() {
 
   const list = await AnimeModel.find(query);
 
-  const sync = [];
   for (const value of list) {
     const req = await getAnimeById(value.animeId);
     const anime = req.data.data;
@@ -32,11 +31,10 @@ export async function GET() {
       broadcast: anime?.broadcast,
       airing: anime?.airing,
     });
-    sync.push(anime?.title);
   }
 
   return NextResponse.json({
-    sync,
+    list: list.map((data) => data?.name),
     ok: 200,
   });
 }
