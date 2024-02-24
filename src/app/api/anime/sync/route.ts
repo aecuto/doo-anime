@@ -11,7 +11,6 @@ export async function GET(req: NextRequest) {
   const query = {
     animeId: { $ne: null },
     status: STATUS.WATCHING,
-    updatedAt: { $gt: moment().add(1, "day").toDate() },
   };
 
   const list = await AnimeModel.find(query);
