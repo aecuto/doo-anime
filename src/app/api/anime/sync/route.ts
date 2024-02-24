@@ -1,9 +1,15 @@
 import { NextResponse } from "next/server";
 import { AnimeModel } from "../../../../database/model";
 import { connectDB } from "../../../../database/mongodb";
-import { getAnimeById } from "@/app/services/jikan";
 import { STATUS } from "@/app/constant";
 import moment from "moment-timezone";
+import axios from "axios";
+
+const getAnimeById = async (animeId: number) => {
+  const url = `https://api.jikan.moe/v4/anime/${animeId}`;
+
+  return axios.get(url);
+};
 
 export async function GET() {
   await connectDB();
@@ -11,7 +17,7 @@ export async function GET() {
   const query = {
     animeId: { $ne: null },
     status: STATUS.WATCHING,
-    updatedAt: { $gt: moment().subtract(1, "day").toDate() },
+    updatedAt: { $lt: moment().subtract(1, "day").toDate() },
   };
 
   const list = await AnimeModel.find(query);
