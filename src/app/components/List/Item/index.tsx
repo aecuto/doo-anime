@@ -40,8 +40,10 @@ export default function ItemList({ data }: { data: IAnime }) {
 
   const episodeRemaining = () => {
     let remaining = 0;
-    if (!data.airing) remaining = data.totalEpisodes - data.episode;
-    if (data.episodeAt) {
+
+    if (!data.airing) {
+      remaining = data.totalEpisodes - data.episode;
+    } else if (data.episodeAt) {
       const fromNow = moment();
       const episodeAt = moment(data.episodeAt);
       remaining = fromNow.diff(episodeAt, "weeks");

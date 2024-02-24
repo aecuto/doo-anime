@@ -29,13 +29,21 @@ const EpisodeAction = ({ episode, setEpisode, data }: Props) => {
       onComplete();
     }
 
-    const episodeAt = moment
-      .tz(
-        `${data?.broadcast.day} ${data?.broadcast.time}}`,
-        "dddd HH:mm",
-        data?.broadcast.timezone || ""
-      )
-      .toDate();
+    let episodeAt = data.episodeAt;
+
+    if (!episodeAt) {
+      episodeAt = moment
+        .tz(
+          `${data?.broadcast.day} ${data?.broadcast.time}}`,
+          "dddd HH:mm",
+          data?.broadcast.timezone || ""
+        )
+        .toDate();
+    } else {
+      episodeAt = moment(episodeAt).add(7, "days").toDate();
+    }
+
+    if (!data.airing) episodeAt = moment().subtract(1, "year").toDate();
 
     reqUpdateEpisode(data._id, newEpisode, episodeAt).then(() =>
       toast.success("Episodes updated")
