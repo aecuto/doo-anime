@@ -1,16 +1,17 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { AnimeModel } from "../../../../database/model";
 import { connectDB } from "../../../../database/mongodb";
 import { getAnimeById } from "@/app/services/jikan";
 import { STATUS } from "@/app/constant";
 import moment from "moment-timezone";
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   await connectDB();
 
   const query = {
     animeId: { $ne: null },
     status: STATUS.WATCHING,
+    updatedAt: { $gt: moment().subtract(1, "day").toDate() },
   };
 
   const list = await AnimeModel.find(query);
@@ -28,6 +29,5 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json({
     ok: 200,
-    list,
   });
 }
