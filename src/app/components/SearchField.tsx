@@ -1,12 +1,13 @@
 import { Box } from "@mui/material";
 import TextField from "@mui/material/TextField";
+import { memo } from "react";
 
 interface ISearchField {
   data: string;
   setData: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const SearchField = ({ data, setData }: ISearchField) => {
+const SearchField = memo(({ data, setData }: ISearchField) => {
   return (
     <Box sx={{ pb: 3 }}>
       <TextField
@@ -19,6 +20,8 @@ const SearchField = ({ data, setData }: ISearchField) => {
       />
     </Box>
   );
-};
+});
+
+SearchField.displayName = "SearchField";
 
 export default SearchField;

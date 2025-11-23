@@ -33,7 +33,7 @@ import _ from "lodash";
 import { useDebouncedCallback } from "use-debounce";
 
 export const AnimeForm = ({ id }: { id?: string }) => {
-  const { setOpen, setSync, user } = useContext(AppContext);
+  const { setOpenDialog, setSync, user } = useContext(AppContext);
   const [loading, setLoading] = useState(true);
   const [animeList, setAnimeList] = useState<IAnimeDetails[]>([]);
 
@@ -42,7 +42,7 @@ export const AnimeForm = ({ id }: { id?: string }) => {
     toast.promise(
       reqUpdate(id, payload).then(() => {
         setSync(new Date());
-        setOpen(false);
+        setOpenDialog(false);
       }),
       {
         pending: "Update is pending",
@@ -57,7 +57,7 @@ export const AnimeForm = ({ id }: { id?: string }) => {
     toast.promise(
       reqCreate(payload).then(() => {
         setSync(new Date());
-        setOpen(false);
+        setOpenDialog(false);
       }),
       {
         pending: "Create is pending",
