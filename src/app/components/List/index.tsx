@@ -12,6 +12,7 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { STATUS } from "@/app/constant";
+import { Chip } from "@mui/material";
 
 import SmartDisplayIcon from "@mui/icons-material/SmartDisplay";
 import ThumbDownIcon from "@mui/icons-material/ThumbDown";
@@ -55,11 +56,11 @@ export default function List() {
   const statusIcons = (status: STATUS) => {
     switch (status) {
       case STATUS.WATCHING:
-        return <SmartDisplayIcon sx={{ marginRight: "5px" }} />;
+        return <SmartDisplayIcon sx={{ marginRight: "8px", color: "#2196f3", fontSize: "1.5rem" }} />;
       case STATUS.DROP:
-        return <ThumbDownIcon sx={{ marginRight: "5px" }} />;
+        return <ThumbDownIcon sx={{ marginRight: "8px", color: "#f44336", fontSize: "1.5rem" }} />;
       case STATUS.DONE:
-        return <CheckCircleIcon sx={{ marginRight: "5px" }} />;
+        return <CheckCircleIcon sx={{ marginRight: "8px", color: "#4caf50", fontSize: "1.5rem" }} />;
       default:
         break;
     }
@@ -76,8 +77,29 @@ export default function List() {
             timeout: 0,
           }}
         >
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            {statusIcons(status)} {status}
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              "& .MuiAccordionSummary-content": {
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "flex-start"
+              }
+            }}
+          >
+            {statusIcons(status)}
+            <span style={{ fontSize: "1.1rem", fontWeight: 500 }}>
+              {status}
+            </span>
+            {data[status] && (
+              <Chip
+                label={data[status].length}
+                size="small"
+                sx={{ marginLeft: "8px" }}
+              />
+            )}
           </AccordionSummary>
           <AccordionDetails>
             <Grid container spacing={3}>

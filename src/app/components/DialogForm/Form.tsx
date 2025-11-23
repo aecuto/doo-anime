@@ -156,18 +156,29 @@ export const AnimeForm = ({ id }: { id?: string }) => {
   ) => {
     const { key, ...otherProps } =
       props as React.HTMLAttributes<HTMLLIElement> & { key: string };
-    const image = option?.images?.webp.small_image_url;
+    const image = option?.images?.webp.image_url;
     return (
       <li key={key} {...otherProps}>
         {option.mal_id ? (
-          <Grid container>
-            <Grid size={2}>
-              {image ? <img src={image} alt="cover" /> : null}
+          <Grid container spacing={2} alignItems="center">
+            <Grid size="auto">
+              {image ? (
+                <img
+                  src={image}
+                  alt="cover"
+                  style={{
+                    width: "80px",
+                    height: "112px",
+                    objectFit: "cover",
+                    borderRadius: "4px",
+                  }}
+                />
+              ) : null}
             </Grid>
 
             <Grid size="grow">
-              <Typography>{option.title}</Typography>
-              <Typography variant="body2" color={`darkgray`}>
+              <Typography noWrap>{option.title}</Typography>
+              <Typography variant="body2" color={`darkgray`} noWrap>
                 {option.title_english}
               </Typography>
             </Grid>
