@@ -80,6 +80,7 @@ export const AnimeForm = ({ id }: { id?: string }) => {
       episode: 1,
       imageUrl: "",
       totalEpisodes: 0,
+      episodeOffset: 0,
       user: user?._id,
     },
     onSubmit: (values: Partial<IAnime>) => {
@@ -153,7 +154,8 @@ export const AnimeForm = ({ id }: { id?: string }) => {
     props: React.HTMLAttributes<HTMLLIElement>,
     option: IAnimeDetails
   ) => {
-    const { key, ...otherProps } = props as React.HTMLAttributes<HTMLLIElement> & { key: string };
+    const { key, ...otherProps } =
+      props as React.HTMLAttributes<HTMLLIElement> & { key: string };
     const image = option?.images?.webp.small_image_url;
     return (
       <li key={key} {...otherProps}>
@@ -247,6 +249,19 @@ export const AnimeForm = ({ id }: { id?: string }) => {
                 </InputAdornment>
               ),
             }}
+          />
+        </FormControl>
+
+        <FormControl fullWidth sx={{ mb: 3 }}>
+          <TextField
+            name="episodeOffset"
+            label="Episode Offset"
+            variant="outlined"
+            type="number"
+            value={formik.values.episodeOffset}
+            onChange={formik.handleChange}
+            fullWidth
+            helperText="For Part 2, set this to the last episode of Part 1 (e.g., 13)"
           />
         </FormControl>
 

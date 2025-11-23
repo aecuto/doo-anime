@@ -52,17 +52,16 @@ const StyledCard = styled(Card)<{ $hasLink: boolean }>`
 `;
 
 export default function ItemList({ data }: { data: IAnime }) {
-  const { setSync } = React.useContext(AppContext);
+  const { setSync, setOpenDialog } = React.useContext(AppContext);
   const [episode, setEpisode] = React.useState(data.episode || 0);
   const [openInfo, setInfoOpen] = React.useState(false);
-  const [dialogOpen, setDialogOpen] = React.useState(false);
 
   const handleClick = () => {
     setInfoOpen(true);
   };
 
   const handleOpen = () => {
-    setDialogOpen(true);
+    setOpenDialog(true);
   };
 
   const onReplay = () => {
@@ -99,7 +98,7 @@ export default function ItemList({ data }: { data: IAnime }) {
         setOpen={setInfoOpen}
       />
 
-      <DialogForm id={data._id} setOpen={setDialogOpen} open={dialogOpen} />
+      <DialogForm id={data._id} />
 
       <StyledCard
         $hasLink={!!data.link}

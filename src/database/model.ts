@@ -16,6 +16,7 @@ export interface IAnime {
   link: string;
   episode: number;
   totalEpisodes: number;
+  episodeOffset: number;
   completed: Date;
   animeId: number;
   imageUrl: string;
@@ -31,6 +32,7 @@ const AnimeSchema = new Schema(
     link: String,
     episode: Number,
     totalEpisodes: Number,
+    episodeOffset: { type: Number, default: 0 },
     completed: Date,
     animeId: Number,
     imageUrl: String,

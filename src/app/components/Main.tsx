@@ -8,8 +8,7 @@ import List from "./List";
 import { DialogForm } from "./DialogForm";
 
 export const Main = () => {
-  const { search, setSearch, openDialog, setOpenDialog } =
-    useContext(AppContext);
+  const { search, setSearch, setOpenDialog } = useContext(AppContext);
 
   return (
     <Box sx={{ p: 5 }}>
@@ -26,7 +25,7 @@ export const Main = () => {
         </Grid>
 
         <List />
-        <DialogForm open={openDialog} setOpen={setOpenDialog} />
+        <DialogForm />
       </Container>
     </Box>
   );

@@ -5,19 +5,21 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { Box } from "@mui/material";
 import { AnimeForm } from "./Form";
+import { AppContext } from "@/app/App";
 
 interface IPros {
-  open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   id?: string;
 }
 
-export const DialogForm = ({ setOpen, open, id }: IPros) => {
+export const DialogForm = ({ id }: IPros) => {
+  const { openDialog, setOpenDialog } = React.useContext(AppContext);
+
   const onClose = (event: object, reason: string) => {
-    setOpen(false);
+    setOpenDialog(false);
   };
+
   return (
-    <Dialog open={open} onClose={onClose} disableEnforceFocus>
+    <Dialog open={openDialog} onClose={onClose} disableEnforceFocus>
       <DialogTitle>{id ? "Update" : "Create"}</DialogTitle>
       <DialogContent>
         <Box sx={{ mt: 3 }}>

@@ -65,10 +65,10 @@ const EpisodeAction = ({ episode, setEpisode, data }: Props) => {
         label={
           <>
             <Typography display="inline">
-              {episode <= 0 ? 0 : episode}
+              {episode <= 0 ? 0 : episode + (data.episodeOffset || 0)}
             </Typography>
             <Typography display="inline" fontSize={12} color={"gold"}>
-              {data.totalEpisodes ? `/${data.totalEpisodes}` : ""}
+              {data.totalEpisodes ? `/${data.totalEpisodes + (data.episodeOffset || 0)}` : ""}
             </Typography>
           </>
         }
