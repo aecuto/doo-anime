@@ -4,13 +4,13 @@ import { connectDB } from "../../../../database/mongodb";
 import { NextRequest, NextResponse } from "next/server";
 
 interface ISegment {
-  params: { username: string };
+  params: Promise<{ username: string }>;
 }
 
 export async function GET(request: NextRequest, seg: ISegment) {
   await connectDB();
 
-  const { username } = seg.params;
+  const { username } = await seg.params;
 
   let data = await UserModel.findOne({ username });
 
