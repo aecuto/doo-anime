@@ -15,7 +15,7 @@ export const Main = () => {
       <Container>
         <Grid container spacing={2} sx={{ mb: 3 }}>
           <Grid size={12}>
-            <Button variant="contained" onClick={() => setOpenDialog(true)}>
+            <Button variant="contained" onClick={() => setOpenDialog("create")}>
               Add Anime
             </Button>
           </Grid>

@@ -3,7 +3,7 @@
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 
-import { createContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useEffect, useMemo, useState } from "react";
 import { Main } from "./components/Main";
 
 import dynamic from "next/dynamic";
@@ -29,8 +29,8 @@ interface IAppContext {
   sync: Date;
   user: IUser | undefined;
   setUser: React.Dispatch<React.SetStateAction<IUser | undefined>>;
-  openDialog: boolean;
-  setOpenDialog: React.Dispatch<React.SetStateAction<boolean>>;
+  openDialog: string | null;
+  setOpenDialog: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 export const AppContext = createContext<IAppContext>({} as IAppContext);
@@ -39,10 +39,14 @@ function AppPage() {
   const [search, setSearch] = useState("");
   const [sync, setSync] = useState(new Date());
   const [user, setUser] = useState<IUser>();
-  const [openDialog, setOpenDialog] = useState(false);
+  const [openDialog, setOpenDialog] = useState<string | null>(null);
 
   useEffect(() => {
     reqSync();
+  }, []);
+
+  const handleSetOpenDialog = useCallback((value: React.SetStateAction<string | null>) => {
+    setOpenDialog(value);
   }, []);
 
   const contextValue = useMemo(
@@ -54,9 +58,9 @@ function AppPage() {
       user,
       setUser,
       openDialog,
-      setOpenDialog,
+      setOpenDialog: handleSetOpenDialog,
     }),
-    [search, sync, user, openDialog]
+    [search, sync, user, openDialog, handleSetOpenDialog]
   );
 
   return (

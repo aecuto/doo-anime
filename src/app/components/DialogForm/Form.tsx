@@ -42,7 +42,7 @@ export const AnimeForm = ({ id }: { id?: string }) => {
     toast.promise(
       reqUpdate(id, payload).then(() => {
         setSync(new Date());
-        setOpenDialog(false);
+        setOpenDialog(null);
       }),
       {
         pending: "Update is pending",
@@ -57,7 +57,7 @@ export const AnimeForm = ({ id }: { id?: string }) => {
     toast.promise(
       reqCreate(payload).then(() => {
         setSync(new Date());
-        setOpenDialog(false);
+        setOpenDialog(null);
       }),
       {
         pending: "Create is pending",

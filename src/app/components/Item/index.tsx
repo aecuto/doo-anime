@@ -61,7 +61,7 @@ export default function ItemList({ data }: { data: IAnime }) {
   };
 
   const handleOpen = () => {
-    setOpenDialog(true);
+    setOpenDialog(data._id);
   };
 
   const onReplay = () => {
@@ -191,10 +191,14 @@ export default function ItemList({ data }: { data: IAnime }) {
 
             <Box
               sx={{
-                display: "flex",
+                display: "inline-flex",
                 mt: "auto",
                 justifyContent: "center",
+                padding: "8px",
+                borderRadius: "4px",
+                alignSelf: "center",
               }}
+              onClick={(e) => e.stopPropagation()}
             >
               <EpisodeAction
                 episode={episode}

@@ -74,8 +74,8 @@ export default function InfoDialog({ open, animeId, setOpen }: Props) {
                   <TableCell>{anime?.type}</TableCell>
                 </TableRow>
 
-                {anime?.titles.map((data) => (
-                  <TableRow key={data.type}>
+                {anime?.titles.map((data, index) => (
+                  <TableRow key={data.type + index}>
                     <TableCell>Title ({data.type})</TableCell>
                     <TableCell>
                       <Typography>{data.title}</Typography>

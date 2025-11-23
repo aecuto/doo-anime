@@ -15,11 +15,13 @@ export const DialogForm = ({ id }: IPros) => {
   const { openDialog, setOpenDialog } = React.useContext(AppContext);
 
   const onClose = (event: object, reason: string) => {
-    setOpenDialog(false);
+    setOpenDialog(null);
   };
 
+  const isOpen = openDialog === (id || "create");
+
   return (
-    <Dialog open={openDialog} onClose={onClose} disableEnforceFocus>
+    <Dialog open={isOpen} onClose={onClose} disableEnforceFocus>
       <DialogTitle>{id ? "Update" : "Create"}</DialogTitle>
       <DialogContent>
         <Box sx={{ mt: 3 }}>

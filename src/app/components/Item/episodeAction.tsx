@@ -58,7 +58,7 @@ const EpisodeAction = ({ episode, setEpisode, data }: Props) => {
 
   return (
     <>
-      <IconButton color="error" onClick={() => onRemove()}>
+      <IconButton color="error" onClick={() => onRemove()} sx={{ border: 1, margin: 0.5 }}>
         <RemoveIcon />
       </IconButton>
       <Chip
@@ -72,9 +72,9 @@ const EpisodeAction = ({ episode, setEpisode, data }: Props) => {
             </Typography>
           </>
         }
-        sx={{ width: "100px", fontSize: "18px", height: "auto" }}
+        sx={{ width: "100px", fontSize: "18px", height: "auto", margin: 0.5 }}
       />
-      <IconButton color="success" onClick={() => onAdd()}>
+      <IconButton color="success" onClick={() => onAdd()} sx={{ border: 1, margin: 0.5 }}>
         <AddIcon />
       </IconButton>
     </>
