@@ -45,19 +45,19 @@ export const Welcome = () => {
       justifyContent="center"
       sx={{ minHeight: "100vh" }}
     >
-      <Grid item xs={3}>
+      <Grid size={3}>
         <Typography sx={{ height: "100%" }} variant="h3" align="center">
           Doo Anime
         </Typography>
 
         <Grid container spacing={1}>
           {loading ? (
-            <Grid item xs>
+            <Grid size="grow">
               <LinearProgress color="secondary" />
             </Grid>
           ) : (
             <>
-              <Grid item xs={9}>
+              <Grid size={9}>
                 <TextField
                   label="Username"
                   fullWidth
@@ -68,7 +68,7 @@ export const Welcome = () => {
                 />
               </Grid>
 
-              <Grid item xs={3} sx={{ margin: "auto" }}>
+              <Grid size={3} sx={{ margin: "auto" }}>
                 <Button onClick={handleConfirm} variant="outlined" size="large">
                   Go
                 </Button>

@@ -4,13 +4,13 @@ import { connectDB } from "../../../../database/mongodb";
 import { NextRequest, NextResponse } from "next/server";
 
 interface ISegment {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export async function GET(request: NextRequest, seg: ISegment) {
   await connectDB();
 
-  const { id } = seg.params;
+  const { id } = await seg.params;
 
   const found = await AnimeModel.findOne({ _id: id });
   if (!found)
@@ -22,7 +22,7 @@ export async function GET(request: NextRequest, seg: ISegment) {
 export async function PUT(request: NextRequest, seg: ISegment) {
   await connectDB();
 
-  const { id } = seg.params;
+  const { id } = await seg.params;
 
   const body = await request.json();
 
@@ -44,7 +44,7 @@ export async function PUT(request: NextRequest, seg: ISegment) {
 export async function DELETE(request: NextRequest, seg: ISegment) {
   await connectDB();
 
-  const { id } = seg.params;
+  const { id } = await seg.params;
   const data = await AnimeModel.findByIdAndDelete({ _id: id });
   return NextResponse.json(data);
 }

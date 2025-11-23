@@ -153,16 +153,17 @@ export const AnimeForm = ({ id }: { id?: string }) => {
     props: React.HTMLAttributes<HTMLLIElement>,
     option: IAnimeDetails
   ) => {
+    const { key, ...otherProps } = props as React.HTMLAttributes<HTMLLIElement> & { key: string };
     const image = option?.images?.webp.small_image_url;
     return (
-      <li {...props}>
+      <li key={key} {...otherProps}>
         {option.mal_id ? (
           <Grid container>
-            <Grid item xs={2}>
+            <Grid size={2}>
               {image ? <img src={image} alt="cover" /> : null}
             </Grid>
 
-            <Grid item xs>
+            <Grid size="grow">
               <Typography>{option.title}</Typography>
               <Typography variant="body2" color={`darkgray`}>
                 {option.title_english}

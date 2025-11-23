@@ -8,13 +8,13 @@ import SearchField from "./components/SearchField";
 import { Box, Button, Container, Grid } from "@mui/material";
 import { createContext, useEffect, useState } from "react";
 
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import dynamic from "next/dynamic";
 import { DialogForm } from "./components/DialogForm";
 import { Welcome } from "./components/Welcome";
 import { IUser } from "@/database/model";
 import "./App.css";
 import { reqSync } from "@/app/services/anime-api";
+import { ToastContainer } from "react-toastify";
 
 const fontFamily = `'Noto Sans', sans-serif;`;
 
@@ -68,7 +68,7 @@ function AppPage() {
           <DialogForm id={id} setOpen={setOpen} open={open} />
 
           <Grid container spacing={2} sx={{ mb: 3 }}>
-            <Grid item xs>
+            <Grid size="grow">
               <SearchField data={search} setData={setSearch} />
             </Grid>
           </Grid>
@@ -94,7 +94,7 @@ function AppPage() {
     >
       <ThemeProvider theme={darkTheme}>
         <CssBaseline />
-        {user ? Main() : <Welcome />}
+        {user ? <Main /> : <Welcome />}
 
         <ToastContainer
           position="top-right"

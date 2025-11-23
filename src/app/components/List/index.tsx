@@ -88,7 +88,7 @@ export default function List() {
                     : true
                 )
                 .map((value) => (
-                  <Grid item key={value._id} xs={12} sm={6}>
+                  <Grid key={value._id} size={{ xs: 12, sm: 6 }}>
                     <ItemList data={value} />
                   </Grid>
                 ))}

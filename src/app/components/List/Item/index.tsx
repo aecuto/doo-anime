@@ -9,10 +9,9 @@ import { Box, Chip } from "@mui/material";
 import styled from "styled-components";
 
 import InfoDialog from "@/app/components/List/Info";
-import moment from "moment-timezone";
 import EpisodeAction from "@/app/components/List/Item/episodeAction";
 import ActionButton from "@/app/components/List/Item/actionButton";
-import { HourglassTop, Info, Link, LinkOutlined } from "@mui/icons-material";
+import { Info, LinkOutlined } from "@mui/icons-material";
 
 const ChipV2 = styled(Chip)`
   && {
@@ -38,19 +37,6 @@ export default function ItemList({ data }: { data: IAnime }) {
     setInfoOpen(true);
   };
 
-  const episodeRemaining = () => {
-    let remaining = 0;
-
-    if (!data.airing) {
-      remaining = data.totalEpisodes - data.episode;
-    } else if (data.episodeAt) {
-      const fromNow = moment();
-      const episodeAt = moment(data.episodeAt);
-      remaining = fromNow.diff(episodeAt, "weeks");
-    }
-
-    return remaining + " ep";
-  };
 
   return (
     <>
@@ -108,13 +94,6 @@ export default function ItemList({ data }: { data: IAnime }) {
                   onClick={handleClick}
                 />
               ) : null}
-
-              <ChipV2
-                icon={<HourglassTop />}
-                label={episodeRemaining()}
-                variant="outlined"
-                color="success"
-              />
 
               <ActionButton data={data} />
             </Box>
