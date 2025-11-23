@@ -24,7 +24,6 @@ export async function GET(req: NextRequest) {
   };
 
   const data = await AnimeModel.find(query).sort({
-    episodeAt: "asc",
     _id: -1,
   });
 

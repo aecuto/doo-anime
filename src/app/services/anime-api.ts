@@ -20,14 +20,9 @@ export const reqUpdate = (id: string, payload: Partial<IAnime>) => {
   return apiService.put<IAnime>(`/anime/${id}`, payload);
 };
 
-export const reqUpdateEpisode = (
-  id: string,
-  episode: number,
-  episodeAt?: Date
-) => {
+export const reqUpdateEpisode = (id: string, episode: number) => {
   return apiService.put<IAnime>(`/anime/${id}`, {
     episode: episode <= 0 ? 0 : episode,
-    episodeAt,
   });
 };
 

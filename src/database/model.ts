@@ -22,7 +22,6 @@ export interface IAnime {
   user: string;
   airing: boolean;
   broadcast: Broadcast;
-  episodeAt: Date;
 }
 
 const AnimeSchema = new Schema(
@@ -42,7 +41,6 @@ const AnimeSchema = new Schema(
       timezone: String,
       string: String,
     },
-    episodeAt: Date,
     user: { type: Schema.Types.ObjectId, ref: "user" },
   },
   { timestamps: true }

@@ -10,7 +10,6 @@ import { toast } from "react-toastify";
 import { AppContext } from "@/app/App";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
-import moment from "moment-timezone";
 
 interface Props {
   episode: number;
@@ -29,23 +28,7 @@ const EpisodeAction = ({ episode, setEpisode, data }: Props) => {
       onComplete();
     }
 
-    let episodeAt = data.episodeAt;
-
-    if (!episodeAt) {
-      episodeAt = moment
-        .tz(
-          `${data?.broadcast.day} ${data?.broadcast.time}}`,
-          "dddd HH:mm",
-          data?.broadcast.timezone || ""
-        )
-        .toDate();
-    } else {
-      episodeAt = moment(episodeAt).add(7, "days").toDate();
-    }
-
-    if (!data.airing) episodeAt = moment().subtract(1, "year").toDate();
-
-    reqUpdateEpisode(data._id, newEpisode, episodeAt).then(() =>
+    reqUpdateEpisode(data._id, newEpisode).then(() =>
       toast.success("Episodes updated")
     );
   }, 500);
