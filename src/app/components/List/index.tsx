@@ -5,7 +5,7 @@ import { AppContext } from "../../App";
 import { reqList } from "../../services/anime-api";
 
 import { IAnime } from "@/database/model";
-import ItemList from "@/app/components/List/Item";
+import ItemList from "@/app/components/Item";
 
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";

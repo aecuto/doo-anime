@@ -9,7 +9,6 @@ import { Box, Button, Container, Grid } from "@mui/material";
 import { createContext, useEffect, useState } from "react";
 
 import dynamic from "next/dynamic";
-import { DialogForm } from "./components/DialogForm";
 import { Welcome } from "./components/Welcome";
 import { IUser } from "@/database/model";
 import "./App.css";
@@ -27,9 +26,6 @@ const darkTheme = createTheme({
 
 interface IAppContext {
   search: string;
-  setId: React.Dispatch<React.SetStateAction<string>>;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  open: boolean;
   setSync: React.Dispatch<React.SetStateAction<Date>>;
   sync: Date;
   user: IUser | undefined;
@@ -40,8 +36,6 @@ export const AppContext = createContext<IAppContext>({} as IAppContext);
 
 function AppPage() {
   const [search, setSearch] = useState("");
-  const [id, setId] = useState("");
-  const [open, setOpen] = useState(false);
   const [sync, setSync] = useState(new Date());
   const [user, setUser] = useState<IUser>();
 
@@ -53,20 +47,6 @@ function AppPage() {
     return (
       <Box sx={{ p: 5 }}>
         <Container>
-          <Button
-            variant="outlined"
-            color="success"
-            onClick={() => {
-              setOpen(true);
-              setId("");
-            }}
-            sx={{ mb: 3 }}
-          >
-            Add
-          </Button>
-
-          <DialogForm id={id} setOpen={setOpen} open={open} />
-
           <Grid container spacing={2} sx={{ mb: 3 }}>
             <Grid size="grow">
               <SearchField data={search} setData={setSearch} />
@@ -83,9 +63,6 @@ function AppPage() {
     <AppContext.Provider
       value={{
         search,
-        setId,
-        setOpen,
-        open,
         sync,
         setSync,
         user,
