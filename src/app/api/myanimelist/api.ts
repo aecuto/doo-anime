@@ -3,7 +3,7 @@ import axios from "axios";
 
 const instance = axios.create({
   baseURL: "https://api.myanimelist.net/v2",
-  headers: { "X-MAL-CLIENT-ID": "c50b245812263e05c322c29149ec2a40" },
+  headers: { "X-MAL-CLIENT-ID": process.env.MAL_CLIENT_ID },
 });
 
 const fields =

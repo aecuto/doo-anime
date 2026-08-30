@@ -1,7 +1,7 @@
 import { Grid } from "@mui/material";
 
-import { useContext, useEffect, useState } from "react";
-import { AppContext } from "../../App";
+import { useEffect, useState } from "react";
+import { useAppStore } from "../../store";
 import { reqList } from "../../services/anime-api";
 
 import { IAnime } from "@/database/model";
@@ -26,7 +26,9 @@ interface Expanded {
 }
 
 export default function List() {
-  const { search, sync, user } = useContext(AppContext);
+  const search = useAppStore((s) => s.search);
+  const sync = useAppStore((s) => s.sync);
+  const user = useAppStore((s) => s.user);
 
   const [data, setData] = useState<AnimeList>({} as AnimeList);
   const [loading, seLoading] = useState(true);

@@ -7,7 +7,7 @@ import { reqUpdateEpisode, reqUpdateComplete } from "@/app/services/anime-api";
 import { useDebouncedCallback } from "use-debounce";
 import { toast } from "react-toastify";
 
-import { AppContext } from "@/app/App";
+import { useAppStore } from "@/app/store";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 
@@ -18,7 +18,7 @@ interface Props {
 }
 
 const EpisodeAction = ({ episode, setEpisode, data }: Props) => {
-  const { setSync } = React.useContext(AppContext);
+  const setSync = useAppStore((s) => s.setSync);
 
   const reqUpdateEpisodeDeb = useDebouncedCallback(() => {
     let newEpisode = episode;

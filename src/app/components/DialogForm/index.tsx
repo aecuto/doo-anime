@@ -5,14 +5,15 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { Box } from "@mui/material";
 import { AnimeForm } from "./Form";
-import { AppContext } from "@/app/App";
+import { useAppStore } from "@/app/store";
 
 interface IPros {
   id?: string;
 }
 
 export const DialogForm = ({ id }: IPros) => {
-  const { openDialog, setOpenDialog } = React.useContext(AppContext);
+  const openDialog = useAppStore((s) => s.openDialog);
+  const setOpenDialog = useAppStore((s) => s.setOpenDialog);
 
   const onClose = (event: object, reason: string) => {
     setOpenDialog(null);

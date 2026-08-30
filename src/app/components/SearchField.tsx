@@ -4,7 +4,7 @@ import { memo } from "react";
 
 interface ISearchField {
   data: string;
-  setData: React.Dispatch<React.SetStateAction<string>>;
+  setData: (value: string) => void;
 }
 
 const SearchField = memo(({ data, setData }: ISearchField) => {

@@ -14,7 +14,7 @@ import { Info, Edit, Delete, Replay, Link } from "@mui/icons-material";
 import { DialogForm } from "@/app/components/DialogForm";
 import { reqUpdateReplay, reqDelete } from "@/app/services/anime-api";
 import { toast } from "react-toastify";
-import { AppContext } from "@/app/App";
+import { useAppStore } from "@/app/store";
 import { STATUS } from "@/app/constant";
 
 const ChipV2 = styled(Chip)`
@@ -52,7 +52,8 @@ const StyledCard = styled(Card)<{ $hasLink: boolean }>`
 `;
 
 export default function ItemList({ data }: { data: IAnime }) {
-  const { setSync, setOpenDialog } = React.useContext(AppContext);
+  const setSync = useAppStore((s) => s.setSync);
+  const setOpenDialog = useAppStore((s) => s.setOpenDialog);
   const [episode, setEpisode] = React.useState(data.episode || 0);
   const [openInfo, setInfoOpen] = React.useState(false);
 

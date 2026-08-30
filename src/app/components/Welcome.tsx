@@ -1,15 +1,15 @@
 import * as React from "react";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import { AppContext } from "../App";
+import { useAppStore } from "../store";
 import { reqMe } from "@/app/services/user-api";
 import { LinearProgress, Grid, Typography } from "@mui/material";
 
 export const Welcome = () => {
   const [loading, setLoading] = React.useState(true);
-  const [username, setUsername] = React.useState("");
+  const [input, setInput] = React.useState("");
 
-  const { setUser } = React.useContext(AppContext);
+  const { setUser, user } = useAppStore();
 
   const getUserData = (username: string) => {
     if (!username) {
@@ -25,15 +25,11 @@ export const Welcome = () => {
   };
 
   React.useEffect(() => {
-    const username = localStorage.getItem("username") || "";
-    getUserData(username);
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [username]);
+    getUserData(user?.username || input);
+  }, [user]);
 
   const handleConfirm = () => {
-    localStorage.setItem("username", username);
-    getUserData(username);
+    getUserData(input);
   };
 
   return (
@@ -62,9 +58,8 @@ export const Welcome = () => {
                   label="Username"
                   fullWidth
                   variant="outlined"
-                  onChange={(e) => setUsername(e.target.value)}
+                  onChange={(e) => setInput(e.target.value)}
                   autoFocus
-                  defaultValue={username}
                 />
               </Grid>
 

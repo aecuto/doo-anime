@@ -22,8 +22,8 @@ import Autocomplete from "@mui/material/Autocomplete";
 import { reqCreate, reqGetById, reqUpdate } from "../../services/anime-api";
 import { toast } from "react-toastify";
 
-import { SyntheticEvent, useContext, useEffect, useState } from "react";
-import { AppContext } from "../../App";
+import { SyntheticEvent, useEffect, useState } from "react";
+import { useAppStore } from "../../store";
 import { STATUS } from "../../constant";
 
 import { AxiosError } from "axios";
@@ -34,7 +34,9 @@ import { reqAnimeSearch } from "@/app/services/myanimelist-api";
 import { IMyAnimeList } from "@/app/types/myanimelist";
 
 export const AnimeForm = ({ id }: { id?: string }) => {
-  const { setOpenDialog, setSync, user } = useContext(AppContext);
+  const setOpenDialog = useAppStore((s) => s.setOpenDialog);
+  const setSync = useAppStore((s) => s.setSync);
+  const user = useAppStore((s) => s.user);
   const [loading, setLoading] = useState(true);
   const [animeList, setAnimeList] = useState<IMyAnimeList[]>([]);
 
