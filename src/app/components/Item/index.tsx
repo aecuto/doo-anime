@@ -73,7 +73,7 @@ export default function ItemList({ data }: { data: IAnime }) {
         pending: "Update is pending",
         success: "Update status to watching",
         error: "Update is failed",
-      }
+      },
     );
   };
 
@@ -86,7 +86,7 @@ export default function ItemList({ data }: { data: IAnime }) {
         pending: "Delete is pending",
         success: "Delete status to watching",
         error: "Delete is failed",
-      }
+      },
     );
   };
 
@@ -114,7 +114,7 @@ export default function ItemList({ data }: { data: IAnime }) {
           if (
             e.target === e.currentTarget ||
             (e.target as HTMLElement).closest(
-              ".MuiCardContent-root, .MuiCardMedia-root, .MuiBox-root:not(button)"
+              ".MuiCardContent-root, .MuiCardMedia-root, .MuiBox-root:not(button)",
             )
           ) {
             if (data.link) {
