@@ -5,6 +5,7 @@ site: [https://doo-anime.vercel.app/](https://doo-anime.vercel.app/)
 `doo-anime = doo(watch)-anime in my lang :)`
 
 ## stack tech
+
 - react-nextjs
 - api-serverless-nextjs
 - mongo with mongoose
@@ -13,8 +14,7 @@ site: [https://doo-anime.vercel.app/](https://doo-anime.vercel.app/)
 
 First, run the development server:
 
-
-### add .env.local
+### add .env.local at root
 
 ```sh
 MONGO_URL=mongodb://root:example@localhost:27017/doo-anime?authSource=admin
@@ -25,12 +25,11 @@ MONGO_URL=mongodb://root:example@localhost:27017/doo-anime?authSource=admin
 ### Run following commands
 
 ```sh
-npm ci
+pnpm i
+pnpm dev
 
+# for mongodb on local run
 docker compose up -d
-
-npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-

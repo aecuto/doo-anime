@@ -2,7 +2,6 @@ import * as React from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import { IAnimeDetails, getAnimeById } from "@/app/services/jikan";
 
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -12,6 +11,8 @@ import TableRow from "@mui/material/TableRow";
 import { Skeleton, Typography } from "@mui/material";
 
 import moment from "moment-timezone";
+import { reqAnimeById } from "@/app/services/myanimelist-api";
+import { IMyAnimeList } from "@/app/types/myanimelist";
 
 interface Props {
   open: boolean;
@@ -20,12 +21,12 @@ interface Props {
 }
 
 export default function InfoDialog({ open, animeId, setOpen }: Props) {
-  const [anime, setAnime] = React.useState<IAnimeDetails>();
+  const [anime, setAnime] = React.useState<IMyAnimeList>();
 
   React.useEffect(() => {
     if (!animeId || !open) return;
 
-    getAnimeById(animeId).then((res) => setAnime(res.data.data));
+    reqAnimeById(String(animeId)).then((res) => setAnime(res.data));
   }, [animeId, open]);
 
   const handleClose = () => {
@@ -34,14 +35,14 @@ export default function InfoDialog({ open, animeId, setOpen }: Props) {
 
   const getTime = () => {
     const date = moment.tz(
-      `${anime?.broadcast.day} ${anime?.broadcast.time}`,
+      `${anime?.broadcast.day_of_the_week} ${anime?.broadcast.start_time}`,
       "dddd HH:mm",
-      anime?.broadcast.timezone || ""
+      "Asia/Tokyo", // parse the input as JST
     );
 
     if (!date.isValid()) return "-";
 
-    return moment(date.format()).format("dddd HH:mm");
+    return date.clone().tz("Asia/Bangkok").format("dddd HH:mm");
   };
 
   if (!animeId) return null;
@@ -55,8 +56,13 @@ export default function InfoDialog({ open, animeId, setOpen }: Props) {
             <Table>
               <TableBody>
                 <TableRow>
+                  <TableCell>Title</TableCell>
+                  <TableCell>{anime?.title || `??`}</TableCell>
+                </TableRow>
+
+                <TableRow>
                   <TableCell>Episodes</TableCell>
-                  <TableCell>{anime?.episodes || `??`}</TableCell>
+                  <TableCell>{anime?.num_episodes || `??`}</TableCell>
                 </TableRow>
 
                 <TableRow>
@@ -71,17 +77,22 @@ export default function InfoDialog({ open, animeId, setOpen }: Props) {
 
                 <TableRow>
                   <TableCell>Type</TableCell>
-                  <TableCell>{anime?.type}</TableCell>
+                  <TableCell>{anime?.media_type}</TableCell>
                 </TableRow>
 
-                {anime?.titles.map((data, index) => (
-                  <TableRow key={data.type + index}>
-                    <TableCell>Title ({data.type})</TableCell>
-                    <TableCell>
-                      <Typography>{data.title}</Typography>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                <TableRow>
+                  <TableCell>Title English</TableCell>
+                  <TableCell>
+                    <Typography>{anime?.alternative_titles?.en}</Typography>
+                  </TableCell>
+                </TableRow>
+
+                <TableRow>
+                  <TableCell>Title Japan</TableCell>
+                  <TableCell>
+                    <Typography>{anime?.alternative_titles?.ja}</Typography>
+                  </TableCell>
+                </TableRow>
               </TableBody>
             </Table>
           ) : (

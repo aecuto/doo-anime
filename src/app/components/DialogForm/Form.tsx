@@ -28,14 +28,17 @@ import { STATUS } from "../../constant";
 
 import { AxiosError } from "axios";
 import { IAnime } from "@/database/model";
-import { IAnimeDetails, getAnimeSearch } from "@/app/services/jikan";
 import _ from "lodash";
 import { useDebouncedCallback } from "use-debounce";
+import { reqAnimeSearch } from "@/app/services/myanimelist-api";
+import { IMyAnimeList } from "@/app/types/myanimelist";
 
 export const AnimeForm = ({ id }: { id?: string }) => {
   const { setOpenDialog, setSync, user } = useContext(AppContext);
   const [loading, setLoading] = useState(true);
-  const [animeList, setAnimeList] = useState<IAnimeDetails[]>([]);
+  const [animeList, setAnimeList] = useState<IMyAnimeList[]>([]);
+
+  console.log(animeList);
 
   const onUpdate = (id: string, values: Partial<IAnime>) => {
     const payload = values;
@@ -48,7 +51,7 @@ export const AnimeForm = ({ id }: { id?: string }) => {
         pending: "Update is pending",
         success: "Update successfully",
         error: "Update is failed",
-      }
+      },
     );
   };
 
@@ -68,7 +71,7 @@ export const AnimeForm = ({ id }: { id?: string }) => {
             return error.response?.data?.message;
           },
         },
-      }
+      },
     );
   };
 
@@ -108,43 +111,43 @@ export const AnimeForm = ({ id }: { id?: string }) => {
 
   const onInputChange = useDebouncedCallback(
     (event: React.SyntheticEvent, value: string) => {
-      getAnimeSearch(value).then((res) => {
-        setAnimeList(res.data.data);
+      if (!value) return;
+      reqAnimeSearch(value).then((res) => {
+        setAnimeList(res.data);
       });
     },
-    500
+    500,
   );
 
-  const getOptionLabel = (option: IAnimeDetails) => {
+  const getOptionLabel = (option: IMyAnimeList) => {
     return option.title;
   };
 
   const onChange = (
     event: SyntheticEvent<Element, Event>,
-    value: IAnimeDetails | null
+    value: IMyAnimeList | null,
   ) => {
     formik.setValues({
       ...formik.values,
       name: value?.title,
-      animeId: value?.mal_id,
-      totalEpisodes: value?.episodes || 0,
-      imageUrl: value?.images?.webp?.image_url || "",
-      broadcast: value?.broadcast,
-      airing: value?.airing,
+      animeId: value?.id,
+      totalEpisodes: value?.num_episodes || 0,
+      imageUrl: value?.main_picture?.large || "",
     });
   };
 
   const filterOptions = (
-    options: IAnimeDetails[],
-    state: FilterOptionsState<IAnimeDetails>
+    options: IMyAnimeList[],
+    state: FilterOptionsState<IMyAnimeList>,
   ) => {
     const { inputValue } = state;
+
     const isExisting = options.some((option) => inputValue === option.title);
 
     if (inputValue && !isExisting) {
       options.push({
         title: inputValue,
-      } as IAnimeDetails);
+      } as IMyAnimeList);
     }
 
     return options;
@@ -152,14 +155,14 @@ export const AnimeForm = ({ id }: { id?: string }) => {
 
   const renderOption = (
     props: React.HTMLAttributes<HTMLLIElement>,
-    option: IAnimeDetails
+    option: IMyAnimeList,
   ) => {
     const { key, ...otherProps } =
       props as React.HTMLAttributes<HTMLLIElement> & { key: string };
-    const image = option?.images?.webp.image_url;
+    const image = option?.main_picture?.large;
     return (
       <li key={key} {...otherProps}>
-        {option.mal_id ? (
+        {option.id ? (
           <Grid container spacing={2} alignItems="center">
             <Grid size="auto">
               {image ? (
@@ -179,7 +182,7 @@ export const AnimeForm = ({ id }: { id?: string }) => {
             <Grid size="grow">
               <Typography noWrap>{option.title}</Typography>
               <Typography variant="body2" color={`darkgray`} noWrap>
-                {option.title_english}
+                {option?.alternative_titles?.en}
               </Typography>
             </Grid>
           </Grid>

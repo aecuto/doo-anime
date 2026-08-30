@@ -1,15 +1,9 @@
 import { NextResponse } from "next/server";
-import { AnimeModel } from "../../../../database/model";
+import { AnimeModel, IAnime } from "../../../../database/model";
 import { connectDB } from "../../../../database/mongodb";
 import { STATUS } from "@/app/constant";
 import moment from "moment-timezone";
-import axios from "axios";
-
-const getAnimeById = async (animeId: number) => {
-  const url = `https://api.jikan.moe/v4/anime/${animeId}`;
-
-  return axios.get(url);
-};
+import { getAnimeById } from "../../myanimelist/api";
 
 export async function GET() {
   await connectDB();
@@ -24,13 +18,13 @@ export async function GET() {
 
   for (const value of list) {
     const req = await getAnimeById(value.animeId);
-    const anime = req.data.data;
+    const anime = req.data;
     await AnimeModel.findByIdAndUpdate(value._id, {
-      totalEpisodes: anime?.episodes || 0,
-      imageUrl: anime?.images?.webp?.image_url || "",
-      broadcast: anime?.broadcast,
-      airing: anime?.airing,
-    });
+      totalEpisodes: anime?.num_episodes || 0,
+      imageUrl: anime?.main_picture?.large || "",
+      animeId: anime?.id,
+      name: anime?.title,
+    } as IAnime);
   }
 
   return NextResponse.json({
