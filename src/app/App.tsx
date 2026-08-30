@@ -1,23 +1,11 @@
 "use client";
 
-import { ThemeProvider, createTheme } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
-
 import { useEffect } from "react";
 
-import { Welcome } from "./components/Welcome";
 import "./App.css";
 import { reqSync } from "@/app/services/anime-api";
 import { ToastContainer } from "react-toastify";
-
-const fontFamily = `'Noto Sans', sans-serif;`;
-
-const darkTheme = createTheme({
-  palette: {
-    mode: "dark",
-  },
-  typography: { fontFamily },
-});
+import Welcome from "./components/Welcome";
 
 function AppPage() {
   useEffect(() => {
@@ -25,10 +13,8 @@ function AppPage() {
   }, []);
 
   return (
-    <ThemeProvider theme={darkTheme}>
-      <CssBaseline />
+    <>
       <Welcome />
-
       <ToastContainer
         position="top-right"
         autoClose={3000}
@@ -42,7 +28,7 @@ function AppPage() {
         pauseOnHover={false}
         theme="dark"
       />
-    </ThemeProvider>
+    </>
   );
 }
 

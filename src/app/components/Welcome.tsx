@@ -24,7 +24,7 @@ const Template = ({ children }: { children: React.ReactNode }) => (
   </Grid>
 );
 
-export const Welcome = () => {
+const Welcome = () => {
   const [input, setInput] = React.useState("");
 
   const { setUser, user, hasHydrated } = useAppStore();
@@ -73,3 +73,5 @@ export const Welcome = () => {
     </Template>
   );
 };
+
+export default Welcome;
