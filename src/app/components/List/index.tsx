@@ -31,14 +31,12 @@ export default function List() {
   const user = useAppStore((s) => s.user);
 
   const [data, setData] = useState<AnimeList>({} as AnimeList);
-  const [loading, seLoading] = useState(true);
   const [expanded, setExpanded] = useState<Expanded>({
     [STATUS.WATCHING]: true,
   } as Expanded);
 
   useEffect(() => {
     getAnimeList(STATUS.WATCHING).finally(() => {
-      seLoading(false);
       getAnimeList(STATUS.DROP);
       getAnimeList(STATUS.DONE);
     });
@@ -58,11 +56,23 @@ export default function List() {
   const statusIcons = (status: STATUS) => {
     switch (status) {
       case STATUS.WATCHING:
-        return <SmartDisplayIcon sx={{ marginRight: "8px", color: "#2196f3", fontSize: "1.5rem" }} />;
+        return (
+          <SmartDisplayIcon
+            sx={{ marginRight: "8px", color: "#2196f3", fontSize: "1.5rem" }}
+          />
+        );
       case STATUS.DROP:
-        return <ThumbDownIcon sx={{ marginRight: "8px", color: "#f44336", fontSize: "1.5rem" }} />;
+        return (
+          <ThumbDownIcon
+            sx={{ marginRight: "8px", color: "#f44336", fontSize: "1.5rem" }}
+          />
+        );
       case STATUS.DONE:
-        return <CheckCircleIcon sx={{ marginRight: "8px", color: "#4caf50", fontSize: "1.5rem" }} />;
+        return (
+          <CheckCircleIcon
+            sx={{ marginRight: "8px", color: "#4caf50", fontSize: "1.5rem" }}
+          />
+        );
       default:
         break;
     }
@@ -87,8 +97,8 @@ export default function List() {
               "& .MuiAccordionSummary-content": {
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "flex-start"
-              }
+                justifyContent: "flex-start",
+              },
             }}
           >
             {statusIcons(status)}
@@ -109,7 +119,7 @@ export default function List() {
                 ?.filter((value) =>
                   search
                     ? value.name.toLowerCase().includes(search.toLowerCase())
-                    : true
+                    : true,
                 )
                 .map((value) => (
                   <Grid key={value._id} size={{ xs: 12, sm: 6 }}>

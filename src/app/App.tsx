@@ -3,14 +3,12 @@
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 
-import { useEffect, useState } from "react";
-import { Main } from "./components/Main";
+import { useEffect } from "react";
 
 import { Welcome } from "./components/Welcome";
 import "./App.css";
 import { reqSync } from "@/app/services/anime-api";
 import { ToastContainer } from "react-toastify";
-import { useAppStore } from "./store";
 
 const fontFamily = `'Noto Sans', sans-serif;`;
 
@@ -22,20 +20,14 @@ const darkTheme = createTheme({
 });
 
 function AppPage() {
-  const hasHydrated = useAppStore((s) => s.hasHydrated);
-  const user = useAppStore((s) => s.user);
-
   useEffect(() => {
     reqSync();
   }, []);
 
-  if (!hasHydrated) return null;
-
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
-
-      {user ? <Main /> : <Welcome />}
+      <Welcome />
 
       <ToastContainer
         position="top-right"
