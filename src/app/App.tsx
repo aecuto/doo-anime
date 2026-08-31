@@ -1,22 +1,25 @@
 "use client";
 
 import { useEffect } from "react";
+import { useMediaQuery } from "@mui/material";
 
 import "./App.css";
 import { reqSync } from "@/app/services/anime-api";
 import { ToastContainer } from "react-toastify";
-import Welcome from "./components/Welcome";
+import AuthGate from "./components/AuthGate";
 
 function AppPage() {
+  const isMobile = useMediaQuery("(max-width:600px)");
+
   useEffect(() => {
     reqSync();
   }, []);
 
   return (
     <>
-      <Welcome />
+      <AuthGate />
       <ToastContainer
-        position="top-right"
+        position={isMobile ? "top-center" : "top-right"}
         autoClose={3000}
         limit={2}
         hideProgressBar={true}

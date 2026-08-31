@@ -22,7 +22,12 @@ export const DialogForm = ({ id }: IPros) => {
   const isOpen = openDialog === (id || "create");
 
   return (
-    <Dialog open={isOpen} onClose={onClose} disableEnforceFocus>
+    <Dialog
+      open={isOpen}
+      onClose={onClose}
+      disableEnforceFocus
+      PaperProps={{ sx: { width: { xs: "100%", sm: "auto" } } }}
+    >
       <DialogTitle>{id ? "Update" : "Create"}</DialogTitle>
       <DialogContent>
         <Box sx={{ mt: 3 }}>

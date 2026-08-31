@@ -35,7 +35,7 @@ export default function InfoDialog({ open, animeId, setOpen }: Props) {
 
   const getTime = () => {
     const date = moment.tz(
-      `${anime?.broadcast.day_of_the_week} ${anime?.broadcast.start_time}`,
+      `${anime?.broadcast?.day_of_the_week} ${anime?.broadcast?.start_time}`,
       "dddd HH:mm",
       "Asia/Tokyo", // parse the input as JST
     );
@@ -48,7 +48,11 @@ export default function InfoDialog({ open, animeId, setOpen }: Props) {
   if (!animeId) return null;
 
   return (
-    <Dialog open={open} onClose={handleClose}>
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      PaperProps={{ sx: { width: { xs: "100%", sm: "auto" } } }}
+    >
       <DialogTitle>Info</DialogTitle>
       <DialogContent>
         <TableContainer>
@@ -97,10 +101,22 @@ export default function InfoDialog({ open, animeId, setOpen }: Props) {
             </Table>
           ) : (
             <>
-              <Skeleton animation="wave" width={300} />
-              <Skeleton animation="wave" width={200} />
-              <Skeleton animation="wave" width={400} />
-              <Skeleton animation="wave" width={250} />
+              <Skeleton
+                animation="wave"
+                sx={{ width: { xs: "85%", sm: 300 } }}
+              />
+              <Skeleton
+                animation="wave"
+                sx={{ width: { xs: "55%", sm: 200 } }}
+              />
+              <Skeleton
+                animation="wave"
+                sx={{ width: { xs: "100%", sm: 400 } }}
+              />
+              <Skeleton
+                animation="wave"
+                sx={{ width: { xs: "70%", sm: 250 } }}
+              />
             </>
           )}
         </TableContainer>

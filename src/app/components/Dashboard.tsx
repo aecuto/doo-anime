@@ -34,18 +34,22 @@ function AuthUI() {
   );
 }
 
-export const Main = () => {
+export const Dashboard = () => {
   const search = useAppStore((s) => s.search);
   const setSearch = useAppStore((s) => s.setSearch);
   const setOpenDialog = useAppStore((s) => s.setOpenDialog);
 
   return (
-    <Box sx={{ p: 5 }}>
+    <Box sx={{ p: { xs: 2, sm: 5 } }}>
       <Container>
         {/* <AuthUI /> */}
         <Grid container spacing={2} sx={{ mb: 3 }}>
           <Grid size={12}>
-            <Button variant="contained" onClick={() => setOpenDialog("create")}>
+            <Button
+              variant="contained"
+              onClick={() => setOpenDialog("create")}
+              sx={{ width: { xs: "100%", sm: "auto" } }}
+            >
               Add Anime
             </Button>
           </Grid>

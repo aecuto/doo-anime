@@ -4,7 +4,7 @@ import TextField from "@mui/material/TextField";
 import { useAppStore } from "../store";
 import { reqMe } from "@/app/services/user-api";
 import { LinearProgress, Grid, Typography } from "@mui/material";
-import { Main } from "./Main";
+import { Dashboard } from "./Dashboard";
 
 const Template = ({ children }: { children: React.ReactNode }) => (
   <Grid
@@ -24,7 +24,7 @@ const Template = ({ children }: { children: React.ReactNode }) => (
   </Grid>
 );
 
-const Welcome = () => {
+const AuthGate = () => {
   const [input, setInput] = React.useState("");
 
   const { setUser, user, hasHydrated } = useAppStore();
@@ -49,7 +49,7 @@ const Welcome = () => {
       </Template>
     );
 
-  if (user) return <Main />;
+  if (user) return <Dashboard />;
 
   return (
     <Template>
@@ -74,4 +74,4 @@ const Welcome = () => {
   );
 };
 
-export default Welcome;
+export default AuthGate;

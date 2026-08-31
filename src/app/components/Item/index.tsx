@@ -33,21 +33,26 @@ const EmptyImage = styled(Box)`
   color: darkslategray;
 `;
 
+// On touch devices there is no hover, so actions must always be visible
 const ActionButtonsContainer = styled(Box)`
-  opacity: 0;
-  transition: opacity 0.2s ease-in-out;
+  @media (hover: hover) {
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+  }
 `;
 
 const StyledCard = styled(Card)<{ $hasLink: boolean }>`
-  &:hover ${ActionButtonsContainer} {
-    opacity: 1;
-  }
+  @media (hover: hover) {
+    &:hover ${ActionButtonsContainer} {
+      opacity: 1;
+    }
 
-  &:hover {
-    border-color: ${(props) =>
-      props.$hasLink ? "lightblue" : "lightcoral"} !important;
-    box-shadow: 0 0 8px
-      ${(props) => (props.$hasLink ? "lightblue" : "lightcoral")};
+    &:hover {
+      border-color: ${(props) =>
+        props.$hasLink ? "lightblue" : "lightcoral"} !important;
+      box-shadow: 0 0 8px
+        ${(props) => (props.$hasLink ? "lightblue" : "lightcoral")};
+    }
   }
 `;
 
@@ -105,6 +110,7 @@ export default function ItemList({ data }: { data: IAnime }) {
         $hasLink={!!data.link}
         sx={{
           display: "flex",
+          flexDirection: { xs: "column", md: "row" },
           backgroundColor: "transparent",
           cursor: data.link ? "pointer" : "default",
           transition: "border-color 0.2s, box-shadow 0.2s",
@@ -124,7 +130,13 @@ export default function ItemList({ data }: { data: IAnime }) {
           }
         }}
       >
-        <Box sx={{ width: "250px", height: "250px" }}>
+        <Box
+          sx={{
+            width: { xs: "100%", md: "250px" },
+            height: { xs: 220, md: 250 },
+            flexShrink: { xs: 0, md: 1 },
+          }}
+        >
           {data.imageUrl ? (
             <CardMedia component="img" image={data.imageUrl} height={`100%`} />
           ) : (
@@ -134,7 +146,14 @@ export default function ItemList({ data }: { data: IAnime }) {
           )}
         </Box>
 
-        <Box sx={{ display: "flex", flexDirection: "column", width: "100%" }}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            width: "100%",
+            minWidth: { xs: 0, md: "auto" },
+          }}
+        >
           <CardContent
             sx={{ display: "flex", flexDirection: "column", height: "100%" }}
           >
