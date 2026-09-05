@@ -40,8 +40,6 @@ export const AnimeForm = ({ id }: { id?: string }) => {
   const [loading, setLoading] = useState(true);
   const [animeList, setAnimeList] = useState<IMyAnimeList[]>([]);
 
-  console.log(animeList);
-
   const onUpdate = (id: string, values: Partial<IAnime>) => {
     const payload = values;
     toast.promise(
