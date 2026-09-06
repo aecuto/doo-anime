@@ -19,7 +19,7 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Autocomplete from "@mui/material/Autocomplete";
 
-import { reqCreate, reqGetById, reqUpdate } from "../../services/anime-api";
+import { reqCreate, reqUpdate } from "../../services/anime-api";
 import { toast } from "react-toastify";
 
 import { SyntheticEvent, useEffect, useState } from "react";
@@ -28,21 +28,25 @@ import { STATUS } from "../../constant";
 
 import { AxiosError } from "axios";
 import { IAnime } from "@/database/model";
-import { useDebouncedCallback } from "use-debounce";
-import { reqAnimeSearch } from "@/app/services/myanimelist-api";
+import { useDebounce } from "use-debounce";
+import { useAnime, useAnimeSearch, useRefreshAnime } from "@/app/hooks/use-anime";
 import { IMyAnimeList } from "@/app/types/myanimelist";
 
 export const AnimeForm = ({ id }: { id?: string }) => {
   const setOpenDialog = useAppStore((s) => s.setOpenDialog);
-  const setSync = useAppStore((s) => s.setSync);
   const user = useAppStore((s) => s.user);
-  const [loading, setLoading] = useState(true);
-  const [animeList, setAnimeList] = useState<IMyAnimeList[]>([]);
+  const refresh = useRefreshAnime();
+
+  const { data: anime, isLoading: loading } = useAnime(id);
+
+  const [nameInput, setNameInput] = useState("");
+  const [debouncedQuery] = useDebounce(nameInput, 500);
+  const { data: animeList = [] } = useAnimeSearch(debouncedQuery);
 
   const onUpdate = (id: string, values: Partial<IAnime>) => {
     toast.promise(
       reqUpdate(id, values).then(() => {
-        setSync(new Date());
+        refresh();
         setOpenDialog(null);
       }),
       {
@@ -56,7 +60,7 @@ export const AnimeForm = ({ id }: { id?: string }) => {
   const onCreate = (values: Partial<IAnime>) => {
     toast.promise(
       reqCreate(values).then(() => {
-        setSync(new Date());
+        refresh();
         setOpenDialog(null);
       }),
       {
@@ -93,23 +97,18 @@ export const AnimeForm = ({ id }: { id?: string }) => {
   });
 
   useEffect(() => {
-    if (!id) {
-      return;
+    if (anime) {
+      formik.setValues(anime);
     }
-
-    reqGetById(id).then((res) => {
-      formik.setValues(res.data);
-      setLoading(false);
-    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
+  }, [anime]);
 
-  const onInputChange = useDebouncedCallback((_, value: string) => {
-    if (!value) return;
-    reqAnimeSearch(value).then((res) => {
-      setAnimeList(res.data);
-    });
-  }, 500);
+  const onInputChange = (
+    event: SyntheticEvent<Element, Event>,
+    value: string,
+  ) => {
+    setNameInput(value);
+  };
 
   const getOptionLabel = (option: IMyAnimeList) => {
     return option.title;

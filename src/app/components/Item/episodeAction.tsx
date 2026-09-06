@@ -7,7 +7,7 @@ import { reqUpdateEpisode, reqUpdateComplete } from "@/app/services/anime-api";
 import { useDebouncedCallback } from "use-debounce";
 import { toast } from "react-toastify";
 
-import { useAppStore } from "@/app/store";
+import { useRefreshAnime } from "@/app/hooks/use-anime";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 
@@ -18,7 +18,7 @@ interface Props {
 }
 
 const EpisodeAction = ({ episode, setEpisode, data }: Props) => {
-  const setSync = useAppStore((s) => s.setSync);
+  const refresh = useRefreshAnime();
 
   const episodeRef = React.useRef(episode);
   React.useEffect(() => {
@@ -27,9 +27,7 @@ const EpisodeAction = ({ episode, setEpisode, data }: Props) => {
 
   const onComplete = () => {
     toast.promise(
-      reqUpdateComplete(data._id).then(() => {
-        setSync(new Date());
-      }),
+      reqUpdateComplete(data._id).then(() => refresh()),
       {
         pending: "Update is pending",
         success: "Update status to done",

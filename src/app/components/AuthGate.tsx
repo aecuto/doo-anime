@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import { useAppStore } from "../store";
 import { reqMe } from "@/app/services/user-api";
+import { useMe } from "@/app/hooks/use-anime";
 import { Dashboard } from "./Dashboard";
 
 const Template = ({ children }: { children: React.ReactNode }) => (
@@ -34,6 +35,14 @@ const AuthGate = () => {
 
   const { setUser, user, hasHydrated } = useAppStore();
 
+  const { data: me } = useMe(hasHydrated ? user?.username : undefined);
+
+  React.useEffect(() => {
+    if (me) {
+      setUser(me);
+    }
+  }, [me, setUser]);
+
   const handleConfirm = async (event: React.FormEvent) => {
     event.preventDefault();
     const username = input.trim();
@@ -50,14 +59,6 @@ const AuthGate = () => {
       setLoading(false);
     }
   };
-
-  React.useEffect(() => {
-    if (!user) return;
-    reqMe(user.username).then((res) => {
-      setUser(res.data);
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasHydrated]);
 
   if (!hasHydrated)
     return (

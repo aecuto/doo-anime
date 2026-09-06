@@ -1,8 +1,8 @@
 import { Grid, Chip, Skeleton, Typography } from "@mui/material";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useAppStore } from "../../store";
-import { reqList } from "../../services/anime-api";
+import { useAnimeList } from "../../hooks/use-anime";
 
 import { IAnime } from "@/database/model";
 import ItemList from "@/app/components/Item";
@@ -16,10 +16,6 @@ import { STATUS } from "@/app/constant";
 import SmartDisplayIcon from "@mui/icons-material/SmartDisplay";
 import ThumbDownIcon from "@mui/icons-material/ThumbDown";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-
-interface AnimeList {
-  [status: string]: IAnime[];
-}
 
 interface Expanded {
   [status: string]: boolean;
@@ -36,26 +32,19 @@ const STATUS_META: Record<
 
 export default function List() {
   const search = useAppStore((s) => s.search);
-  const sync = useAppStore((s) => s.sync);
-  const user = useAppStore((s) => s.user);
 
-  const [data, setData] = useState<AnimeList>({} as AnimeList);
-  const [expanded, setExpanded] = useState<Expanded>({
-    [STATUS.WATCHING]: true,
-  } as Expanded);
+  const expandedInit = { [STATUS.WATCHING]: true } as Expanded;
+  const [expanded, setExpanded] = useState<Expanded>(expandedInit);
 
-  const getAnimeList = (status: STATUS) =>
-    reqList(status, user?._id || "").then((res) => {
-      setData((prev) => ({ ...prev, [status]: res.data }));
-    });
+  const watching = useAnimeList(STATUS.WATCHING);
+  const drop = useAnimeList(STATUS.DROP);
+  const done = useAnimeList(STATUS.DONE);
 
-  useEffect(() => {
-    getAnimeList(STATUS.WATCHING).finally(() => {
-      getAnimeList(STATUS.DROP);
-      getAnimeList(STATUS.DONE);
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sync]);
+  const lists: Partial<Record<STATUS, ReturnType<typeof useAnimeList>>> = {
+    [STATUS.WATCHING]: watching,
+    [STATUS.DROP]: drop,
+    [STATUS.DONE]: done,
+  };
 
   const handleChange =
     (panel: STATUS) => (event: React.SyntheticEvent, isExpanded: boolean) => {
@@ -66,8 +55,9 @@ export default function List() {
     <>
       {Object.values(STATUS).map((status) => {
         const { Icon, color } = STATUS_META[status];
+        const list = lists[status];
         const items =
-          data[status]?.filter((value) =>
+          list?.data?.filter((value) =>
             search
               ? value.name.toLowerCase().includes(search.toLowerCase())
               : true,
@@ -90,7 +80,7 @@ export default function List() {
             >
               <Icon sx={{ marginRight: 1, color, fontSize: "1.5rem" }} />
               <Typography sx={{ fontWeight: 600 }}>{status}</Typography>
-              {data[status] && (
+              {list?.data && (
                 <Chip
                   label={items.length}
                   size="small"
@@ -99,7 +89,11 @@ export default function List() {
               )}
             </AccordionSummary>
             <AccordionDetails>
-              {!data[status] ? (
+              {list?.error ? (
+                <Typography variant="body2" color="error">
+                  Failed to load {status} list.
+                </Typography>
+              ) : !list?.data ? (
                 <Grid container spacing={3}>
                   <Grid size={{ xs: 12, sm: 6 }}>
                     <Skeleton variant="rounded" height={140} />

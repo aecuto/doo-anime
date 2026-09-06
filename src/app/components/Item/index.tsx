@@ -23,14 +23,19 @@ import { DialogForm } from "@/app/components/DialogForm";
 import { reqUpdateReplay, reqDelete } from "@/app/services/anime-api";
 import { toast } from "react-toastify";
 import { useAppStore } from "@/app/store";
+import { useRefreshAnime } from "@/app/hooks/use-anime";
 import { STATUS } from "@/app/constant";
 
 export default function ItemList({ data }: { data: IAnime }) {
-  const setSync = useAppStore((s) => s.setSync);
+  const refresh = useRefreshAnime();
   const setOpenDialog = useAppStore((s) => s.setOpenDialog);
   const [episode, setEpisode] = React.useState(data.episode || 0);
   const [openInfo, setInfoOpen] = React.useState(false);
   const [confirmDelete, setConfirmDelete] = React.useState(false);
+
+  React.useEffect(() => {
+    setEpisode(data.episode || 0);
+  }, [data.episode]);
 
   const handleClick = () => {
     setInfoOpen(true);
@@ -42,9 +47,7 @@ export default function ItemList({ data }: { data: IAnime }) {
 
   const onReplay = () => {
     toast.promise(
-      reqUpdateReplay(data._id).then(() => {
-        setSync(new Date());
-      }),
+      reqUpdateReplay(data._id).then(() => refresh()),
       {
         pending: "Update is pending",
         success: "Update status to watching",
@@ -55,9 +58,7 @@ export default function ItemList({ data }: { data: IAnime }) {
 
   const handleDelete = () => {
     toast.promise(
-      reqDelete(data._id).then(() => {
-        setSync(new Date());
-      }),
+      reqDelete(data._id).then(() => refresh()),
       {
         pending: "Delete is pending",
         success: "Anime deleted",

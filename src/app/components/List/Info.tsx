@@ -13,8 +13,7 @@ import TableRow from "@mui/material/TableRow";
 import { Typography } from "@mui/material";
 
 import moment from "moment-timezone";
-import { reqAnimeById } from "@/app/services/myanimelist-api";
-import { IMyAnimeList } from "@/app/types/myanimelist";
+import { useMalAnime } from "@/app/hooks/use-anime";
 
 interface Props {
   open: boolean;
@@ -42,15 +41,7 @@ const InfoRow = ({
 );
 
 export default function InfoDialog({ open, animeId, setOpen }: Props) {
-  const [anime, setAnime] = React.useState<IMyAnimeList | null>();
-
-  React.useEffect(() => {
-    if (!animeId || !open) return;
-
-    reqAnimeById(String(animeId))
-      .then((res) => setAnime(res.data))
-      .catch(() => setAnime(null));
-  }, [animeId, open]);
+  const { data: anime, error } = useMalAnime(open ? animeId : undefined);
 
   const handleClose = () => {
     setOpen(false);
@@ -89,14 +80,14 @@ export default function InfoDialog({ open, animeId, setOpen }: Props) {
         </IconButton>
       </DialogTitle>
       <DialogContent>
-        {anime === undefined ? (
+        {!anime && !error ? (
           <Box sx={{ width: { xs: "100%", sm: 400 }, py: 1 }}>
             <Skeleton sx={{ width: "85%" }} />
             <Skeleton sx={{ width: "55%" }} />
             <Skeleton sx={{ width: "100%" }} />
             <Skeleton sx={{ width: "70%" }} />
           </Box>
-        ) : anime === null ? (
+        ) : error ? (
           <Typography variant="body2" color="text.secondary">
             Failed to load anime info. Please try again.
           </Typography>

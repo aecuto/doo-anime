@@ -5,8 +5,6 @@ import { persist } from "zustand/middleware";
 interface IAppState {
   search: string;
   setSearch: (search: string) => void;
-  sync: Date;
-  setSync: (sync: Date) => void;
   user: IUser | undefined;
   setUser: (user: IUser | undefined) => void;
   openDialog: string | null;
@@ -20,8 +18,6 @@ export const useAppStore = create<IAppState>()(
     (set) => ({
       search: "",
       setSearch: (search) => set({ search }),
-      sync: new Date(),
-      setSync: (sync) => set({ sync }),
       user: undefined,
       setUser: (user) => set({ user }),
       openDialog: null,
