@@ -4,7 +4,16 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import { IAnime } from "@/database/model";
-import { Box, Chip } from "@mui/material";
+import {
+  Box,
+  Chip,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from "@mui/material";
 
 import styled from "styled-components";
 
@@ -61,6 +70,7 @@ export default function ItemList({ data }: { data: IAnime }) {
   const setOpenDialog = useAppStore((s) => s.setOpenDialog);
   const [episode, setEpisode] = React.useState(data.episode || 0);
   const [openInfo, setInfoOpen] = React.useState(false);
+  const [confirmDelete, setConfirmDelete] = React.useState(false);
 
   const handleClick = () => {
     setInfoOpen(true);
@@ -105,6 +115,33 @@ export default function ItemList({ data }: { data: IAnime }) {
       />
 
       <DialogForm id={data._id} />
+
+      <Dialog
+        open={confirmDelete}
+        onClose={() => setConfirmDelete(false)}
+        PaperProps={{ sx: { width: { xs: "100%", sm: "auto" } } }}
+      >
+        <DialogTitle>Delete anime</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to delete “{data.name}”? This action cannot
+            be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setConfirmDelete(false)}>Cancel</Button>
+          <Button
+            color="error"
+            variant="contained"
+            onClick={() => {
+              setConfirmDelete(false);
+              handleDelete();
+            }}
+          >
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <StyledCard
         $hasLink={!!data.link}
@@ -205,7 +242,7 @@ export default function ItemList({ data }: { data: IAnime }) {
                 label="Delete"
                 variant="outlined"
                 color="error"
-                onClick={handleDelete}
+                onClick={() => setConfirmDelete(true)}
               />
             </ActionButtonsContainer>
 
