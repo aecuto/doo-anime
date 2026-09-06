@@ -14,56 +14,16 @@ import {
   DialogContentText,
   DialogTitle,
 } from "@mui/material";
-
-import styled from "styled-components";
+import { alpha, Theme } from "@mui/material/styles";
 
 import InfoDialog from "@/app/components/List/Info";
 import EpisodeAction from "@/app/components/Item/episodeAction";
-import { Info, Edit, Delete, Replay, Link } from "@mui/icons-material";
+import { Info, Edit, Delete, Replay } from "@mui/icons-material";
 import { DialogForm } from "@/app/components/DialogForm";
 import { reqUpdateReplay, reqDelete } from "@/app/services/anime-api";
 import { toast } from "react-toastify";
 import { useAppStore } from "@/app/store";
 import { STATUS } from "@/app/constant";
-
-const ChipV2 = styled(Chip)`
-  && {
-    margin: auto;
-    margin-right: 5px;
-  }
-`;
-
-const EmptyImage = styled(Box)`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  border: 1px solid darkslategray;
-  color: darkslategray;
-`;
-
-// On touch devices there is no hover, so actions must always be visible
-const ActionButtonsContainer = styled(Box)`
-  @media (hover: hover) {
-    opacity: 0;
-    transition: opacity 0.2s ease-in-out;
-  }
-`;
-
-const StyledCard = styled(Card)<{ $hasLink: boolean }>`
-  @media (hover: hover) {
-    &:hover ${ActionButtonsContainer} {
-      opacity: 1;
-    }
-
-    &:hover {
-      border-color: ${(props) =>
-        props.$hasLink ? "lightblue" : "lightcoral"} !important;
-      box-shadow: 0 0 8px
-        ${(props) => (props.$hasLink ? "lightblue" : "lightcoral")};
-    }
-  }
-`;
 
 export default function ItemList({ data }: { data: IAnime }) {
   const setSync = useAppStore((s) => s.setSync);
@@ -100,7 +60,7 @@ export default function ItemList({ data }: { data: IAnime }) {
       }),
       {
         pending: "Delete is pending",
-        success: "Delete status to watching",
+        success: "Anime deleted",
         error: "Delete is failed",
       },
     );
@@ -143,43 +103,60 @@ export default function ItemList({ data }: { data: IAnime }) {
         </DialogActions>
       </Dialog>
 
-      <StyledCard
-        $hasLink={!!data.link}
+      <Card
+        variant="outlined"
+        onClick={() => {
+          if (data.link) window.open(data.link, "_blank", "noreferrer");
+        }}
         sx={{
           display: "flex",
           flexDirection: { xs: "column", md: "row" },
-          backgroundColor: "transparent",
+          height: "100%",
+          backgroundColor: "background.paper",
           cursor: data.link ? "pointer" : "default",
           transition: "border-color 0.2s, box-shadow 0.2s",
-        }}
-        variant="outlined"
-        onClick={(e) => {
-          // Only open link if clicking on the card itself, not on buttons
-          if (
-            e.target === e.currentTarget ||
-            (e.target as HTMLElement).closest(
-              ".MuiCardContent-root, .MuiCardMedia-root, .MuiBox-root:not(button)",
-            )
-          ) {
-            if (data.link) {
-              window.open(data.link, "_blank", "noreferrer");
-            }
-          }
+          "@media (hover: hover)": {
+            "&:hover": {
+              borderColor: data.link ? "primary.main" : "divider",
+              boxShadow: (theme: Theme) =>
+                data.link
+                  ? `0 0 8px ${alpha(theme.palette.primary.main, 0.4)}`
+                  : "none",
+            },
+          },
         }}
       >
         <Box
           sx={{
             width: { xs: "100%", md: "250px" },
-            height: { xs: 220, md: 250 },
-            flexShrink: { xs: 0, md: 1 },
+            height: { xs: 220, md: "auto" },
+            minHeight: { xs: 220, md: 250 },
+            flexShrink: 0,
           }}
         >
           {data.imageUrl ? (
-            <CardMedia component="img" image={data.imageUrl} height={`100%`} />
+            <CardMedia
+              component="img"
+              image={data.imageUrl}
+              alt={data.name}
+              height="100%"
+            />
           ) : (
-            <EmptyImage>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100%",
+                minHeight: { md: 250 },
+                borderRight: { md: 1 },
+                borderColor: "divider",
+                bgcolor: "action.hover",
+                color: "text.disabled",
+              }}
+            >
               <Typography align="center">No Image</Typography>
-            </EmptyImage>
+            </Box>
           )}
         </Box>
 
@@ -188,72 +165,76 @@ export default function ItemList({ data }: { data: IAnime }) {
             display: "flex",
             flexDirection: "column",
             width: "100%",
-            minWidth: { xs: 0, md: "auto" },
+            minWidth: 0,
           }}
         >
           <CardContent
             sx={{ display: "flex", flexDirection: "column", height: "100%" }}
           >
             <Typography
-              variant="body1"
+              variant="h6"
               sx={{
-                maxHeight: "70px",
+                marginBottom: 1,
+                display: "-webkit-box",
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: "vertical",
                 overflow: "hidden",
-                marginBottom: "5px",
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
               }}
             >
               {data.name}
             </Typography>
 
-            <ActionButtonsContainer onClick={(e) => e.stopPropagation()}>
+            <Box
+              sx={{ display: "flex", gap: 1, flexWrap: "wrap", mb: 1 }}
+              onClick={(e) => e.stopPropagation()}
+            >
               {data.animeId ? (
-                <ChipV2
+                <Chip
                   icon={<Info />}
-                  label={`info`}
+                  label="Info"
+                  size="small"
                   variant="outlined"
                   color="info"
                   onClick={handleClick}
                 />
               ) : null}
 
-              <ChipV2
+              <Chip
                 icon={<Edit />}
                 label="Edit"
+                size="small"
                 variant="outlined"
                 color="primary"
                 onClick={handleOpen}
               />
 
               {[STATUS.DROP].includes(data.status as STATUS) && (
-                <ChipV2
+                <Chip
                   icon={<Replay />}
                   label="Replay"
+                  size="small"
                   variant="outlined"
                   color="success"
                   onClick={onReplay}
                 />
               )}
 
-              <ChipV2
+              <Chip
                 icon={<Delete />}
                 label="Delete"
+                size="small"
                 variant="outlined"
                 color="error"
                 onClick={() => setConfirmDelete(true)}
               />
-            </ActionButtonsContainer>
+            </Box>
 
             <Box
               sx={{
-                display: "inline-flex",
-                mt: "auto",
+                display: "flex",
                 justifyContent: "center",
-                padding: "8px",
-                borderRadius: "4px",
-                alignSelf: "center",
+                mt: "auto",
+                pt: 1,
               }}
               onClick={(e) => e.stopPropagation()}
             >
@@ -265,7 +246,7 @@ export default function ItemList({ data }: { data: IAnime }) {
             </Box>
           </CardContent>
         </Box>
-      </StyledCard>
+      </Card>
     </>
   );
 }

@@ -20,18 +20,10 @@ interface Props {
 const EpisodeAction = ({ episode, setEpisode, data }: Props) => {
   const setSync = useAppStore((s) => s.setSync);
 
-  const reqUpdateEpisodeDeb = useDebouncedCallback(() => {
-    let newEpisode = episode;
-
-    if (data.totalEpisodes && newEpisode > data.totalEpisodes) {
-      newEpisode = data.totalEpisodes;
-      onComplete();
-    }
-
-    reqUpdateEpisode(data._id, newEpisode).then(() =>
-      toast.success("Episodes updated")
-    );
-  }, 500);
+  const episodeRef = React.useRef(episode);
+  React.useEffect(() => {
+    episodeRef.current = episode;
+  }, [episode]);
 
   const onComplete = () => {
     toast.promise(
@@ -42,9 +34,22 @@ const EpisodeAction = ({ episode, setEpisode, data }: Props) => {
         pending: "Update is pending",
         success: "Update status to done",
         error: "Update is failed",
-      }
+      },
     );
   };
+
+  const reqUpdateEpisodeDeb = useDebouncedCallback(() => {
+    let newEpisode = episodeRef.current;
+
+    if (data.totalEpisodes && newEpisode > data.totalEpisodes) {
+      newEpisode = data.totalEpisodes;
+      onComplete();
+    }
+
+    reqUpdateEpisode(data._id, newEpisode).then(() =>
+      toast.success("Episodes updated"),
+    );
+  }, 500);
 
   const onAdd = () => {
     setEpisode((prev) => prev + 1);
@@ -52,29 +57,41 @@ const EpisodeAction = ({ episode, setEpisode, data }: Props) => {
   };
 
   const onRemove = () => {
-    setEpisode((prev) => prev - 1);
+    setEpisode((prev) => Math.max(0, prev - 1));
     reqUpdateEpisodeDeb();
   };
 
   return (
     <>
-      <IconButton color="error" onClick={() => onRemove()} sx={{ border: 1, margin: 0.5 }}>
+      <IconButton
+        color="default"
+        aria-label="Decrease episode"
+        onClick={() => onRemove()}
+        sx={{ border: 1, borderColor: "divider", margin: 0.5 }}
+      >
         <RemoveIcon />
       </IconButton>
       <Chip
         label={
           <>
-            <Typography display="inline">
+            <Typography display="inline" fontSize="1.125rem">
               {episode <= 0 ? 0 : episode + (data.episodeOffset || 0)}
             </Typography>
-            <Typography display="inline" fontSize={12} color={"gold"}>
-              {data.totalEpisodes ? `/${data.totalEpisodes + (data.episodeOffset || 0)}` : ""}
+            <Typography display="inline" fontSize={12} color="warning.light">
+              {data.totalEpisodes
+                ? `/${data.totalEpisodes + (data.episodeOffset || 0)}`
+                : ""}
             </Typography>
           </>
         }
-        sx={{ width: "100px", fontSize: "18px", height: "auto", margin: 0.5 }}
+        sx={{ minWidth: 88, px: 1.5, margin: 0.5 }}
       />
-      <IconButton color="success" onClick={() => onAdd()} sx={{ border: 1, margin: 0.5 }}>
+      <IconButton
+        color="default"
+        aria-label="Increase episode"
+        onClick={() => onAdd()}
+        sx={{ border: 1, borderColor: "divider", margin: 0.5 }}
+      >
         <AddIcon />
       </IconButton>
     </>

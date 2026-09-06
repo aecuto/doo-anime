@@ -3,7 +3,6 @@
 import { useEffect } from "react";
 import { useMediaQuery } from "@mui/material";
 
-import "./App.css";
 import { reqSync } from "@/app/services/anime-api";
 import { ToastContainer } from "react-toastify";
 import AuthGate from "./components/AuthGate";

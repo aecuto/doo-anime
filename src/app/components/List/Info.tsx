@@ -2,13 +2,15 @@ import * as React from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
+import { Box, IconButton, Skeleton } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableRow from "@mui/material/TableRow";
-import { Skeleton, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 
 import moment from "moment-timezone";
 import { reqAnimeById } from "@/app/services/myanimelist-api";
@@ -20,13 +22,34 @@ interface Props {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+const InfoRow = ({
+  label,
+  value,
+}: {
+  label: string;
+  value: React.ReactNode;
+}) => (
+  <TableRow>
+    <TableCell
+      component="th"
+      scope="row"
+      sx={{ color: "text.secondary", whiteSpace: "nowrap", pr: 3 }}
+    >
+      {label}
+    </TableCell>
+    <TableCell>{value || "—"}</TableCell>
+  </TableRow>
+);
+
 export default function InfoDialog({ open, animeId, setOpen }: Props) {
-  const [anime, setAnime] = React.useState<IMyAnimeList>();
+  const [anime, setAnime] = React.useState<IMyAnimeList | null>();
 
   React.useEffect(() => {
     if (!animeId || !open) return;
 
-    reqAnimeById(String(animeId)).then((res) => setAnime(res.data));
+    reqAnimeById(String(animeId))
+      .then((res) => setAnime(res.data))
+      .catch(() => setAnime(null));
   }, [animeId, open]);
 
   const handleClose = () => {
@@ -40,7 +63,7 @@ export default function InfoDialog({ open, animeId, setOpen }: Props) {
       "Asia/Tokyo", // parse the input as JST
     );
 
-    if (!date.isValid()) return "-";
+    if (!date.isValid()) return "—";
 
     return date.clone().tz("Asia/Bangkok").format("dddd HH:mm");
   };
@@ -53,73 +76,51 @@ export default function InfoDialog({ open, animeId, setOpen }: Props) {
       onClose={handleClose}
       PaperProps={{ sx: { width: { xs: "100%", sm: "auto" } } }}
     >
-      <DialogTitle>Info</DialogTitle>
+      <DialogTitle
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        Info
+        <IconButton aria-label="Close" size="small" onClick={handleClose}>
+          <CloseIcon fontSize="small" />
+        </IconButton>
+      </DialogTitle>
       <DialogContent>
-        <TableContainer>
-          {anime ? (
+        {anime === undefined ? (
+          <Box sx={{ width: { xs: "100%", sm: 400 }, py: 1 }}>
+            <Skeleton sx={{ width: "85%" }} />
+            <Skeleton sx={{ width: "55%" }} />
+            <Skeleton sx={{ width: "100%" }} />
+            <Skeleton sx={{ width: "70%" }} />
+          </Box>
+        ) : anime === null ? (
+          <Typography variant="body2" color="text.secondary">
+            Failed to load anime info. Please try again.
+          </Typography>
+        ) : (
+          <TableContainer>
             <Table>
               <TableBody>
-                <TableRow>
-                  <TableCell>Title</TableCell>
-                  <TableCell>{anime?.title || `??`}</TableCell>
-                </TableRow>
-
-                <TableRow>
-                  <TableCell>Episodes</TableCell>
-                  <TableCell>{anime?.num_episodes || `??`}</TableCell>
-                </TableRow>
-
-                <TableRow>
-                  <TableCell>Status</TableCell>
-                  <TableCell>{anime?.status}</TableCell>
-                </TableRow>
-
-                <TableRow>
-                  <TableCell>Broadcast</TableCell>
-                  <TableCell>{getTime()}</TableCell>
-                </TableRow>
-
-                <TableRow>
-                  <TableCell>Type</TableCell>
-                  <TableCell>{anime?.media_type}</TableCell>
-                </TableRow>
-
-                <TableRow>
-                  <TableCell>Title English</TableCell>
-                  <TableCell>
-                    <Typography>{anime?.alternative_titles?.en}</Typography>
-                  </TableCell>
-                </TableRow>
-
-                <TableRow>
-                  <TableCell>Title Japan</TableCell>
-                  <TableCell>
-                    <Typography>{anime?.alternative_titles?.ja}</Typography>
-                  </TableCell>
-                </TableRow>
+                <InfoRow label="Title" value={anime?.title} />
+                <InfoRow label="Episodes" value={anime?.num_episodes || "—"} />
+                <InfoRow label="Status" value={anime?.status} />
+                <InfoRow label="Broadcast" value={getTime()} />
+                <InfoRow label="Type" value={anime?.media_type} />
+                <InfoRow
+                  label="Title English"
+                  value={anime?.alternative_titles?.en}
+                />
+                <InfoRow
+                  label="Title Japan"
+                  value={anime?.alternative_titles?.ja}
+                />
               </TableBody>
             </Table>
-          ) : (
-            <>
-              <Skeleton
-                animation="wave"
-                sx={{ width: { xs: "85%", sm: 300 } }}
-              />
-              <Skeleton
-                animation="wave"
-                sx={{ width: { xs: "55%", sm: 200 } }}
-              />
-              <Skeleton
-                animation="wave"
-                sx={{ width: { xs: "100%", sm: 400 } }}
-              />
-              <Skeleton
-                animation="wave"
-                sx={{ width: { xs: "70%", sm: 250 } }}
-              />
-            </>
-          )}
-        </TableContainer>
+          </TableContainer>
+        )}
       </DialogContent>
     </Dialog>
   );

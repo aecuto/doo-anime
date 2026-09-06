@@ -1,6 +1,7 @@
 "use client";
 
-import { Box, Button, Container, Grid } from "@mui/material";
+import { Box, Button, Container, Typography } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
 import { useAppStore } from "../store";
 import SearchField from "./SearchField";
 import List from "./List";
@@ -14,20 +15,32 @@ export const Dashboard = () => {
   return (
     <Box sx={{ p: { xs: 2, sm: 5 } }}>
       <Container>
-        <Grid container spacing={2} sx={{ mb: 3 }}>
-          <Grid size={12}>
-            <Button
-              variant="contained"
-              onClick={() => setOpenDialog("create")}
-              sx={{ width: { xs: "100%", sm: "auto" } }}
-            >
-              Add Anime
-            </Button>
-          </Grid>
-          <Grid size={12}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", sm: "row" },
+            alignItems: { sm: "center" },
+            gap: 2,
+            mb: 3,
+          }}
+        >
+          <Typography variant="h5" sx={{ fontWeight: 700, mr: "auto" }}>
+            Doo Anime
+          </Typography>
+
+          <Box sx={{ width: { xs: "100%", sm: 320 } }}>
             <SearchField data={search} setData={setSearch} />
-          </Grid>
-        </Grid>
+          </Box>
+
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={() => setOpenDialog("create")}
+            sx={{ width: { xs: "100%", sm: "auto" } }}
+          >
+            Add Anime
+          </Button>
+        </Box>
 
         <List />
         <DialogForm />

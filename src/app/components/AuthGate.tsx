@@ -1,38 +1,54 @@
 import * as React from "react";
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
+import {
+  Alert,
+  Box,
+  Button,
+  LinearProgress,
+  Paper,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { useAppStore } from "../store";
 import { reqMe } from "@/app/services/user-api";
-import { LinearProgress, Grid, Typography } from "@mui/material";
 import { Dashboard } from "./Dashboard";
 
 const Template = ({ children }: { children: React.ReactNode }) => (
-  <Grid
-    container
-    spacing={0}
-    direction="column"
-    alignItems="center"
-    justifyContent="center"
-    sx={{ minHeight: "100vh" }}
+  <Box
+    sx={{
+      minHeight: "100vh",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      p: 2,
+    }}
   >
-    <Grid size={3}>
-      <Typography sx={{ height: "100%" }} variant="h3" align="center">
-        Doo Anime
-      </Typography>
-      {children}
-    </Grid>
-  </Grid>
+    {children}
+  </Box>
 );
 
 const AuthGate = () => {
   const [input, setInput] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
 
   const { setUser, user, hasHydrated } = useAppStore();
 
-  const handleConfirm = () => {
-    reqMe(input).then((res) => {
+  const handleConfirm = async (event: React.FormEvent) => {
+    event.preventDefault();
+    const username = input.trim();
+    if (!username || loading) return;
+
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await reqMe(username);
       setUser(res.data);
-    });
+    } catch {
+      setError("Could not find that username. Please check it and try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   React.useEffect(() => {
@@ -40,12 +56,16 @@ const AuthGate = () => {
     reqMe(user.username).then((res) => {
       setUser(res.data);
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasHydrated]);
 
   if (!hasHydrated)
     return (
       <Template>
-        <LinearProgress color="secondary" />
+        <LinearProgress
+          color="secondary"
+          sx={{ width: "100%", maxWidth: 420 }}
+        />
       </Template>
     );
 
@@ -53,23 +73,50 @@ const AuthGate = () => {
 
   return (
     <Template>
-      <Grid container spacing={1}>
-        <Grid size={9}>
-          <TextField
-            label="Username"
-            fullWidth
-            variant="outlined"
-            onChange={(e) => setInput(e.target.value)}
-            autoFocus
-          />
-        </Grid>
+      <Paper
+        component="form"
+        onSubmit={handleConfirm}
+        elevation={8}
+        sx={{
+          p: 4,
+          width: "100%",
+          maxWidth: 420,
+          display: "flex",
+          flexDirection: "column",
+          gap: 2,
+        }}
+      >
+        <Box>
+          <Typography variant="h4" align="center" sx={{ fontWeight: 700 }}>
+            Doo Anime
+          </Typography>
+          <Typography variant="body2" align="center" color="text.secondary">
+            Track your anime watchlist
+          </Typography>
+        </Box>
 
-        <Grid size={3} sx={{ margin: "auto" }}>
-          <Button onClick={handleConfirm} variant="outlined" size="large">
-            Go
-          </Button>
-        </Grid>
-      </Grid>
+        {error && <Alert severity="error">{error}</Alert>}
+
+        <TextField
+          label="MyAnimeList username"
+          fullWidth
+          variant="outlined"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          autoFocus
+          disabled={loading}
+        />
+
+        <Button
+          type="submit"
+          variant="contained"
+          size="large"
+          loading={loading}
+          disabled={!input.trim()}
+        >
+          Sign in
+        </Button>
+      </Paper>
     </Template>
   );
 };

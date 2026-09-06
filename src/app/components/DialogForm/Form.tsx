@@ -1,7 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
 import {
-  Backdrop,
-  CircularProgress,
   FilterOptionsState,
   FormControl,
   FormControlLabel,
@@ -10,6 +8,8 @@ import {
   InputAdornment,
   Radio,
   RadioGroup,
+  Skeleton,
+  Box,
   Typography,
 } from "@mui/material";
 
@@ -28,7 +28,6 @@ import { STATUS } from "../../constant";
 
 import { AxiosError } from "axios";
 import { IAnime } from "@/database/model";
-import _ from "lodash";
 import { useDebouncedCallback } from "use-debounce";
 import { reqAnimeSearch } from "@/app/services/myanimelist-api";
 import { IMyAnimeList } from "@/app/types/myanimelist";
@@ -41,9 +40,8 @@ export const AnimeForm = ({ id }: { id?: string }) => {
   const [animeList, setAnimeList] = useState<IMyAnimeList[]>([]);
 
   const onUpdate = (id: string, values: Partial<IAnime>) => {
-    const payload = values;
     toast.promise(
-      reqUpdate(id, payload).then(() => {
+      reqUpdate(id, values).then(() => {
         setSync(new Date());
         setOpenDialog(null);
       }),
@@ -56,9 +54,8 @@ export const AnimeForm = ({ id }: { id?: string }) => {
   };
 
   const onCreate = (values: Partial<IAnime>) => {
-    const payload = values;
     toast.promise(
-      reqCreate(payload).then(() => {
+      reqCreate(values).then(() => {
         setSync(new Date());
         setOpenDialog(null);
       }),
@@ -97,11 +94,9 @@ export const AnimeForm = ({ id }: { id?: string }) => {
 
   useEffect(() => {
     if (!id) {
-      setLoading(false);
       return;
     }
 
-    setLoading(true);
     reqGetById(id).then((res) => {
       formik.setValues(res.data);
       setLoading(false);
@@ -109,15 +104,12 @@ export const AnimeForm = ({ id }: { id?: string }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
-  const onInputChange = useDebouncedCallback(
-    (event: React.SyntheticEvent, value: string) => {
-      if (!value) return;
-      reqAnimeSearch(value).then((res) => {
-        setAnimeList(res.data);
-      });
-    },
-    500,
-  );
+  const onInputChange = useDebouncedCallback((_, value: string) => {
+    if (!value) return;
+    reqAnimeSearch(value).then((res) => {
+      setAnimeList(res.data);
+    });
+  }, 500);
 
   const getOptionLabel = (option: IMyAnimeList) => {
     return option.title;
@@ -181,7 +173,7 @@ export const AnimeForm = ({ id }: { id?: string }) => {
 
             <Grid size="grow">
               <Typography noWrap>{option.title}</Typography>
-              <Typography variant="body2" color={`darkgray`} noWrap>
+              <Typography variant="body2" color="text.secondary" noWrap>
                 {option?.alternative_titles?.en}
               </Typography>
             </Grid>
@@ -193,119 +185,125 @@ export const AnimeForm = ({ id }: { id?: string }) => {
     );
   };
 
+  if (loading) {
+    return (
+      <Box sx={{ width: 320, maxWidth: "100%" }}>
+        <Skeleton height={56} />
+        <Skeleton height={56} />
+        <Skeleton height={56} />
+        <Skeleton height={56} />
+      </Box>
+    );
+  }
+
   return (
-    <>
-      {loading ? (
-        <Backdrop open={true} sx={{ zIndex: 10 }}>
-          <CircularProgress color="inherit" />
-        </Backdrop>
-      ) : null}
+    <form onSubmit={formik.handleSubmit} style={{ width: "100%" }}>
+      {id ? (
+        <FormControl fullWidth sx={{ mb: 3 }}>
+          <TextField
+            value={formik.values.name}
+            variant="outlined"
+            label="Name"
+            disabled
+          />
+        </FormControl>
+      ) : (
+        <FormControl fullWidth sx={{ mb: 3 }}>
+          <Autocomplete
+            renderOption={renderOption}
+            options={animeList}
+            getOptionLabel={getOptionLabel}
+            onChange={onChange}
+            onInputChange={onInputChange}
+            filterOptions={filterOptions}
+            renderInput={(params) => (
+              <TextField {...params} variant="outlined" label="Name" />
+            )}
+          />
+        </FormControl>
+      )}
 
-      <form onSubmit={formik.handleSubmit} style={{ width: "100%" }}>
-        {id ? (
-          <FormControl fullWidth sx={{ mb: 3 }}>
-            <TextField
-              value={formik.values.name}
-              variant="outlined"
-              label="Name"
-              disabled
+      <FormControl fullWidth sx={{ mb: 3 }}>
+        <FormLabel>Status</FormLabel>
+        <RadioGroup
+          row
+          name="status"
+          value={formik.values.status}
+          onChange={formik.handleChange}
+        >
+          {Object.values(STATUS).map((value) => (
+            <FormControlLabel
+              value={value}
+              control={<Radio />}
+              label={value}
+              key={value}
             />
-          </FormControl>
-        ) : (
-          <FormControl fullWidth sx={{ mb: 3 }}>
-            <Autocomplete
-              renderOption={renderOption}
-              options={animeList}
-              getOptionLabel={getOptionLabel}
-              onChange={onChange}
-              onInputChange={onInputChange}
-              filterOptions={filterOptions}
-              renderInput={(params) => (
-                <TextField {...params} variant="outlined" label="Name" />
-              )}
-            />
-          </FormControl>
-        )}
+          ))}
+        </RadioGroup>
+      </FormControl>
 
-        <FormControl fullWidth sx={{ mb: 3 }}>
-          <FormLabel>Status</FormLabel>
-          <RadioGroup
-            row
-            name="status"
-            value={formik.values.status}
-            onChange={formik.handleChange}
-          >
-            {Object.values(STATUS).map((value) => (
-              <FormControlLabel
-                value={value}
-                control={<Radio />}
-                label={value}
-                key={value}
-              />
-            ))}
-          </RadioGroup>
-        </FormControl>
+      <FormControl fullWidth sx={{ mb: 3 }}>
+        <TextField
+          name="episode"
+          label="Episode"
+          variant="outlined"
+          value={formik.values.episode}
+          onChange={formik.handleChange}
+          fullWidth
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                {formik.values.totalEpisodes
+                  ? `/${formik.values.totalEpisodes}`
+                  : ""}
+              </InputAdornment>
+            ),
+          }}
+        />
+      </FormControl>
 
-        <FormControl fullWidth sx={{ mb: 3 }}>
-          <TextField
-            name="episode"
-            label="Episode"
-            variant="outlined"
-            value={formik.values.episode}
-            onChange={formik.handleChange}
-            fullWidth
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  {formik.values.totalEpisodes
-                    ? `/${formik.values.totalEpisodes}`
-                    : ""}
-                </InputAdornment>
-              ),
-            }}
-          />
-        </FormControl>
+      <FormControl fullWidth sx={{ mb: 3 }}>
+        <TextField
+          name="episodeOffset"
+          label="Episode Offset"
+          variant="outlined"
+          type="number"
+          value={formik.values.episodeOffset}
+          onChange={formik.handleChange}
+          fullWidth
+          helperText="For Part 2, set this to the last episode of Part 1 (e.g., 13)"
+        />
+      </FormControl>
 
-        <FormControl fullWidth sx={{ mb: 3 }}>
-          <TextField
-            name="episodeOffset"
-            label="Episode Offset"
-            variant="outlined"
-            type="number"
-            value={formik.values.episodeOffset}
-            onChange={formik.handleChange}
-            fullWidth
-            helperText="For Part 2, set this to the last episode of Part 1 (e.g., 13)"
-          />
-        </FormControl>
+      <FormControl fullWidth sx={{ mb: 3 }}>
+        <TextField
+          name="link"
+          label="Link"
+          variant="outlined"
+          value={formik.values.link}
+          onChange={formik.handleChange}
+        />
+      </FormControl>
 
-        <FormControl fullWidth sx={{ mb: 3 }}>
-          <TextField
-            name="link"
-            label="Link"
-            variant="outlined"
-            value={formik.values.link}
-            onChange={formik.handleChange}
-          />
-        </FormControl>
+      <FormControl fullWidth sx={{ mb: 3 }}>
+        <TextField
+          name="imageUrl"
+          label="Image URL"
+          variant="outlined"
+          value={formik.values.imageUrl}
+          onChange={formik.handleChange}
+          fullWidth
+        />
+      </FormControl>
 
-        <FormControl fullWidth sx={{ mb: 3 }}>
-          <TextField
-            name="imageUrl"
-            label="Image Url"
-            variant="outlined"
-            value={formik.values.imageUrl}
-            onChange={formik.handleChange}
-            fullWidth
-          />
-        </FormControl>
-
-        <FormControl fullWidth sx={{ mb: 3 }}>
-          <Button type="submit" variant="outlined">
-            {id ? "Update" : "Create"}
-          </Button>
-        </FormControl>
-      </form>
-    </>
+      <Box sx={{ display: "flex", gap: 1, justifyContent: "flex-end" }}>
+        <Button variant="outlined" onClick={() => setOpenDialog(null)}>
+          Cancel
+        </Button>
+        <Button type="submit" variant="contained">
+          {id ? "Update" : "Create"}
+        </Button>
+      </Box>
+    </form>
   );
 };

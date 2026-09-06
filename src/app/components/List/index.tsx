@@ -1,4 +1,4 @@
-import { Grid } from "@mui/material";
+import { Grid, Chip, Skeleton, Typography } from "@mui/material";
 
 import { useEffect, useState } from "react";
 import { useAppStore } from "../../store";
@@ -12,18 +12,27 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { STATUS } from "@/app/constant";
-import { Chip } from "@mui/material";
 
 import SmartDisplayIcon from "@mui/icons-material/SmartDisplay";
 import ThumbDownIcon from "@mui/icons-material/ThumbDown";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+
 interface AnimeList {
   [status: string]: IAnime[];
 }
 
 interface Expanded {
-  [status: string]: Boolean;
+  [status: string]: boolean;
 }
+
+const STATUS_META: Record<
+  STATUS,
+  { Icon: typeof SmartDisplayIcon; color: string }
+> = {
+  [STATUS.WATCHING]: { Icon: SmartDisplayIcon, color: "info.main" },
+  [STATUS.DROP]: { Icon: ThumbDownIcon, color: "error.main" },
+  [STATUS.DONE]: { Icon: CheckCircleIcon, color: "success.main" },
+};
 
 export default function List() {
   const search = useAppStore((s) => s.search);
@@ -35,6 +44,11 @@ export default function List() {
     [STATUS.WATCHING]: true,
   } as Expanded);
 
+  const getAnimeList = (status: STATUS) =>
+    reqList(status, user?._id || "").then((res) => {
+      setData((prev) => ({ ...prev, [status]: res.data }));
+    });
+
   useEffect(() => {
     getAnimeList(STATUS.WATCHING).finally(() => {
       getAnimeList(STATUS.DROP);
@@ -43,93 +57,76 @@ export default function List() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sync]);
 
-  const getAnimeList = (status: STATUS) =>
-    reqList(status, user?._id || "").then((res) => {
-      setData((prev) => ({ ...prev, [status]: res.data }));
-    });
-
   const handleChange =
     (panel: STATUS) => (event: React.SyntheticEvent, isExpanded: boolean) => {
       setExpanded((prev) => ({ ...prev, [panel]: isExpanded }));
     };
 
-  const statusIcons = (status: STATUS) => {
-    switch (status) {
-      case STATUS.WATCHING:
-        return (
-          <SmartDisplayIcon
-            sx={{ marginRight: "8px", color: "#2196f3", fontSize: "1.5rem" }}
-          />
-        );
-      case STATUS.DROP:
-        return (
-          <ThumbDownIcon
-            sx={{ marginRight: "8px", color: "#f44336", fontSize: "1.5rem" }}
-          />
-        );
-      case STATUS.DONE:
-        return (
-          <CheckCircleIcon
-            sx={{ marginRight: "8px", color: "#4caf50", fontSize: "1.5rem" }}
-          />
-        );
-      default:
-        break;
-    }
-  };
-
   return (
     <>
-      {Object.values(STATUS).map((status) => (
-        <Accordion
-          key={status}
-          expanded={Boolean(expanded[status]) || Boolean(search)}
-          onChange={handleChange(status)}
-          TransitionProps={{
-            timeout: 0,
-          }}
-        >
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              "& .MuiAccordionSummary-content": {
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "flex-start",
-              },
-            }}
+      {Object.values(STATUS).map((status) => {
+        const { Icon, color } = STATUS_META[status];
+        const items =
+          data[status]?.filter((value) =>
+            search
+              ? value.name.toLowerCase().includes(search.toLowerCase())
+              : true,
+          ) ?? [];
+
+        return (
+          <Accordion
+            key={status}
+            expanded={Boolean(expanded[status]) || Boolean(search)}
+            onChange={handleChange(status)}
           >
-            {statusIcons(status)}
-            <span style={{ fontSize: "1.1rem", fontWeight: 500 }}>
-              {status}
-            </span>
-            {data[status] && (
-              <Chip
-                label={data[status].length}
-                size="small"
-                sx={{ marginLeft: "8px" }}
-              />
-            )}
-          </AccordionSummary>
-          <AccordionDetails>
-            <Grid container spacing={3}>
-              {data[status]
-                ?.filter((value) =>
-                  search
-                    ? value.name.toLowerCase().includes(search.toLowerCase())
-                    : true,
-                )
-                .map((value) => (
-                  <Grid key={value._id} size={{ xs: 12, sm: 6 }}>
-                    <ItemList data={value} />
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              sx={{
+                "& .MuiAccordionSummary-content": {
+                  display: "flex",
+                  alignItems: "center",
+                },
+              }}
+            >
+              <Icon sx={{ marginRight: 1, color, fontSize: "1.5rem" }} />
+              <Typography sx={{ fontWeight: 600 }}>{status}</Typography>
+              {data[status] && (
+                <Chip
+                  label={items.length}
+                  size="small"
+                  sx={{ marginLeft: 1 }}
+                />
+              )}
+            </AccordionSummary>
+            <AccordionDetails>
+              {!data[status] ? (
+                <Grid container spacing={3}>
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <Skeleton variant="rounded" height={140} />
                   </Grid>
-                ))}
-            </Grid>
-          </AccordionDetails>
-        </Accordion>
-      ))}
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <Skeleton variant="rounded" height={140} />
+                  </Grid>
+                </Grid>
+              ) : items.length === 0 ? (
+                <Typography variant="body2" color="text.secondary">
+                  {search
+                    ? `No results for “${search}”`
+                    : "Nothing here yet — add an anime to get started."}
+                </Typography>
+              ) : (
+                <Grid container spacing={3}>
+                  {items.map((value) => (
+                    <Grid key={value._id} size={{ xs: 12, sm: 6 }}>
+                      <ItemList data={value} />
+                    </Grid>
+                  ))}
+                </Grid>
+              )}
+            </AccordionDetails>
+          </Accordion>
+        );
+      })}
     </>
   );
 }

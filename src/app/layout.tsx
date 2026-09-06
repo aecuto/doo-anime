@@ -6,13 +6,16 @@ import CssBaseline from "@mui/material/CssBaseline";
 
 const inter = Inter({ subsets: ["latin"] });
 
-const fontFamily = `'Noto Sans', sans-serif;`;
-
-const darkTheme = createTheme({
+const theme = createTheme({
   palette: {
     mode: "dark",
+    primary: { main: "#8b7cf6" },
+    background: { default: "#0f1115", paper: "#181b21" },
   },
-  typography: { fontFamily },
+  shape: { borderRadius: 10 },
+  typography: {
+    fontFamily: inter.style.fontFamily,
+  },
 });
 
 export default function RootLayout({
@@ -23,7 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <ThemeProvider theme={darkTheme}>
+        <ThemeProvider theme={theme}>
           <CssBaseline />
           {children}
         </ThemeProvider>

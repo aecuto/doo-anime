@@ -3,7 +3,8 @@ import * as React from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import { Box } from "@mui/material";
+import { Box, IconButton } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 import { AnimeForm } from "./Form";
 import { useAppStore } from "@/app/store";
 
@@ -15,7 +16,7 @@ export const DialogForm = ({ id }: IPros) => {
   const openDialog = useAppStore((s) => s.openDialog);
   const setOpenDialog = useAppStore((s) => s.setOpenDialog);
 
-  const onClose = (event: object, reason: string) => {
+  const onClose = () => {
     setOpenDialog(null);
   };
 
@@ -25,10 +26,20 @@ export const DialogForm = ({ id }: IPros) => {
     <Dialog
       open={isOpen}
       onClose={onClose}
-      disableEnforceFocus
       PaperProps={{ sx: { width: { xs: "100%", sm: "auto" } } }}
     >
-      <DialogTitle>{id ? "Update" : "Create"}</DialogTitle>
+      <DialogTitle
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        {id ? "Edit anime" : "Add anime"}
+        <IconButton aria-label="Close" size="small" onClick={onClose}>
+          <CloseIcon fontSize="small" />
+        </IconButton>
+      </DialogTitle>
       <DialogContent>
         <Box sx={{ mt: 3 }}>
           <AnimeForm id={id} />
