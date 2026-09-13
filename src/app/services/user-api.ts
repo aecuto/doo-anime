@@ -4,3 +4,11 @@ import { apiService } from "./base";
 export const reqMe = (username: string) => {
   return apiService.get<IUser>(`/user/${username}`);
 };
+
+export const reqMalMe = () => {
+  return apiService.get<IUser>("/auth/mal/me");
+};
+
+export const reqMalLogout = () => {
+  return apiService.post("/auth/mal/logout");
+};

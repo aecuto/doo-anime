@@ -3,13 +3,14 @@ import {
   Alert,
   Box,
   Button,
+  Divider,
   LinearProgress,
   Paper,
   TextField,
   Typography,
 } from "@mui/material";
 import { useAppStore } from "../store";
-import { reqMe } from "@/app/services/user-api";
+import { reqMalMe, reqMe } from "@/app/services/user-api";
 import { useMe } from "@/app/hooks/use-anime";
 import { Dashboard } from "./Dashboard";
 
@@ -42,6 +43,33 @@ const AuthGate = () => {
       setUser(me);
     }
   }, [me, setUser]);
+
+  React.useEffect(() => {
+    if (!hasHydrated || user) return;
+
+    const searchParams = new URLSearchParams(window.location.search);
+    const loginError = searchParams.get("loginError");
+
+    if (loginError) {
+      setError(loginError);
+      window.history.replaceState(null, "", window.location.pathname);
+      return;
+    }
+
+    let cancelled = false;
+
+    reqMalMe()
+      .then((res) => {
+        if (!cancelled && res.data) {
+          setUser(res.data);
+        }
+      })
+      .catch(() => {});
+
+    return () => {
+      cancelled = true;
+    };
+  }, [hasHydrated, user, setUser]);
 
   const handleConfirm = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -116,6 +144,22 @@ const AuthGate = () => {
           disabled={!input.trim()}
         >
           Sign in
+        </Button>
+
+        <Divider>
+          <Typography variant="body2" color="text.secondary">
+            or
+          </Typography>
+        </Divider>
+
+        <Button
+          component="a"
+          href="/api/auth/mal"
+          variant="outlined"
+          size="large"
+          disabled={loading}
+        >
+          Sign in with MyAnimeList
         </Button>
       </Paper>
     </Template>

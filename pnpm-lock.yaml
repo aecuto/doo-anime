@@ -26,9 +26,6 @@ importers:
       formik:
         specifier: ^2.4.2
         version: 2.4.9(@types/react@19.2.18)(react@19.2.8)
-      lodash:
-        specifier: ^4.17.21
-        version: 4.18.1
       moment-timezone:
         specifier: ^0.5.43
         version: 0.5.48
@@ -50,9 +47,6 @@ importers:
       search-params:
         specifier: ^4.0.1
         version: 4.0.1
-      styled-components:
-        specifier: ^6.0.4
-        version: 6.5.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       swr:
         specifier: ^2.5.1
         version: 2.5.1(react@19.2.8)
@@ -63,9 +57,6 @@ importers:
         specifier: ^5.0.15
         version: 5.0.15(@types/react@19.2.18)(react@19.2.8)(use-sync-external-store@1.6.0(react@19.2.8))
     devDependencies:
-      '@types/lodash':
-        specifier: ^4.14.196
-        version: 4.17.25
       '@types/node':
         specifier: 20.4.2
         version: 20.4.2
@@ -641,9 +632,6 @@ packages:
 
   '@types/json5@0.0.29':
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
-
-  '@types/lodash@4.17.25':
-    resolution: {integrity: sha512-+K1NIO8I+F9/wNulfVvu23QYd0Pe9/OCqRrim4NoYIf1VoEDL90Ve4ClzpyqBLc7NpGGWRvYNCKZ1BE/Jpf8dQ==}
 
   '@types/node@20.4.2':
     resolution: {integrity: sha512-Dd0BYtWgnWJKwO1jkmTrzofjK2QXXcai0dmtzvIBhcA+RsG5h8R3xlyta0kGOZRNfL9GuRtb1knmPEhQrePCEw==}
@@ -2156,22 +2144,6 @@ packages:
     resolution: {integrity: sha512-vavAMRXOgBVNF6nyEEmL3DBK19iRpDcoIwW+swQ+CbGiu7lju6t+JklA1MHweoWtadgt4ISVUsXLyDq34ddcwA==}
     engines: {node: '>=4'}
 
-  styled-components@6.5.3:
-    resolution: {integrity: sha512-vAX79sfpmUerP9fsTTxoTrBDE0RuO4ahjInyWYoohNgqrdg63Ms4q6FJ/o2Fyity82NU3cujOT8Ewl9TThBdwg==}
-    engines: {node: '>= 16'}
-    peerDependencies:
-      css-to-react-native: '>= 3.2.0'
-      react: '>= 16.8.0'
-      react-dom: '>= 16.8.0'
-      react-native: '>= 0.68.0'
-    peerDependenciesMeta:
-      css-to-react-native:
-        optional: true
-      react-dom:
-        optional: true
-      react-native:
-        optional: true
-
   styled-jsx@5.1.6:
     resolution: {integrity: sha512-qSVyDTeMotdvQYoHWLNGwRFJHC+i+ZvdBRYosOFgC+Wg1vx4frN2/RG/NA7SYqqvKNLf39P2LSRA2pu6n0XYZA==}
     engines: {node: '>= 12.0.0'}
@@ -2187,9 +2159,6 @@ packages:
 
   stylis@4.2.0:
     resolution: {integrity: sha512-Orov6g6BB1sDfYgzWfTHDOxamtX1bE/zo104Dh9e6fqJ3PooipYyfJ0pUmrZO2wAvO8YbEyeFrkV91XTsGMSrw==}
-
-  stylis@4.3.6:
-    resolution: {integrity: sha512-yQ3rwFWRfwNUY7H5vpU0wfdkNSnvnJinhF9830Swlaxl03zsOjCfmX0ugac+3LtK0lYSgwL/KXc8oYL3mG4YFQ==}
 
   supports-preserve-symlinks-flag@1.0.0:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
@@ -2913,8 +2882,6 @@ snapshots:
   '@types/json-schema@7.0.15': {}
 
   '@types/json5@0.0.29': {}
-
-  '@types/lodash@4.17.25': {}
 
   '@types/node@20.4.2': {}
 
@@ -4628,15 +4595,6 @@ snapshots:
 
   strip-bom@3.0.0: {}
 
-  styled-components@6.5.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
-    dependencies:
-      '@emotion/is-prop-valid': 1.4.0
-      csstype: 3.2.3
-      react: 19.2.8
-      stylis: 4.3.6
-    optionalDependencies:
-      react-dom: 19.2.8(react@19.2.8)
-
   styled-jsx@5.1.6(@babel/core@7.29.7)(react@19.2.8):
     dependencies:
       client-only: 0.0.1
@@ -4645,8 +4603,6 @@ snapshots:
       '@babel/core': 7.29.7
 
   stylis@4.2.0: {}
-
-  stylis@4.3.6: {}
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
