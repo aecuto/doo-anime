@@ -6,24 +6,18 @@ import useSWR, { useSWRConfig } from "swr";
 import { STATUS } from "../constant";
 import { useAppStore } from "../store";
 import { reqGetById, reqList } from "../services/anime-api";
-import {
-  reqAnimeById,
-  reqAnimeSearch,
-  reqMalList,
-} from "../services/myanimelist-api";
+import { reqAnimeById, reqAnimeSearch } from "../services/myanimelist-api";
 import { reqMe } from "../services/user-api";
 
 export const useAnimeList = (status: STATUS) => {
   const user = useAppStore((s) => s.user);
+  const viewMal = useAppStore((s) => s.viewMal);
 
   return useSWR(
-    user ? ["animeList", status] : null,
-    () => reqList(status, user!._id).then((res) => res.data),
+    user ? ["animeList", status, viewMal] : null,
+    () => reqList(status, user!._id, viewMal).then((res) => res.data),
   );
 };
-
-export const useMalList = () =>
-  useSWR("malList", () => reqMalList().then((res) => res.data));
 
 export const useAnime = (id?: string) =>
   useSWR(
@@ -58,8 +52,7 @@ export const useRefreshAnime = () => {
       mutate(
         (key) =>
           Array.isArray(key) &&
-          (key[0] === "animeList" || key[0] === "anime") ||
-          key === "malList",
+          (key[0] === "animeList" || key[0] === "anime"),
         undefined,
         { revalidate: true },
       ),

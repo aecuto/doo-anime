@@ -2,7 +2,7 @@ import { Grid, Chip, Skeleton, Typography } from "@mui/material";
 
 import { useState } from "react";
 import { useAppStore } from "../../store";
-import { useAnimeList, useMalList } from "../../hooks/use-anime";
+import { useAnimeList } from "../../hooks/use-anime";
 
 import ItemList from "@/app/components/Item";
 
@@ -31,7 +31,6 @@ const STATUS_META: Record<
 
 export default function List() {
   const search = useAppStore((s) => s.search);
-  const viewMal = useAppStore((s) => s.viewMal);
 
   const expandedInit = { [STATUS.WATCHING]: true } as Expanded;
   const [expanded, setExpanded] = useState<Expanded>(expandedInit);
@@ -39,8 +38,6 @@ export default function List() {
   const watching = useAnimeList(STATUS.WATCHING);
   const drop = useAnimeList(STATUS.DROP);
   const done = useAnimeList(STATUS.DONE);
-
-  const malList = useMalList();
 
   const lists: Partial<Record<STATUS, ReturnType<typeof useAnimeList>>> = {
     [STATUS.WATCHING]: watching,
@@ -57,7 +54,7 @@ export default function List() {
     <>
       {Object.values(STATUS).map((status) => {
         const { Icon, color } = STATUS_META[status];
-        const list = viewMal ? malList : lists[status];
+        const list = lists[status];
         const items =
           list?.data?.filter((value) =>
             search
@@ -93,9 +90,7 @@ export default function List() {
             <AccordionDetails>
               {list?.error ? (
                 <Typography variant="body2" color="error">
-                  {viewMal
-                    ? "Failed to load your MyAnimeList. Please sign in again."
-                    : `Failed to load ${status} list.`}
+                  {`Failed to load ${status} list.`}
                 </Typography>
               ) : !list?.data ? (
                 <Grid container spacing={3}>
@@ -110,9 +105,7 @@ export default function List() {
                 <Typography variant="body2" color="text.secondary">
                   {search
                     ? `No results for “${search}”`
-                    : viewMal
-                      ? "Nothing here yet on your MyAnimeList."
-                      : "Nothing here yet — add an anime to get started."}
+                    : "Nothing here yet — add an anime to get started."}
                 </Typography>
               ) : (
                 <Grid container spacing={3}>

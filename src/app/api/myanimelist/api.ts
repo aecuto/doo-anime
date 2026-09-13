@@ -46,8 +46,8 @@ export interface IMyListEntry {
     title: string;
     main_picture?: { large?: string; medium?: string };
     num_episodes?: number;
-    list_status?: { status: string; num_episodes_watched: number };
   };
+  list_status?: { status: string; num_episodes_watched: number };
 }
 
 export interface IUpdateMyListStatus {
@@ -74,7 +74,10 @@ export const usersMe = {
       }),
 
     deleteStatus: (animeId: number, accessToken: string) =>
-      instance.delete(`/anime/${animeId}/my_list_status`, withAuth(accessToken)),
+      instance.delete(
+        `/anime/${animeId}/my_list_status`,
+        withAuth(accessToken),
+      ),
 
     updateStatus: (
       animeId: number,

@@ -1,14 +1,15 @@
 import { STATUS } from "../constant";
 import { IAnime } from "@/database/model";
 import { apiService } from "./base";
+import type { IItemAnime } from "@/app/components/Item";
 
 export const reqCreate = (payload: Partial<IAnime>) => {
   return apiService.post("/anime/create", payload);
 };
 
-export const reqList = async (status: string, user: string) => {
-  return apiService.get<IAnime[]>("/anime/list", {
-    params: { status, user },
+export const reqList = (status: string, user: string, mal?: boolean) => {
+  return apiService.get<IItemAnime[]>("/anime/list", {
+    params: { status, user, ...(mal ? { mal } : {}) },
   });
 };
 
