@@ -3,11 +3,10 @@
 import { useCallback } from "react";
 import useSWR, { useSWRConfig } from "swr";
 
-import { STATUS } from "../constant";
-import { useAppStore } from "../store";
-import { reqGetById, reqList } from "../services/anime-api";
-import { reqAnimeById, reqAnimeSearch } from "../services/myanimelist-api";
-import { reqMe } from "../services/user-api";
+import { STATUS } from "@/constants";
+import { useAppStore } from "@/store";
+import { reqGetById, reqList } from "@/services/anime-api";
+import { reqAnimeById, reqAnimeSearch } from "@/services/myanimelist-api";
 
 export const useAnimeList = (status: STATUS) => {
   const user = useAppStore((s) => s.user);
@@ -23,12 +22,6 @@ export const useAnime = (id?: string) =>
   useSWR(
     id ? ["anime", id] : null,
     () => reqGetById(id!).then((res) => res.data),
-  );
-
-export const useMe = (username?: string) =>
-  useSWR(
-    username ? "me" : null,
-    () => reqMe(username!).then((res) => res.data),
   );
 
 export const useAnimeSearch = (query: string) =>

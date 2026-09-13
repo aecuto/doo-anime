@@ -1,16 +1,16 @@
 import { Grid, Chip, Skeleton, Typography } from "@mui/material";
 
 import { useState } from "react";
-import { useAppStore } from "../../store";
-import { useAnimeList } from "../../hooks/use-anime";
+import { useAppStore } from "@/store";
+import { useAnimeList } from "@/hooks/use-anime";
 
-import ItemList from "@/app/components/Item";
+import { AnimeCard } from "@/components/anime/AnimeCard";
 
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { STATUS } from "@/app/constant";
+import { STATUS } from "@/constants";
 
 import SmartDisplayIcon from "@mui/icons-material/SmartDisplay";
 import ThumbDownIcon from "@mui/icons-material/ThumbDown";
@@ -25,23 +25,23 @@ const STATUS_META: Record<
   { Icon: typeof SmartDisplayIcon; color: string }
 > = {
   [STATUS.WATCHING]: { Icon: SmartDisplayIcon, color: "info.main" },
-  [STATUS.DROP]: { Icon: ThumbDownIcon, color: "error.main" },
+  [STATUS.DROPPED]: { Icon: ThumbDownIcon, color: "error.main" },
   [STATUS.DONE]: { Icon: CheckCircleIcon, color: "success.main" },
 };
 
-export default function List() {
+export function AnimeList() {
   const search = useAppStore((s) => s.search);
 
   const expandedInit = { [STATUS.WATCHING]: true } as Expanded;
   const [expanded, setExpanded] = useState<Expanded>(expandedInit);
 
   const watching = useAnimeList(STATUS.WATCHING);
-  const drop = useAnimeList(STATUS.DROP);
+  const dropped = useAnimeList(STATUS.DROPPED);
   const done = useAnimeList(STATUS.DONE);
 
   const lists: Partial<Record<STATUS, ReturnType<typeof useAnimeList>>> = {
     [STATUS.WATCHING]: watching,
-    [STATUS.DROP]: drop,
+    [STATUS.DROPPED]: dropped,
     [STATUS.DONE]: done,
   };
 
@@ -111,7 +111,7 @@ export default function List() {
                 <Grid container spacing={3}>
                   {items.map((value) => (
                     <Grid key={value._id} size={{ xs: 12, sm: 6 }}>
-                      <ItemList data={value} />
+                      <AnimeCard data={value} />
                     </Grid>
                   ))}
                 </Grid>

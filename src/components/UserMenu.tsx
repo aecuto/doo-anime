@@ -24,9 +24,9 @@ import AddIcon from "@mui/icons-material/Add";
 import LogoutIcon from "@mui/icons-material/Logout";
 import SyncIcon from "@mui/icons-material/Sync";
 import DeleteSweepIcon from "@mui/icons-material/DeleteSweep";
-import { useAppStore } from "../store";
-import { reqMalLogout, reqMalMe } from "@/app/services/user-api";
-import { reqDeleteMalList, reqSyncToMal } from "@/app/services/anime-api";
+import { useAppStore } from "@/store";
+import { reqMalLogout, reqMalMe } from "@/services/user-api";
+import { reqDeleteMalList, reqSyncToMal } from "@/services/anime-api";
 import { toast } from "react-toastify";
 import { useSWRConfig } from "swr";
 

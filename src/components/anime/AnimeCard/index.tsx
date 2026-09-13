@@ -3,7 +3,7 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
-import { IAnime } from "@/database/model";
+import { IItemAnime } from "@/types/anime";
 import {
   Box,
   Chip,
@@ -16,21 +16,17 @@ import {
 } from "@mui/material";
 import { alpha, Theme } from "@mui/material/styles";
 
-import InfoDialog from "@/app/components/List/Info";
-import EpisodeAction from "@/app/components/Item/episodeAction";
+import { AnimeInfoDialog } from "./AnimeInfoDialog";
+import { EpisodeAction } from "./EpisodeAction";
 import { Info, Edit, Delete, Replay } from "@mui/icons-material";
-import { DialogForm } from "@/app/components/DialogForm";
-import { reqUpdateReplay, reqDelete } from "@/app/services/anime-api";
+import { AnimeFormDialog } from "@/components/anime/AnimeFormDialog";
+import { reqUpdateReplay, reqDelete } from "@/services/anime-api";
 import { toast } from "react-toastify";
-import { useAppStore } from "@/app/store";
-import { useRefreshAnime } from "@/app/hooks/use-anime";
-import { STATUS } from "@/app/constant";
+import { useAppStore } from "@/store";
+import { useRefreshAnime } from "@/hooks/use-anime";
+import { STATUS } from "@/constants";
 
-export interface IItemAnime extends IAnime {
-  mal?: boolean;
-}
-
-export default function ItemList({ data }: { data: IItemAnime }) {
+export function AnimeCard({ data }: { data: IItemAnime }) {
   const isMal = Boolean(data.mal);
   const refresh = useRefreshAnime();
   const setOpenDialog = useAppStore((s) => s.setOpenDialog);
@@ -74,13 +70,13 @@ export default function ItemList({ data }: { data: IItemAnime }) {
 
   return (
     <>
-      <InfoDialog
+      <AnimeInfoDialog
         animeId={data.animeId}
         open={openInfo}
         setOpen={setInfoOpen}
       />
 
-      {!isMal && <DialogForm id={data._id} />}
+      {!isMal && <AnimeFormDialog id={data._id} />}
 
       <Dialog
         open={confirmDelete}
@@ -218,7 +214,7 @@ export default function ItemList({ data }: { data: IItemAnime }) {
                 />
               )}
 
-              {!isMal && [STATUS.DROP].includes(data.status as STATUS) && (
+              {!isMal && [STATUS.DROPPED].includes(data.status as STATUS) && (
                 <Chip
                   icon={<Replay />}
                   label="Replay"

@@ -1,5 +1,5 @@
-import { IMyAnimeList } from "../types/myanimelist";
-import { apiService } from "./base";
+import { IMyAnimeList } from "@/types/myanimelist";
+import { apiService } from "@/services/base";
 
 export const reqAnimeSearch = (name: string) => {
   return apiService.get<IMyAnimeList[]>(`/myanimelist`, {

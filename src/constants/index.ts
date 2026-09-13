@@ -1,5 +1,5 @@
 export enum STATUS {
   WATCHING = "watching",
-  DROP = "drop",
+  DROPPED = "drop",
   DONE = "done",
 }

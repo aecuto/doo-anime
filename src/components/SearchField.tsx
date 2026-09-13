@@ -10,7 +10,7 @@ interface ISearchField {
   setData: (value: string) => void;
 }
 
-const SearchField = memo(({ data, setData }: ISearchField) => {
+export const SearchField = memo(({ data, setData }: ISearchField) => {
   return (
     <TextField
       label="Search"
@@ -43,5 +43,3 @@ const SearchField = memo(({ data, setData }: ISearchField) => {
 });
 
 SearchField.displayName = "SearchField";
-
-export default SearchField;

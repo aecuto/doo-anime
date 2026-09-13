@@ -5,14 +5,14 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { Box, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { AnimeForm } from "./Form";
-import { useAppStore } from "@/app/store";
+import { AnimeForm } from "./AnimeForm";
+import { useAppStore } from "@/store";
 
-interface IPros {
+interface Props {
   id?: string;
 }
 
-export const DialogForm = ({ id }: IPros) => {
+export const AnimeFormDialog = ({ id }: Props) => {
   const openDialog = useAppStore((s) => s.openDialog);
   const setOpenDialog = useAppStore((s) => s.setOpenDialog);
 

@@ -9,10 +9,10 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useAppStore } from "../store";
-import { reqMalMe, reqMe } from "@/app/services/user-api";
-import { useMe } from "@/app/hooks/use-anime";
-import { Dashboard } from "./Dashboard";
+import { useAppStore } from "@/store";
+import { reqMalMe, reqMe } from "@/services/user-api";
+import { useMe } from "@/hooks/use-user";
+import { Dashboard } from "@/components/Dashboard";
 
 const Template = ({ children }: { children: React.ReactNode }) => (
   <Box
@@ -29,7 +29,7 @@ const Template = ({ children }: { children: React.ReactNode }) => (
   </Box>
 );
 
-const AuthGate = () => {
+export const AuthGate = () => {
   const [input, setInput] = React.useState("");
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
@@ -165,5 +165,3 @@ const AuthGate = () => {
     </Template>
   );
 };
-
-export default AuthGate;

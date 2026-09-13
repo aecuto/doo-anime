@@ -3,11 +3,11 @@
 import { useEffect } from "react";
 import { useMediaQuery } from "@mui/material";
 
-import { reqSync } from "@/app/services/anime-api";
+import { reqSync } from "@/services/anime-api";
 import { ToastContainer } from "react-toastify";
-import AuthGate from "./components/AuthGate";
+import { AuthGate } from "@/components/AuthGate";
 
-function AppPage() {
+export function AppPage() {
   const isMobile = useMediaQuery("(max-width:600px)");
 
   useEffect(() => {
@@ -33,5 +33,3 @@ function AppPage() {
     </>
   );
 }
-
-export default AppPage;

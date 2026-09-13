@@ -1,7 +1,7 @@
-import { STATUS } from "../constant";
+import { STATUS } from "@/constants";
 import { IAnime } from "@/database/model";
-import { apiService } from "./base";
-import type { IItemAnime } from "@/app/components/Item";
+import { apiService } from "@/services/base";
+import type { IItemAnime } from "@/types/anime";
 
 export const reqCreate = (payload: Partial<IAnime>) => {
   return apiService.post("/anime/create", payload);

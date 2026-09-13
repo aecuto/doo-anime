@@ -1,4 +1,4 @@
-import { AnimeModel } from "../../../../database/model";
+import { AnimeModel } from "@/database/model";
 
 import { NextRequest, NextResponse } from "next/server";
 

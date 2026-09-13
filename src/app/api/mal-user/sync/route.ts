@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { AnimeModel, IAnime } from "../../../../database/model";
-import { STATUS } from "@/app/constant";
+import { AnimeModel, IAnime } from "@/database/model";
+import { STATUS } from "@/constants";
 import { SESSION_COOKIE, parseSession } from "../../auth/mal/session";
 import { usersMe } from "../../myanimelist/api";
 
 const MAL_STATUS: Record<string, string> = {
   [STATUS.WATCHING]: "watching",
-  [STATUS.DROP]: "dropped",
+  [STATUS.DROPPED]: "dropped",
   [STATUS.DONE]: "completed",
 };
 

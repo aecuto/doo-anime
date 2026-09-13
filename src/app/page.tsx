@@ -1,4 +1,4 @@
-import AppPage from "@/app/App";
+import { AppPage } from "@/components/AppPage";
 import type { Metadata, Viewport } from "next";
 
 export const metadata: Metadata = {

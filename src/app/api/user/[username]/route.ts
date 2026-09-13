@@ -1,4 +1,4 @@
-import { UserModel } from "../../../../database/model";
+import { UserModel } from "@/database/model";
 
 import { NextRequest, NextResponse } from "next/server";
 

@@ -19,18 +19,18 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Autocomplete from "@mui/material/Autocomplete";
 
-import { reqCreate, reqUpdate } from "../../services/anime-api";
+import { reqCreate, reqUpdate } from "@/services/anime-api";
 import { toast } from "react-toastify";
 
 import { SyntheticEvent, useEffect, useState } from "react";
-import { useAppStore } from "../../store";
-import { STATUS } from "../../constant";
+import { useAppStore } from "@/store";
+import { STATUS } from "@/constants";
 
 import { AxiosError } from "axios";
 import { IAnime } from "@/database/model";
 import { useDebounce } from "use-debounce";
-import { useAnime, useAnimeSearch, useRefreshAnime } from "@/app/hooks/use-anime";
-import { IMyAnimeList } from "@/app/types/myanimelist";
+import { useAnime, useAnimeSearch, useRefreshAnime } from "@/hooks/use-anime";
+import { IMyAnimeList } from "@/types/myanimelist";
 
 export const AnimeForm = ({ id }: { id?: string }) => {
   const setOpenDialog = useAppStore((s) => s.setOpenDialog);

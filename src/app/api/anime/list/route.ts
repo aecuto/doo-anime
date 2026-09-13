@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { AnimeModel } from "../../../../database/model";
+import { AnimeModel } from "@/database/model";
 import { parse } from "search-params";
 import { SESSION_COOKIE, parseSession } from "../../auth/mal/session";
 import { usersMe } from "../../myanimelist/api";
-import type { IItemAnime } from "../../../components/Item";
-import { STATUS } from "@/app/constant";
+import type { IItemAnime } from "@/types/anime";
+import { STATUS } from "@/constants";
 
 interface IList {
   status: string;
@@ -15,7 +15,7 @@ interface IList {
 const MAL_STATUS: Record<string, STATUS> = {
   watching: STATUS.WATCHING,
   completed: STATUS.DONE,
-  dropped: STATUS.DROP,
+  dropped: STATUS.DROPPED,
 };
 
 async function getMalList(req: NextRequest, status?: string) {

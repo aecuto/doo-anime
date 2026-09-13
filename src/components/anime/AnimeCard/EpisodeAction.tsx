@@ -3,11 +3,11 @@ import * as React from "react";
 import { IAnime } from "@/database/model";
 import { Chip, IconButton, Typography } from "@mui/material";
 
-import { reqUpdateEpisode, reqUpdateComplete } from "@/app/services/anime-api";
+import { reqUpdateEpisode, reqUpdateComplete } from "@/services/anime-api";
 import { useDebouncedCallback } from "use-debounce";
 import { toast } from "react-toastify";
 
-import { useRefreshAnime } from "@/app/hooks/use-anime";
+import { useRefreshAnime } from "@/hooks/use-anime";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 
@@ -17,7 +17,7 @@ interface Props {
   data: IAnime;
 }
 
-const EpisodeAction = ({ episode, setEpisode, data }: Props) => {
+export const EpisodeAction = ({ episode, setEpisode, data }: Props) => {
   const refresh = useRefreshAnime();
 
   const episodeRef = React.useRef(episode);
@@ -95,5 +95,3 @@ const EpisodeAction = ({ episode, setEpisode, data }: Props) => {
     </>
   );
 };
-
-export default EpisodeAction;

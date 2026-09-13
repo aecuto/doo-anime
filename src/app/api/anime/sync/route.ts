@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { AnimeModel, IAnime } from "../../../../database/model";
-import { STATUS } from "@/app/constant";
+import { AnimeModel, IAnime } from "@/database/model";
+import { STATUS } from "@/constants";
 import moment from "moment-timezone";
 import { getAnimeById } from "../../myanimelist/api";
 

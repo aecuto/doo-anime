@@ -1,4 +1,4 @@
-import { IMyAnimeList } from "@/app/types/myanimelist";
+import { IMyAnimeList } from "@/types/myanimelist";
 import axios from "axios";
 
 const instance = axios.create({

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { UserModel } from "../../../../../database/model";
+import { UserModel } from "@/database/model";
 import { SESSION_COOKIE, parseSession } from "../session";
 
 export async function GET(request: NextRequest) {

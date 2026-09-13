@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { UserModel } from "../../../../../database/model";
+import { UserModel } from "@/database/model";
 import { usersMe, exchangeToken } from "../../../myanimelist/api";
 import {
   SESSION_COOKIE,

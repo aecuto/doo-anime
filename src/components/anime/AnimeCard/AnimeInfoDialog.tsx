@@ -13,7 +13,7 @@ import TableRow from "@mui/material/TableRow";
 import { Typography } from "@mui/material";
 
 import moment from "moment-timezone";
-import { useMalAnime } from "@/app/hooks/use-anime";
+import { useMalAnime } from "@/hooks/use-anime";
 
 interface Props {
   open: boolean;
@@ -40,7 +40,7 @@ const InfoRow = ({
   </TableRow>
 );
 
-export default function InfoDialog({ open, animeId, setOpen }: Props) {
+export function AnimeInfoDialog({ open, animeId, setOpen }: Props) {
   const { data: anime, error } = useMalAnime(open ? animeId : undefined);
 
   const handleClose = () => {

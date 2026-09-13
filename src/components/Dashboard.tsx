@@ -2,11 +2,11 @@
 
 import * as React from "react";
 import { Box, Container, Typography } from "@mui/material";
-import { useAppStore } from "../store";
-import SearchField from "./SearchField";
-import List from "./List";
-import { DialogForm } from "./DialogForm";
-import { UserMenu } from "./UserMenu";
+import { useAppStore } from "@/store";
+import { SearchField } from "@/components/SearchField";
+import { AnimeList } from "@/components/anime/AnimeList";
+import { AnimeFormDialog } from "@/components/anime/AnimeFormDialog";
+import { UserMenu } from "@/components/UserMenu";
 
 export const Dashboard = () => {
   const search = useAppStore((s) => s.search);
@@ -35,8 +35,8 @@ export const Dashboard = () => {
           <UserMenu />
         </Box>
 
-        <List />
-        <DialogForm />
+        <AnimeList />
+        <AnimeFormDialog />
       </Container>
     </Box>
   );
