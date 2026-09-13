@@ -1,13 +1,10 @@
 import { NextResponse } from "next/server";
 import { AnimeModel, IAnime } from "../../../../database/model";
-import { connectDB } from "../../../../database/mongodb";
 import { STATUS } from "@/app/constant";
 import moment from "moment-timezone";
 import { getAnimeById } from "../../myanimelist/api";
 
 export async function GET() {
-  await connectDB();
-
   const query = {
     animeId: { $ne: null },
     status: STATUS.WATCHING,

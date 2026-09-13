@@ -1,5 +1,4 @@
 import { AnimeModel } from "../../../../database/model";
-import { connectDB } from "../../../../database/mongodb";
 
 import { NextRequest, NextResponse } from "next/server";
 
@@ -8,8 +7,6 @@ interface ISegment {
 }
 
 export async function GET(request: NextRequest, seg: ISegment) {
-  await connectDB();
-
   const { id } = await seg.params;
 
   const found = await AnimeModel.findOne({ _id: id });
@@ -20,8 +17,6 @@ export async function GET(request: NextRequest, seg: ISegment) {
 }
 
 export async function PUT(request: NextRequest, seg: ISegment) {
-  await connectDB();
-
   const { id } = await seg.params;
 
   const body = await request.json();
@@ -42,8 +37,6 @@ export async function PUT(request: NextRequest, seg: ISegment) {
 }
 
 export async function DELETE(request: NextRequest, seg: ISegment) {
-  await connectDB();
-
   const { id } = await seg.params;
   const data = await AnimeModel.findByIdAndDelete({ _id: id });
   return NextResponse.json(data);

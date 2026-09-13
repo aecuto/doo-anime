@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { AnimeModel } from "../../../../database/model";
-import { connectDB } from "../../../../database/mongodb";
 import { parse } from "search-params";
 
 interface IList {
@@ -9,7 +8,6 @@ interface IList {
 }
 
 export async function GET(req: NextRequest) {
-  await connectDB();
   const queryParams = parse(req.nextUrl.search);
 
   const { status, user } = queryParams as unknown as IList;

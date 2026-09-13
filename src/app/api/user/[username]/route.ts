@@ -1,5 +1,4 @@
 import { UserModel } from "../../../../database/model";
-import { connectDB } from "../../../../database/mongodb";
 
 import { NextRequest, NextResponse } from "next/server";
 
@@ -8,8 +7,6 @@ interface ISegment {
 }
 
 export async function GET(request: NextRequest, seg: ISegment) {
-  await connectDB();
-
   const { username } = await seg.params;
 
   let data = await UserModel.findOne({ username });
