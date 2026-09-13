@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { UserModel } from "../../../../../database/model";
+import { usersMe, exchangeToken } from "../../../myanimelist/api";
 import {
   SESSION_COOKIE,
   STATE_COOKIE,
@@ -53,59 +54,61 @@ export async function GET(request: NextRequest) {
     origin,
   ).toString();
 
-  const tokenResponse = await fetch(
-    "https://myanimelist.net/v1/oauth2/token",
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams({
-        client_id: clientId,
-        client_secret: clientSecret,
-        grant_type: "authorization_code",
-        code,
-        redirect_uri: redirectUri,
-        code_verifier: codeVerifier,
-      }),
-    },
-  );
+  let accessToken: string | undefined;
 
-  if (!tokenResponse.ok) {
-    console.error("MAL token exchange failed:", tokenResponse.status, await tokenResponse.text());
+  try {
+    const tokenResponse = await exchangeToken({
+      client_id: clientId,
+      client_secret: clientSecret,
+      grant_type: "authorization_code",
+      code,
+      redirect_uri: redirectUri,
+      code_verifier: codeVerifier,
+    });
+
+    accessToken = tokenResponse.data.access_token;
+  } catch (error: any) {
+    console.error(
+      "MAL token exchange failed:",
+      error?.response?.status,
+      error?.response?.data,
+    );
     return fail("Could not exchange the authorization code with MyAnimeList.");
   }
 
-  const token = (await tokenResponse.json()) as { access_token?: string };
-
-  if (!token.access_token) {
+  if (!accessToken) {
     return fail("MyAnimeList did not return an access token.");
   }
 
-  const malUserResponse = await fetch(
-    "https://api.myanimelist.net/v2/users/@me",
-    { headers: { Authorization: `Bearer ${token.access_token}` } },
-  );
+  let malName: string | undefined;
 
-  if (!malUserResponse.ok) {
+  try {
+    const malUserResponse = await usersMe.get(accessToken);
+    malName = malUserResponse.data.name;
+  } catch {
     return fail("Could not fetch your MyAnimeList user.");
   }
 
-  const malUser = (await malUserResponse.json()) as { name?: string };
-
-  if (!malUser.name) {
+  if (!malName) {
     return fail("MyAnimeList did not return a user name.");
   }
 
-  let user = await UserModel.findOne({ username: malUser.name });
+  let user = await UserModel.findOne({ username: malName });
 
   if (!user) {
-    user = await UserModel.create({ username: malUser.name });
+    user = await UserModel.create({ username: malName });
   }
 
   const response = NextResponse.redirect(new URL("/", origin));
 
   response.cookies.set(
     SESSION_COOKIE,
-    serializeSession({ uid: user._id.toString(), username: user.username, iat: Date.now() / 1000 }),
+    serializeSession({
+      uid: user._id.toString(),
+      username: user.username,
+      token: accessToken,
+      iat: Date.now() / 1000,
+    }),
     cookieOptions(60 * 60 * 24 * 30),
   );
   response.cookies.set(VERIFIER_COOKIE, "", { ...cookieOptions(), maxAge: 0 });

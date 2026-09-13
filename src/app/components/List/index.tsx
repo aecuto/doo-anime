@@ -2,9 +2,8 @@ import { Grid, Chip, Skeleton, Typography } from "@mui/material";
 
 import { useState } from "react";
 import { useAppStore } from "../../store";
-import { useAnimeList } from "../../hooks/use-anime";
+import { useAnimeList, useMalList } from "../../hooks/use-anime";
 
-import { IAnime } from "@/database/model";
 import ItemList from "@/app/components/Item";
 
 import Accordion from "@mui/material/Accordion";
@@ -32,6 +31,7 @@ const STATUS_META: Record<
 
 export default function List() {
   const search = useAppStore((s) => s.search);
+  const viewMal = useAppStore((s) => s.viewMal);
 
   const expandedInit = { [STATUS.WATCHING]: true } as Expanded;
   const [expanded, setExpanded] = useState<Expanded>(expandedInit);
@@ -40,6 +40,8 @@ export default function List() {
   const drop = useAnimeList(STATUS.DROP);
   const done = useAnimeList(STATUS.DONE);
 
+  const malList = useMalList();
+
   const lists: Partial<Record<STATUS, ReturnType<typeof useAnimeList>>> = {
     [STATUS.WATCHING]: watching,
     [STATUS.DROP]: drop,
@@ -47,7 +49,7 @@ export default function List() {
   };
 
   const handleChange =
-    (panel: STATUS) => (event: React.SyntheticEvent, isExpanded: boolean) => {
+    (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
       setExpanded((prev) => ({ ...prev, [panel]: isExpanded }));
     };
 
@@ -55,7 +57,7 @@ export default function List() {
     <>
       {Object.values(STATUS).map((status) => {
         const { Icon, color } = STATUS_META[status];
-        const list = lists[status];
+        const list = viewMal ? malList : lists[status];
         const items =
           list?.data?.filter((value) =>
             search
@@ -91,7 +93,9 @@ export default function List() {
             <AccordionDetails>
               {list?.error ? (
                 <Typography variant="body2" color="error">
-                  Failed to load {status} list.
+                  {viewMal
+                    ? "Failed to load your MyAnimeList. Please sign in again."
+                    : `Failed to load ${status} list.`}
                 </Typography>
               ) : !list?.data ? (
                 <Grid container spacing={3}>
@@ -106,7 +110,9 @@ export default function List() {
                 <Typography variant="body2" color="text.secondary">
                   {search
                     ? `No results for “${search}”`
-                    : "Nothing here yet — add an anime to get started."}
+                    : viewMal
+                      ? "Nothing here yet on your MyAnimeList."
+                      : "Nothing here yet — add an anime to get started."}
                 </Typography>
               ) : (
                 <Grid container spacing={3}>

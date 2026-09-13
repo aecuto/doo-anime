@@ -7,24 +7,42 @@ import {
   Button,
   Chip,
   Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  FormControlLabel,
+  Switch,
   Tooltip,
   Typography,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import LogoutIcon from "@mui/icons-material/Logout";
+import SyncIcon from "@mui/icons-material/Sync";
+import DeleteSweepIcon from "@mui/icons-material/DeleteSweep";
 import { useAppStore } from "../store";
 import SearchField from "./SearchField";
 import List from "./List";
 import { DialogForm } from "./DialogForm";
 import { reqMalLogout, reqMalMe } from "@/app/services/user-api";
+import { reqDeleteMalList, reqSyncToMal } from "@/app/services/anime-api";
+import { toast } from "react-toastify";
+import { useSWRConfig } from "swr";
 
 export const Dashboard = () => {
+  const { mutate } = useSWRConfig();
   const search = useAppStore((s) => s.search);
   const setSearch = useAppStore((s) => s.setSearch);
   const setOpenDialog = useAppStore((s) => s.setOpenDialog);
   const setUser = useAppStore((s) => s.setUser);
   const user = useAppStore((s) => s.user);
+  const viewMal = useAppStore((s) => s.viewMal);
+  const setViewMal = useAppStore((s) => s.setViewMal);
   const [loggingOut, setLoggingOut] = React.useState(false);
+  const [syncing, setSyncing] = React.useState(false);
+  const [deletingMal, setDeletingMal] = React.useState(false);
+  const [confirmDeleteMal, setConfirmDeleteMal] = React.useState(false);
   const [isMalSession, setIsMalSession] = React.useState<boolean | null>(null);
 
   React.useEffect(() => {
@@ -42,6 +60,58 @@ export const Dashboard = () => {
       cancelled = true;
     };
   }, [user?.username]);
+
+  const handleSyncToMal = () => {
+    setSyncing(true);
+    toast.promise(
+      reqSyncToMal()
+        .then((res) => res.data)
+        .then((data) => {
+          mutate("malList");
+          return data;
+        }),
+      {
+        pending: "Syncing your list to MyAnimeList…",
+        success: {
+          render({ data }) {
+            return `Synced ${data.synced} of ${data.total} anime to MyAnimeList`;
+          },
+        },
+        error: {
+          render({ data }: any) {
+            const message = data?.response?.data?.error;
+            return message || "Could not sync to MyAnimeList. Please sign in again.";
+          },
+        },
+      },
+    ).finally(() => setSyncing(false));
+  };
+
+  const handleDeleteMalList = () => {
+    setDeletingMal(true);
+    toast.promise(
+      reqDeleteMalList()
+        .then((res) => res.data)
+        .then((data) => {
+          mutate("malList");
+          return data;
+        }),
+      {
+        pending: "Deleting your MyAnimeList entries…",
+        success: {
+          render({ data }) {
+            return `Deleted ${data.deleted} of ${data.total} anime from MyAnimeList`;
+          },
+        },
+        error: {
+          render({ data }: any) {
+            const message = data?.response?.data?.error;
+            return message || "Could not delete your MyAnimeList. Please sign in again.";
+          },
+        },
+      },
+    ).finally(() => setDeletingMal(false));
+  };
 
   const handleLogout = async () => {
     setLoggingOut(true);
@@ -83,6 +153,50 @@ export const Dashboard = () => {
           >
             Add Anime
           </Button>
+
+          {isMalSession && (
+            <Tooltip title="Show your MyAnimeList instead of your local list">
+              <FormControlLabel
+                sx={{ width: { xs: "100%", sm: "auto" }, mr: 0 }}
+                control={
+                  <Switch
+                    checked={viewMal}
+                    onChange={(e) => setViewMal(e.target.checked)}
+                  />
+                }
+                label="MyAnimeList"
+              />
+            </Tooltip>
+          )}
+
+          {isMalSession && (
+            <Tooltip title="Push your local anime list to your MyAnimeList account">
+              <Button
+                variant="outlined"
+                startIcon={<SyncIcon />}
+                onClick={handleSyncToMal}
+                loading={syncing}
+                sx={{ width: { xs: "100%", sm: "auto" } }}
+              >
+                Sync to MAL
+              </Button>
+            </Tooltip>
+          )}
+
+          {isMalSession && (
+            <Tooltip title="Remove every anime from your MyAnimeList account">
+              <Button
+                color="error"
+                variant="outlined"
+                startIcon={<DeleteSweepIcon />}
+                onClick={() => setConfirmDeleteMal(true)}
+                loading={deletingMal}
+                sx={{ width: { xs: "100%", sm: "auto" } }}
+              >
+                Delete MAL List
+              </Button>
+            </Tooltip>
+          )}
 
           <Box
             sx={{
@@ -154,6 +268,33 @@ export const Dashboard = () => {
 
         <List />
         <DialogForm />
+
+        <Dialog
+          open={confirmDeleteMal}
+          onClose={() => setConfirmDeleteMal(false)}
+          PaperProps={{ sx: { width: { xs: "100%", sm: "auto" } } }}
+        >
+          <DialogTitle>Delete MyAnimeList</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              This will remove every anime from your MyAnimeList account. This
+              action cannot be undone.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setConfirmDeleteMal(false)}>Cancel</Button>
+            <Button
+              color="error"
+              variant="contained"
+              onClick={() => {
+                setConfirmDeleteMal(false);
+                handleDeleteMalList();
+              }}
+            >
+              Delete all
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Container>
     </Box>
   );

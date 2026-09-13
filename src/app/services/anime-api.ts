@@ -48,3 +48,23 @@ export const reqDelete = (id: string) => {
 export const reqSync = () => {
   return apiService.get<IAnime>(`/anime/sync`);
 };
+
+export interface ISyncMalResult {
+  synced: number;
+  failed: string[];
+  total: number;
+}
+
+export const reqSyncToMal = () => {
+  return apiService.post<ISyncMalResult>("/mal-user/sync");
+};
+
+export interface IDeleteMalResult {
+  deleted: number;
+  failed: string[];
+  total: number;
+}
+
+export const reqDeleteMalList = () => {
+  return apiService.post<IDeleteMalResult>("/mal-user/delete");
+};

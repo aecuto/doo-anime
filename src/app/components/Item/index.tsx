@@ -26,7 +26,12 @@ import { useAppStore } from "@/app/store";
 import { useRefreshAnime } from "@/app/hooks/use-anime";
 import { STATUS } from "@/app/constant";
 
-export default function ItemList({ data }: { data: IAnime }) {
+export interface IItemAnime extends IAnime {
+  mal?: boolean;
+}
+
+export default function ItemList({ data }: { data: IItemAnime }) {
+  const isMal = Boolean(data.mal);
   const refresh = useRefreshAnime();
   const setOpenDialog = useAppStore((s) => s.setOpenDialog);
   const [episode, setEpisode] = React.useState(data.episode || 0);
@@ -75,7 +80,7 @@ export default function ItemList({ data }: { data: IAnime }) {
         setOpen={setInfoOpen}
       />
 
-      <DialogForm id={data._id} />
+      {!isMal && <DialogForm id={data._id} />}
 
       <Dialog
         open={confirmDelete}
@@ -108,19 +113,21 @@ export default function ItemList({ data }: { data: IAnime }) {
         variant="outlined"
         onClick={() => {
           if (data.link) window.open(data.link, "_blank", "noreferrer");
+          else if (isMal) setInfoOpen(true);
         }}
         sx={{
           display: "flex",
           flexDirection: { xs: "column", md: "row" },
           height: "100%",
           backgroundColor: "background.paper",
-          cursor: data.link ? "pointer" : "default",
+          cursor: data.link || isMal ? "pointer" : "default",
           transition: "border-color 0.2s, box-shadow 0.2s",
           "@media (hover: hover)": {
             "&:hover": {
-              borderColor: data.link ? "primary.main" : "divider",
+              borderColor:
+                data.link || isMal ? "primary.main" : "divider",
               boxShadow: (theme: Theme) =>
-                data.link
+                data.link || isMal
                   ? `0 0 8px ${alpha(theme.palette.primary.main, 0.4)}`
                   : "none",
             },
@@ -200,16 +207,18 @@ export default function ItemList({ data }: { data: IAnime }) {
                 />
               ) : null}
 
-              <Chip
-                icon={<Edit />}
-                label="Edit"
-                size="small"
-                variant="outlined"
-                color="primary"
-                onClick={handleOpen}
-              />
+              {!isMal && (
+                <Chip
+                  icon={<Edit />}
+                  label="Edit"
+                  size="small"
+                  variant="outlined"
+                  color="primary"
+                  onClick={handleOpen}
+                />
+              )}
 
-              {[STATUS.DROP].includes(data.status as STATUS) && (
+              {!isMal && [STATUS.DROP].includes(data.status as STATUS) && (
                 <Chip
                   icon={<Replay />}
                   label="Replay"
@@ -220,30 +229,53 @@ export default function ItemList({ data }: { data: IAnime }) {
                 />
               )}
 
-              <Chip
-                icon={<Delete />}
-                label="Delete"
-                size="small"
-                variant="outlined"
-                color="error"
-                onClick={() => setConfirmDelete(true)}
-              />
+              {!isMal && (
+                <Chip
+                  icon={<Delete />}
+                  label="Delete"
+                  size="small"
+                  variant="outlined"
+                  color="error"
+                  onClick={() => setConfirmDelete(true)}
+                />
+              )}
             </Box>
 
             <Box
               sx={{
                 display: "flex",
                 justifyContent: "center",
+                alignItems: "center",
                 mt: "auto",
                 pt: 1,
               }}
               onClick={(e) => e.stopPropagation()}
             >
-              <EpisodeAction
-                episode={episode}
-                setEpisode={setEpisode}
-                data={data}
-              />
+              {isMal ? (
+                <Chip
+                  label={
+                    <>
+                      <Typography display="inline" fontSize="1.125rem">
+                        {data.episode || 0}
+                      </Typography>
+                      <Typography
+                        display="inline"
+                        fontSize={12}
+                        color="warning.light"
+                      >
+                        {data.totalEpisodes ? `/${data.totalEpisodes}` : ""}
+                      </Typography>
+                    </>
+                  }
+                  sx={{ minWidth: 88, px: 1.5 }}
+                />
+              ) : (
+                <EpisodeAction
+                  episode={episode}
+                  setEpisode={setEpisode}
+                  data={data}
+                />
+              )}
             </Box>
           </CardContent>
         </Box>

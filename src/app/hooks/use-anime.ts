@@ -6,7 +6,11 @@ import useSWR, { useSWRConfig } from "swr";
 import { STATUS } from "../constant";
 import { useAppStore } from "../store";
 import { reqGetById, reqList } from "../services/anime-api";
-import { reqAnimeById, reqAnimeSearch } from "../services/myanimelist-api";
+import {
+  reqAnimeById,
+  reqAnimeSearch,
+  reqMalList,
+} from "../services/myanimelist-api";
 import { reqMe } from "../services/user-api";
 
 export const useAnimeList = (status: STATUS) => {
@@ -17,6 +21,9 @@ export const useAnimeList = (status: STATUS) => {
     () => reqList(status, user!._id).then((res) => res.data),
   );
 };
+
+export const useMalList = () =>
+  useSWR("malList", () => reqMalList().then((res) => res.data));
 
 export const useAnime = (id?: string) =>
   useSWR(
@@ -51,7 +58,8 @@ export const useRefreshAnime = () => {
       mutate(
         (key) =>
           Array.isArray(key) &&
-          (key[0] === "animeList" || key[0] === "anime"),
+          (key[0] === "animeList" || key[0] === "anime") ||
+          key === "malList",
         undefined,
         { revalidate: true },
       ),

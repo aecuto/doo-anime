@@ -22,6 +22,7 @@ export const createCodeChallenge = (codeVerifier: string) => codeVerifier;
 interface ISessionPayload {
   uid: string;
   username: string;
+  token?: string;
   iat: number;
 }
 
