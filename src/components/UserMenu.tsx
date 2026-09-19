@@ -60,64 +60,90 @@ export const UserMenu = () => {
     };
   }, [user?.username]);
 
+  const finishToast = (
+    id: string | number,
+    render: string,
+    type: "success" | "error",
+  ) =>
+    toast.update(id, {
+      render,
+      type,
+      isLoading: false,
+      autoClose: type === "error" ? 8000 : 5000,
+    });
+
   const handleSyncToMal = () => {
     setSyncing(true);
-    toast.promise(
-      reqSyncToMal()
-        .then((res) => res.data)
-        .then((data) => {
-          mutate(
-            (key) => Array.isArray(key) && key[0] === "animeList",
-            undefined,
-            { revalidate: true },
-          );
-          return data;
-        }),
-      {
-        pending: "Syncing your list to MyAnimeList…",
-        success: {
-          render({ data }) {
-            return `Synced ${data.synced} of ${data.total} anime to MyAnimeList`;
-          },
-        },
-        error: {
-          render({ data }: any) {
-            const message = data?.response?.data?.error;
-            return message || "Could not sync to MyAnimeList. Please sign in again.";
-          },
-        },
-      },
-    ).finally(() => setSyncing(false));
+    const toastId = toast.loading("Syncing your list to MyAnimeList…");
+
+    reqSyncToMal(({ synced, total }) =>
+      toast.update(toastId, {
+        render: `Syncing your list to MyAnimeList… ${synced}/${total}`,
+      }),
+    )
+      .then((result) => {
+        mutate(
+          (key) => Array.isArray(key) && key[0] === "animeList",
+          undefined,
+          { revalidate: true },
+        );
+        const failedNote = result.failed.length
+          ? ` (${result.failed.length} failed: ${result.failed.slice(0, 3).join(", ")}${
+              result.failed.length > 3 ? "…" : ""
+            })`
+          : "";
+        finishToast(
+          toastId,
+          `Synced ${result.synced} of ${result.total} anime to MyAnimeList${failedNote}`,
+          "success",
+        );
+      })
+      .catch((error: any) => {
+        const message = error?.response?.data?.error;
+        finishToast(
+          toastId,
+          message || "Could not sync to MyAnimeList. Please sign in again.",
+          "error",
+        );
+      })
+      .finally(() => setSyncing(false));
   };
 
   const handleDeleteMalList = () => {
     setDeletingMal(true);
-    toast.promise(
-      reqDeleteMalList()
-        .then((res) => res.data)
-        .then((data) => {
-          mutate(
-            (key) => Array.isArray(key) && key[0] === "animeList",
-            undefined,
-            { revalidate: true },
-          );
-          return data;
-        }),
-      {
-        pending: "Deleting your MyAnimeList entries…",
-        success: {
-          render({ data }) {
-            return `Deleted ${data.deleted} of ${data.total} anime from MyAnimeList`;
-          },
-        },
-        error: {
-          render({ data }: any) {
-            const message = data?.response?.data?.error;
-            return message || "Could not delete your MyAnimeList. Please sign in again.";
-          },
-        },
-      },
-    ).finally(() => setDeletingMal(false));
+    const toastId = toast.loading("Deleting your MyAnimeList entries…");
+
+    reqDeleteMalList(({ deleted }) =>
+      toast.update(toastId, {
+        render: `Deleting your MyAnimeList entries… ${deleted} removed`,
+      }),
+    )
+      .then((result) => {
+        mutate(
+          (key) => Array.isArray(key) && key[0] === "animeList",
+          undefined,
+          { revalidate: true },
+        );
+        const failedNote = result.failed.length
+          ? ` (${result.failed.length} failed: ${result.failed.slice(0, 3).join(", ")}${
+              result.failed.length > 3 ? "…" : ""
+            })`
+          : "";
+        finishToast(
+          toastId,
+          `Deleted ${result.deleted} of ${result.total} anime from MyAnimeList${failedNote}`,
+          "success",
+        );
+      })
+      .catch((error: any) => {
+        const message = error?.response?.data?.error;
+        finishToast(
+          toastId,
+          message || "Could not delete your MyAnimeList. Please sign in again.",
+          "error",
+        );
+      })
+      .finally(() => setDeletingMal(false));
   };
 
   const handleLogout = async () => {

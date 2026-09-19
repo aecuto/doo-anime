@@ -73,6 +73,12 @@ export const usersMe = {
         ...withAuth(accessToken),
       }),
 
+    getPage: (accessToken: string, limit: number) =>
+      instance.get<{ data: IMyListEntry[] }>("/users/@me/animelist", {
+        params: { fields: "id,title", limit },
+        ...withAuth(accessToken),
+      }),
+
     deleteStatus: (animeId: number, accessToken: string) =>
       instance.delete(
         `/anime/${animeId}/my_list_status`,

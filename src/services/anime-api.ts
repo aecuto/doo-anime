@@ -56,8 +56,34 @@ export interface ISyncMalResult {
   total: number;
 }
 
-export const reqSyncToMal = () => {
-  return apiService.post<ISyncMalResult>("/mal-user/sync");
+interface ISyncMalBatch extends ISyncMalResult {
+  nextCursor: string | null;
+  done: boolean;
+}
+
+const reqSyncToMalBatch = (cursor?: string | null) =>
+  apiService.post<ISyncMalBatch>("/mal-user/sync", cursor ? { cursor } : {});
+
+// Drives the batched sync from the client so every request stays small
+// enough for serverless timeouts (Vercel Hobby).
+export const reqSyncToMal = async (
+  onProgress?: (progress: { synced: number; failed: number; total: number }) => void,
+): Promise<ISyncMalResult> => {
+  let cursor: string | null = null;
+  let total = 0;
+  let synced = 0;
+  const failed: string[] = [];
+
+  do {
+    const { data } = await reqSyncToMalBatch(cursor);
+    total = data.total;
+    synced += data.synced;
+    failed.push(...data.failed);
+    cursor = data.nextCursor;
+    onProgress?.({ synced, failed: failed.length, total });
+  } while (cursor);
+
+  return { synced, failed, total };
 };
 
 export interface IDeleteMalResult {
@@ -66,6 +92,30 @@ export interface IDeleteMalResult {
   total: number;
 }
 
-export const reqDeleteMalList = () => {
-  return apiService.post<IDeleteMalResult>("/mal-user/delete");
+interface IDeleteMalBatch {
+  deleted: number;
+  failed: string[];
+  done: boolean;
+}
+
+const reqDeleteMalBatch = () =>
+  apiService.post<IDeleteMalBatch>("/mal-user/delete");
+
+// Drains the MAL list one page per request to stay within serverless timeouts.
+export const reqDeleteMalList = async (
+  onProgress?: (progress: { deleted: number; failed: number }) => void,
+): Promise<IDeleteMalResult> => {
+  let deleted = 0;
+  let failed: string[] = [];
+  let done = false;
+
+  while (!done) {
+    const { data } = await reqDeleteMalBatch();
+    deleted += data.deleted;
+    failed = [...new Set([...failed, ...data.failed])];
+    done = data.done;
+    onProgress?.({ deleted, failed: failed.length });
+  }
+
+  return { deleted, failed, total: deleted + failed.length };
 };
