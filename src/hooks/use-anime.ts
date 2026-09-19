@@ -10,11 +10,10 @@ import { reqAnimeById, reqAnimeSearch } from "@/services/myanimelist-api";
 
 export const useAnimeList = (status: STATUS) => {
   const user = useAppStore((s) => s.user);
-  const viewMal = useAppStore((s) => s.viewMal);
 
   return useSWR(
-    user ? ["animeList", status, viewMal] : null,
-    () => reqList(status, user!._id, viewMal).then((res) => res.data),
+    user ? ["animeList", status] : null,
+    () => reqList(status, user!._id).then((res) => res.data),
   );
 };
 

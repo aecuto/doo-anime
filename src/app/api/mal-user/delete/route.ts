@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { AnimeModel } from "@/database/model";
 import { SESSION_COOKIE, parseSession } from "../../auth/mal/session";
 import { usersMe } from "../../myanimelist/api";
 
@@ -71,6 +72,10 @@ export async function POST(request: NextRequest) {
   await runPool(page, CONCURRENCY, async ({ node }) => {
     try {
       await deleteWithRetry(node.id, token);
+      await AnimeModel.updateMany(
+        { user: session.uid, animeId: node.id },
+        { mal: false },
+      );
       deleted += 1;
     } catch {
       failed.push(node.title);

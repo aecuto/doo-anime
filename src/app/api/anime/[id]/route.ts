@@ -21,8 +21,15 @@ export async function PUT(request: NextRequest, seg: ISegment) {
 
   const body = await request.json();
 
+  const found = await AnimeModel.findOne({ _id: id });
+  if (!found)
+    return NextResponse.json({ message: "anime not found" }, { status: 404 });
+
   if (body.name) {
-    const exist = await AnimeModel.findOne({ name: body.name });
+    const exist = await AnimeModel.findOne({
+      name: body.name,
+      user: body.user ?? found.user,
+    });
     if (exist && String(exist._id) !== id)
       return NextResponse.json(
         { message: "anime's name is exists" },

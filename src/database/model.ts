@@ -14,6 +14,7 @@ export interface IAnime {
   animeId: number;
   imageUrl: string;
   user: string;
+  mal: boolean;
 }
 
 const AnimeSchema = new Schema(
@@ -28,6 +29,7 @@ const AnimeSchema = new Schema(
     animeId: Number,
     imageUrl: String,
     user: { type: Schema.Types.ObjectId, ref: "user" },
+    mal: { type: Boolean, default: false },
   },
   { timestamps: true },
 );

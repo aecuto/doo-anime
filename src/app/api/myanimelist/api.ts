@@ -51,7 +51,7 @@ export interface IMyListEntry {
 }
 
 export interface IUpdateMyListStatus {
-  status: string;
+  status?: string;
   num_watched_episodes?: number;
 }
 
@@ -89,13 +89,21 @@ export const usersMe = {
       animeId: number,
       payload: IUpdateMyListStatus,
       accessToken: string,
-    ) =>
-      instance.put(
+    ) => {
+      const body = new URLSearchParams();
+      if (payload.status) {
+        body.set("status", payload.status);
+      }
+      if (payload.num_watched_episodes !== undefined) {
+        body.set(
+          "num_watched_episodes",
+          String(payload.num_watched_episodes),
+        );
+      }
+
+      return instance.put(
         `/anime/${animeId}/my_list_status`,
-        new URLSearchParams({
-          status: payload.status,
-          num_watched_episodes: String(payload.num_watched_episodes ?? 0),
-        }),
+        body,
         {
           ...withAuth(accessToken),
           headers: {
@@ -103,6 +111,7 @@ export const usersMe = {
             "Content-Type": "application/x-www-form-urlencoded",
           },
         },
-      ),
+      );
+    },
   },
 };

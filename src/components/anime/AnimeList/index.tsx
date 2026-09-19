@@ -1,4 +1,4 @@
-import { Grid, Chip, Skeleton, Typography } from "@mui/material";
+import { Grid, Chip, Skeleton, Typography, Button } from "@mui/material";
 
 import { useState } from "react";
 import { useAppStore } from "@/store";
@@ -20,6 +20,8 @@ interface Expanded {
   [status: string]: boolean;
 }
 
+const PAGE_SIZE = 12;
+
 const STATUS_META: Record<
   STATUS,
   { Icon: typeof SmartDisplayIcon; color: string }
@@ -34,6 +36,7 @@ export function AnimeList() {
 
   const expandedInit = { [STATUS.WATCHING]: true } as Expanded;
   const [expanded, setExpanded] = useState<Expanded>(expandedInit);
+  const [visibleCount, setVisibleCount] = useState<Record<string, number>>({});
 
   const watching = useAnimeList(STATUS.WATCHING);
   const dropped = useAnimeList(STATUS.DROPPED);
@@ -61,12 +64,18 @@ export function AnimeList() {
               ? value.name.toLowerCase().includes(search.toLowerCase())
               : true,
           ) ?? [];
+        const searching = Boolean(search);
+        const shown = searching
+          ? items
+          : items.slice(0, visibleCount[status] ?? PAGE_SIZE);
+        const hasMore = !searching && items.length > shown.length;
 
         return (
           <Accordion
             key={status}
-            expanded={Boolean(expanded[status]) || Boolean(search)}
+            expanded={Boolean(expanded[status]) || searching}
             onChange={handleChange(status)}
+            TransitionProps={{ unmountOnExit: true }}
           >
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
@@ -81,7 +90,7 @@ export function AnimeList() {
               <Typography sx={{ fontWeight: 600 }}>{status}</Typography>
               {list?.data && (
                 <Chip
-                  label={items.length}
+                  label={searching ? `${items.length}/${list.data.length}` : items.length}
                   size="small"
                   sx={{ marginLeft: 1 }}
                 />
@@ -109,12 +118,26 @@ export function AnimeList() {
                 </Typography>
               ) : (
                 <Grid container spacing={3}>
-                  {items.map((value) => (
+                  {shown.map((value) => (
                     <Grid key={value._id} size={{ xs: 12, sm: 6 }}>
                       <AnimeCard data={value} />
                     </Grid>
                   ))}
                 </Grid>
+              )}
+              {hasMore && (
+                <Button
+                  fullWidth
+                  sx={{ marginTop: 2 }}
+                  onClick={() =>
+                    setVisibleCount((prev) => ({
+                      ...prev,
+                      [status]: (prev[status] ?? PAGE_SIZE) + PAGE_SIZE,
+                    }))
+                  }
+                >
+                  {`Show more (${items.length - shown.length} remaining)`}
+                </Button>
               )}
             </AccordionDetails>
           </Accordion>

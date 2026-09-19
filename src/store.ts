@@ -9,8 +9,6 @@ interface IAppState {
   setUser: (user: IUser | undefined) => void;
   openDialog: string | null;
   setOpenDialog: (openDialog: string | null) => void;
-  viewMal: boolean;
-  setViewMal: (viewMal: boolean) => void;
   hasHydrated: boolean;
   setHasHydrated: (state: boolean) => void;
 }
@@ -24,8 +22,6 @@ export const useAppStore = create<IAppState>()(
       setUser: (user) => set({ user }),
       openDialog: null,
       setOpenDialog: (openDialog) => set({ openDialog }),
-      viewMal: false,
-      setViewMal: (viewMal) => set({ viewMal }),
       hasHydrated: false,
       setHasHydrated: (hasHydrated) => set({ hasHydrated }),
     }),

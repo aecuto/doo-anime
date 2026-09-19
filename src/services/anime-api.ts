@@ -7,9 +7,9 @@ export const reqCreate = (payload: Partial<IAnime>) => {
   return apiService.post("/anime/create", payload);
 };
 
-export const reqList = (status: string, user: string, mal?: boolean) => {
+export const reqList = (status: string, user: string) => {
   return apiService.get<IItemAnime[]>("/anime/list", {
-    params: { status, user, ...(mal ? { mal } : {}) },
+    params: { status, user },
   });
 };
 
@@ -49,6 +49,12 @@ export const reqDelete = (id: string) => {
 export const reqSync = () => {
   return apiService.get<IAnime>(`/anime/sync`);
 };
+
+export const reqSyncEpisodeToMal = (
+  animeId: number,
+  episode: number,
+  status?: string,
+) => apiService.post("/mal-user/update", { animeId, episode, status });
 
 export interface ISyncMalResult {
   synced: number;

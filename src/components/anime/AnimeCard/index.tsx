@@ -18,7 +18,15 @@ import { alpha, Theme } from "@mui/material/styles";
 
 import { AnimeInfoDialog } from "./AnimeInfoDialog";
 import { EpisodeAction } from "./EpisodeAction";
-import { Info, Edit, Delete, Replay } from "@mui/icons-material";
+import {
+  Info,
+  Edit,
+  Delete,
+  Replay,
+  EventAvailable,
+  Link as LinkIcon,
+  CloudDone as CloudDoneIcon,
+} from "@mui/icons-material";
 import { AnimeFormDialog } from "@/components/anime/AnimeFormDialog";
 import { reqUpdateReplay, reqDelete } from "@/services/anime-api";
 import { toast } from "react-toastify";
@@ -26,8 +34,21 @@ import { useAppStore } from "@/store";
 import { useRefreshAnime } from "@/hooks/use-anime";
 import { STATUS } from "@/constants";
 
-export function AnimeCard({ data }: { data: IItemAnime }) {
-  const isMal = Boolean(data.mal);
+const formatDate = (date: Date) =>
+  new Date(date).toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+
+const actionChipSx = {
+  height: 26,
+  fontSize: 12,
+  "& .MuiChip-icon": { fontSize: 16 },
+} as const;
+
+function AnimeCardBase({ data }: { data: IItemAnime }) {
+  const synced = Boolean(data.mal);
   const refresh = useRefreshAnime();
   const setOpenDialog = useAppStore((s) => s.setOpenDialog);
   const [episode, setEpisode] = React.useState(data.episode || 0);
@@ -41,6 +62,20 @@ export function AnimeCard({ data }: { data: IItemAnime }) {
   const handleClick = () => {
     setInfoOpen(true);
   };
+
+  const completedDate =
+    data.status === STATUS.DONE && data.completed
+      ? formatDate(data.completed)
+      : null;
+  const linkHost = data.link
+    ? (() => {
+        try {
+          return new URL(data.link).hostname.replace(/^www\./, "");
+        } catch {
+          return null;
+        }
+      })()
+    : null;
 
   const handleOpen = () => {
     setOpenDialog(data._id);
@@ -76,7 +111,7 @@ export function AnimeCard({ data }: { data: IItemAnime }) {
         setOpen={setInfoOpen}
       />
 
-      {!isMal && <AnimeFormDialog id={data._id} />}
+      <AnimeFormDialog id={data._id} />
 
       <Dialog
         open={confirmDelete}
@@ -109,21 +144,19 @@ export function AnimeCard({ data }: { data: IItemAnime }) {
         variant="outlined"
         onClick={() => {
           if (data.link) window.open(data.link, "_blank", "noreferrer");
-          else if (isMal) setInfoOpen(true);
         }}
         sx={{
           display: "flex",
           flexDirection: { xs: "column", md: "row" },
           height: "100%",
           backgroundColor: "background.paper",
-          cursor: data.link || isMal ? "pointer" : "default",
+          cursor: data.link ? "pointer" : "default",
           transition: "border-color 0.2s, box-shadow 0.2s",
           "@media (hover: hover)": {
             "&:hover": {
-              borderColor:
-                data.link || isMal ? "primary.main" : "divider",
+              borderColor: data.link ? "primary.main" : "divider",
               boxShadow: (theme: Theme) =>
-                data.link || isMal
+                data.link
                   ? `0 0 8px ${alpha(theme.palette.primary.main, 0.4)}`
                   : "none",
             },
@@ -144,6 +177,7 @@ export function AnimeCard({ data }: { data: IItemAnime }) {
               image={data.imageUrl}
               alt={data.name}
               height="100%"
+              loading="lazy"
             />
           ) : (
             <Box
@@ -189,7 +223,71 @@ export function AnimeCard({ data }: { data: IItemAnime }) {
             </Typography>
 
             <Box
-              sx={{ display: "flex", gap: 1, flexWrap: "wrap", mb: 1 }}
+              sx={{
+                display: "flex",
+                gap: 0.5,
+                flexWrap: "wrap",
+                alignItems: "center",
+              }}
+            >
+              {synced && (
+                <Chip
+                  icon={<CloudDoneIcon />}
+                  label="On MAL"
+                  size="small"
+                  sx={{
+                    height: 26,
+                    fontSize: 12,
+                    bgcolor: "#2e51a2",
+                    color: "#fff",
+                    "& .MuiChip-icon": { color: "#fff", fontSize: 16 },
+                  }}
+                />
+              )}
+
+              {completedDate && (
+                <Typography
+                  variant="caption"
+                  sx={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 0.5,
+                    color: "text.secondary",
+                  }}
+                >
+                  <EventAvailable sx={{ fontSize: 16 }} />
+                  Finished {completedDate}
+                </Typography>
+              )}
+
+              {linkHost && (
+                <Typography
+                  variant="caption"
+                  sx={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 0.5,
+                    color: "text.secondary",
+                    minWidth: 0,
+                  }}
+                >
+                  <LinkIcon sx={{ fontSize: 16 }} />
+                  <Box
+                    component="span"
+                    sx={{
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {linkHost}
+                  </Box>
+                </Typography>
+              )}
+            </Box>
+
+            <Box
+              sx={{ display: "flex", gap: 0.5, flexWrap: "wrap", mt: "auto", pt: 1.5 }}
               onClick={(e) => e.stopPropagation()}
             >
               {data.animeId ? (
@@ -199,42 +297,42 @@ export function AnimeCard({ data }: { data: IItemAnime }) {
                   size="small"
                   variant="outlined"
                   color="info"
+                  sx={actionChipSx}
                   onClick={handleClick}
                 />
               ) : null}
 
-              {!isMal && (
-                <Chip
-                  icon={<Edit />}
-                  label="Edit"
-                  size="small"
-                  variant="outlined"
-                  color="primary"
-                  onClick={handleOpen}
-                />
-              )}
+              <Chip
+                icon={<Edit />}
+                label="Edit"
+                size="small"
+                variant="outlined"
+                color="primary"
+                sx={actionChipSx}
+                onClick={handleOpen}
+              />
 
-              {!isMal && [STATUS.DROPPED].includes(data.status as STATUS) && (
+              {[STATUS.DROPPED].includes(data.status as STATUS) && (
                 <Chip
                   icon={<Replay />}
                   label="Replay"
                   size="small"
                   variant="outlined"
                   color="success"
+                  sx={actionChipSx}
                   onClick={onReplay}
                 />
               )}
 
-              {!isMal && (
-                <Chip
-                  icon={<Delete />}
-                  label="Delete"
-                  size="small"
-                  variant="outlined"
-                  color="error"
-                  onClick={() => setConfirmDelete(true)}
-                />
-              )}
+              <Chip
+                icon={<Delete />}
+                label="Delete"
+                size="small"
+                variant="outlined"
+                color="error"
+                sx={actionChipSx}
+                onClick={() => setConfirmDelete(true)}
+              />
             </Box>
 
             <Box
@@ -242,36 +340,15 @@ export function AnimeCard({ data }: { data: IItemAnime }) {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                mt: "auto",
                 pt: 1,
               }}
               onClick={(e) => e.stopPropagation()}
             >
-              {isMal ? (
-                <Chip
-                  label={
-                    <>
-                      <Typography display="inline" fontSize="1.125rem">
-                        {data.episode || 0}
-                      </Typography>
-                      <Typography
-                        display="inline"
-                        fontSize={12}
-                        color="warning.light"
-                      >
-                        {data.totalEpisodes ? `/${data.totalEpisodes}` : ""}
-                      </Typography>
-                    </>
-                  }
-                  sx={{ minWidth: 88, px: 1.5 }}
-                />
-              ) : (
-                <EpisodeAction
-                  episode={episode}
-                  setEpisode={setEpisode}
-                  data={data}
-                />
-              )}
+              <EpisodeAction
+                episode={episode}
+                setEpisode={setEpisode}
+                data={data}
+              />
             </Box>
           </CardContent>
         </Box>
@@ -279,3 +356,5 @@ export function AnimeCard({ data }: { data: IItemAnime }) {
     </>
   );
 }
+
+export const AnimeCard = React.memo(AnimeCardBase);

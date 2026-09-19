@@ -100,6 +100,7 @@ export async function POST(request: NextRequest) {
         },
         token,
       );
+      await AnimeModel.updateOne({ _id: anime._id }, { mal: true });
       synced += 1;
     } catch {
       failed.push(anime.name);

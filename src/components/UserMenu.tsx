@@ -16,7 +16,6 @@ import {
   ListItemText,
   Menu,
   MenuItem,
-  Switch,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -35,8 +34,6 @@ export const UserMenu = () => {
   const setOpenDialog = useAppStore((s) => s.setOpenDialog);
   const setUser = useAppStore((s) => s.setUser);
   const user = useAppStore((s) => s.user);
-  const viewMal = useAppStore((s) => s.viewMal);
-  const setViewMal = useAppStore((s) => s.setViewMal);
   const [menuAnchor, setMenuAnchor] = React.useState<HTMLElement | null>(null);
   const [isMalSession, setIsMalSession] = React.useState<boolean | null>(null);
   const [syncing, setSyncing] = React.useState(false);
@@ -164,9 +161,7 @@ export const UserMenu = () => {
     <>
       <Tooltip
         title={
-          isMalSession
-            ? "Signed in via MyAnimeList"
-            : "Signed in with username"
+          isMalSession ? "Signed in via MyAnimeList" : "Signed in with username"
         }
       >
         <Chip
@@ -228,16 +223,6 @@ export const UserMenu = () => {
         </MenuItem>
 
         {isMalSession && <Divider />}
-        {isMalSession && (
-          <MenuItem disableRipple sx={{ cursor: "default" }}>
-            <ListItemText>MyAnimeList</ListItemText>
-            <Switch
-              edge="end"
-              checked={viewMal}
-              onChange={(e) => setViewMal(e.target.checked)}
-            />
-          </MenuItem>
-        )}
         {isMalSession && (
           <MenuItem
             disabled={syncing}

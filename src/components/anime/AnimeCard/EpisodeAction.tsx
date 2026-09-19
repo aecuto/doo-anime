@@ -3,11 +3,12 @@ import * as React from "react";
 import { IAnime } from "@/database/model";
 import { Chip, IconButton, Typography } from "@mui/material";
 
-import { reqUpdateEpisode, reqUpdateComplete } from "@/services/anime-api";
+import { reqUpdateEpisode, reqUpdateComplete, reqSyncEpisodeToMal } from "@/services/anime-api";
 import { useDebouncedCallback } from "use-debounce";
 import { toast } from "react-toastify";
 
 import { useRefreshAnime } from "@/hooks/use-anime";
+import { STATUS } from "@/constants";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 
@@ -36,17 +37,40 @@ export const EpisodeAction = ({ episode, setEpisode, data }: Props) => {
     );
   };
 
+  // Best-effort push of the episode change to MyAnimeList. Ignored entirely
+  // when there is no linked MAL id or no MAL session (401); other failures
+  // surface a quiet toast and can be fixed with "Sync to MAL" later.
+  const syncMalEpisode = (episode: number, status?: string) => {
+    if (!data.animeId) return;
+
+    reqSyncEpisodeToMal(data.animeId, episode, status)
+      .then(() => refresh())
+      .catch((error: { response?: { status?: number } }) => {
+        if (error?.response?.status !== 401) {
+          toast.error("MyAnimeList sync failed");
+        }
+      });
+  };
+
   const reqUpdateEpisodeDeb = useDebouncedCallback(() => {
     let newEpisode = episodeRef.current;
+    let completed = false;
 
     if (data.totalEpisodes && newEpisode > data.totalEpisodes) {
       newEpisode = data.totalEpisodes;
-      onComplete();
+      completed = true;
     }
 
     reqUpdateEpisode(data._id, newEpisode).then(() =>
       toast.success("Episodes updated"),
     );
+
+    if (completed) {
+      onComplete();
+      syncMalEpisode(newEpisode, STATUS.DONE);
+    } else {
+      syncMalEpisode(newEpisode);
+    }
   }, 500);
 
   const onAdd = () => {
