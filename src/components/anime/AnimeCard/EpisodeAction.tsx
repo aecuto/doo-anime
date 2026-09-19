@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import { IAnime } from "@/database/model";
-import { Chip, IconButton, Typography } from "@mui/material";
+import { Box, IconButton, Typography } from "@mui/material";
 
 import { reqUpdateEpisode, reqUpdateComplete, reqSyncEpisodeToMal } from "@/services/anime-api";
 import { useDebouncedCallback } from "use-debounce";
@@ -11,6 +11,7 @@ import { useRefreshAnime } from "@/hooks/use-anime";
 import { STATUS } from "@/constants";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
+import CheckIcon from "@mui/icons-material/Check";
 
 interface Props {
   episode: number;
@@ -83,39 +84,70 @@ export const EpisodeAction = ({ episode, setEpisode, data }: Props) => {
     reqUpdateEpisodeDeb();
   };
 
+  const offset = data.episodeOffset || 0;
+  const total = data.totalEpisodes ? data.totalEpisodes + offset : null;
+  const display = episode <= 0 ? 0 : episode + offset;
+  const completed = Boolean(data.totalEpisodes && episode >= data.totalEpisodes);
+
   return (
-    <>
-      <IconButton
-        color="default"
-        aria-label="Decrease episode"
-        onClick={() => onRemove()}
-        sx={{ border: 1, borderColor: "divider", margin: 0.5 }}
+    <Box sx={{ width: "100%", maxWidth: 220 }}>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          border: 1,
+          borderColor: "divider",
+          borderRadius: 1,
+          overflow: "hidden",
+        }}
       >
-        <RemoveIcon />
-      </IconButton>
-      <Chip
-        label={
-          <>
-            <Typography display="inline" fontSize="1.125rem">
-              {episode <= 0 ? 0 : episode + (data.episodeOffset || 0)}
-            </Typography>
-            <Typography display="inline" fontSize={12} color="warning.light">
-              {data.totalEpisodes
-                ? `/${data.totalEpisodes + (data.episodeOffset || 0)}`
-                : ""}
-            </Typography>
-          </>
-        }
-        sx={{ minWidth: 88, px: 1.5, margin: 0.5 }}
-      />
-      <IconButton
-        color="default"
-        aria-label="Increase episode"
-        onClick={() => onAdd()}
-        sx={{ border: 1, borderColor: "divider", margin: 0.5 }}
-      >
-        <AddIcon />
-      </IconButton>
-    </>
+        <IconButton
+          aria-label="Decrease episode"
+          color="error"
+          onClick={onRemove}
+          disabled={episode <= 0}
+          sx={{ borderRadius: 0, flexShrink: 0 }}
+        >
+          <RemoveIcon fontSize="small" />
+        </IconButton>
+        <Box
+          sx={{
+            flex: 1,
+            display: "inline-flex",
+            alignItems: "baseline",
+            justifyContent: "center",
+            gap: 0.25,
+            py: 0.75,
+            px: 1,
+            borderLeft: 1,
+            borderRight: 1,
+            borderColor: "divider",
+            fontVariantNumeric: "tabular-nums",
+          }}
+        >
+          {completed && <CheckIcon fontSize="small" sx={{ fontSize: 16 }} />}
+          <Typography
+            display="inline"
+            fontSize="1.125rem"
+            fontWeight={600}
+            sx={{ lineHeight: 1.2 }}
+          >
+            {display}
+          </Typography>
+          <Typography display="inline" fontSize={12} color="text.secondary">
+            {total ? `/${total}` : ""}
+          </Typography>
+        </Box>
+        <IconButton
+          aria-label="Increase episode"
+          color="success"
+          onClick={onAdd}
+          disabled={completed}
+          sx={{ borderRadius: 0, flexShrink: 0 }}
+        >
+          <AddIcon fontSize="small" />
+        </IconButton>
+      </Box>
+    </Box>
   );
 };

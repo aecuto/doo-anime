@@ -26,6 +26,7 @@ import {
   EventAvailable,
   Link as LinkIcon,
   CloudDone as CloudDoneIcon,
+  ImageNotSupported as ImageNotSupportedIcon,
 } from "@mui/icons-material";
 import { AnimeFormDialog } from "@/components/anime/AnimeFormDialog";
 import { reqUpdateReplay, reqDelete } from "@/services/anime-api";
@@ -183,17 +184,28 @@ function AnimeCardBase({ data }: { data: IItemAnime }) {
             <Box
               sx={{
                 display: "flex",
+                flexDirection: "column",
                 justifyContent: "center",
                 alignItems: "center",
+                gap: 1,
                 height: "100%",
                 minHeight: { md: 250 },
-                borderRight: { md: 1 },
-                borderColor: "divider",
-                bgcolor: "action.hover",
+                background: (theme: Theme) =>
+                  `linear-gradient(160deg, ${alpha(
+                    theme.palette.primary.main,
+                    0.08,
+                  )} 0%, ${alpha(theme.palette.text.primary, 0.04)} 100%)`,
                 color: "text.disabled",
               }}
             >
-              <Typography align="center">No Image</Typography>
+              <ImageNotSupportedIcon sx={{ fontSize: 44 }} />
+              <Typography
+                variant="body2"
+                align="center"
+                sx={{ fontWeight: 500, px: 2 }}
+              >
+                No Image
+              </Typography>
             </Box>
           )}
         </Box>
@@ -213,10 +225,9 @@ function AnimeCardBase({ data }: { data: IItemAnime }) {
               variant="h6"
               sx={{
                 marginBottom: 1,
-                display: "-webkit-box",
-                WebkitLineClamp: 2,
-                WebkitBoxOrient: "vertical",
-                overflow: "hidden",
+                fontWeight: 600,
+                lineHeight: 1.3,
+                overflowWrap: "anywhere",
               }}
             >
               {data.name}
