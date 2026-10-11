@@ -1,9 +1,13 @@
 import * as React from "react";
 
 import { IAnime } from "@/database/model";
-import { Box, IconButton, Typography } from "@mui/material";
+import { Box, Button, IconButton, Typography } from "@mui/material";
 
-import { reqUpdateEpisode, reqUpdateComplete, reqSyncEpisodeToMal } from "@/services/anime-api";
+import {
+  reqUpdateComplete,
+  reqUpdateEpisode,
+  reqSyncEpisodeToMal,
+} from "@/services/anime-api";
 import { useDebouncedCallback } from "use-debounce";
 import { toast } from "react-toastify";
 
@@ -27,17 +31,6 @@ export const EpisodeAction = ({ episode, setEpisode, data }: Props) => {
     episodeRef.current = episode;
   }, [episode]);
 
-  const onComplete = () => {
-    toast.promise(
-      reqUpdateComplete(data._id).then(() => refresh()),
-      {
-        pending: "Update is pending",
-        success: "Update status to done",
-        error: "Update is failed",
-      },
-    );
-  };
-
   // Best-effort push of the episode change to MyAnimeList. Ignored entirely
   // when there is no linked MAL id or no MAL session (401); other failures
   // surface a quiet toast and can be fixed with "Sync to MAL" later.
@@ -55,24 +48,33 @@ export const EpisodeAction = ({ episode, setEpisode, data }: Props) => {
 
   const reqUpdateEpisodeDeb = useDebouncedCallback(() => {
     let newEpisode = episodeRef.current;
-    let completed = false;
 
-    if (data.totalEpisodes && newEpisode > data.totalEpisodes) {
+    if (data.totalEpisodes && newEpisode >= data.totalEpisodes) {
       newEpisode = data.totalEpisodes;
-      completed = true;
     }
 
     reqUpdateEpisode(data._id, newEpisode).then(() =>
       toast.success("Episodes updated"),
     );
 
-    if (completed) {
-      onComplete();
-      syncMalEpisode(newEpisode, STATUS.DONE);
-    } else {
-      syncMalEpisode(newEpisode);
-    }
+    syncMalEpisode(newEpisode);
   }, 500);
+
+  // Deliberate completion: reaching the last episode only clamps the counter;
+  // the status changes to done only when the user presses this button.
+  const onMarkDone = () => {
+    toast.promise(
+      reqUpdateComplete(data._id).then(() => {
+        refresh();
+        syncMalEpisode(data.totalEpisodes ?? episodeRef.current, STATUS.DONE);
+      }),
+      {
+        pending: "Update is pending",
+        success: "Update status to done",
+        error: "Update is failed",
+      },
+    );
+  };
 
   const onAdd = () => {
     setEpisode((prev) => prev + 1);
@@ -148,6 +150,19 @@ export const EpisodeAction = ({ episode, setEpisode, data }: Props) => {
           <AddIcon fontSize="small" />
         </IconButton>
       </Box>
+      {completed && data.status !== STATUS.DONE && (
+        <Button
+          fullWidth
+          size="small"
+          variant="outlined"
+          color="success"
+          startIcon={<CheckIcon />}
+          onClick={onMarkDone}
+          sx={{ marginTop: 1 }}
+        >
+          Set to done
+        </Button>
+      )}
     </Box>
   );
 };

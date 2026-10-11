@@ -19,7 +19,11 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Autocomplete from "@mui/material/Autocomplete";
 
-import { reqCreate, reqUpdate } from "@/services/anime-api";
+import {
+  reqCreate,
+  reqUpdate,
+  reqSyncEpisodeToMal,
+} from "@/services/anime-api";
 import { toast } from "react-toastify";
 
 import { SyntheticEvent, useEffect, useState } from "react";
@@ -59,9 +63,26 @@ export const AnimeForm = ({ id }: { id?: string }) => {
 
   const onCreate = (values: Partial<IAnime>) => {
     toast.promise(
-      reqCreate(values).then(() => {
+      reqCreate(values).then(({ data: created }) => {
         refresh();
         setOpenDialog(null);
+
+        // Best-effort push of the new entry to MyAnimeList. Only possible for
+        // anime picked from the MAL autocomplete (they have an animeId) and
+        // with an active MAL session (401 is ignored like elsewhere).
+        if (created.animeId) {
+          reqSyncEpisodeToMal(
+            created.animeId,
+            created.episode ?? 0,
+            created.status,
+          ).catch((error: { response?: { status?: number } }) => {
+            if (error?.response?.status !== 401) {
+              toast.error("MyAnimeList sync failed");
+            }
+          });
+        }
+
+        return created;
       }),
       {
         pending: "Create is pending",

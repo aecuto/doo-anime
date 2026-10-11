@@ -50,11 +50,24 @@ export const reqSync = () => {
   return apiService.get<IAnime>(`/anime/sync`);
 };
 
+// The app's STATUS values differ from the ones the MAL API accepts, so they
+// are translated before being pushed to /mal-user/update.
+const MAL_STATUS: Record<string, string> = {
+  [STATUS.WATCHING]: "watching",
+  [STATUS.DONE]: "completed",
+  [STATUS.DROPPED]: "dropped",
+};
+
 export const reqSyncEpisodeToMal = (
   animeId: number,
   episode: number,
   status?: string,
-) => apiService.post("/mal-user/update", { animeId, episode, status });
+) =>
+  apiService.post("/mal-user/update", {
+    animeId,
+    episode,
+    status: status ? MAL_STATUS[status] ?? status : undefined,
+  });
 
 export interface ISyncMalResult {
   synced: number;
